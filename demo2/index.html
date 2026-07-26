@@ -1,1 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SMART RE — Property for Sale &amp; Rent in Saudi Arabia</title>
+<meta name="description" content="SMART RE (سمارت ري) — buy, rent and invest in Saudi property. Manual filters plus AI search, AI pricing, virtual staging and neighborhood intelligence." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --green:#1E9E62; --green-d:#16794A; --green-l:#E8F6EF; --green-t:#0F5C39;
+  --ink:#111827; --ink-2:#374151; --muted:#6B7280; --faint:#9CA3AF;
+  --bg:#FFFFFF; --surface:#F5F7F9; --surface-2:#EEF2F5;
+  --border:#E3E8EE; --line:#EDF1F5;
+  --gold:#C9A84C; --red:#E05252; --blue:#2563EB;
+  --r-s:6px; --r:10px; --r-l:14px; --pill:999px;
+  --sh-xs:0 1px 2px rgba(17,24,39,.05);
+  --sh-sm:0 2px 8px rgba(17,24,39,.06);
+  --sh:0 6px 20px rgba(17,24,39,.08);
+  --sh-lg:0 20px 46px rgba(17,24,39,.14);
+  --t:.18s ease;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Inter",system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden;font-size:14px}
+h1,h2,h3,h4,h5,.mn,.price{font-family:"Manrope",system-ui,sans-serif;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;transition:var(--t)}
+img{display:block;max-width:100%}
+.wrap{max-width:1300px;margin:0 auto;padding:0 32px}
+.sec{padding:72px 0}
+.sec.tight{padding:56px 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:28px}
+.sec-title{font-size:30px;font-weight:800;line-height:1.15}
+.sec-sub{color:var(--muted);font-size:15px;margin-top:8px}
+.link{color:var(--green);font-weight:700;font-size:14px}
+.link:hover{color:var(--green-d)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 22px;border-radius:var(--r-s);font-size:14.5px;font-weight:700;font-family:"Manrope",sans-serif;transition:var(--t);white-space:nowrap}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:var(--green-d)}
+.btn-out{border:1px solid var(--border);color:var(--ink);background:#fff}
+.btn-out:hover{border-color:var(--green);color:var(--green)}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-dark:hover{background:#000}
+.btn-sm{height:36px;padding:0 14px;font-size:13px;border-radius:var(--r-s)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:4px}
+.b-green{background:var(--green-l);color:var(--green-t)}
+.b-gold{background:#FBF3DC;color:#8A6D16}
+.b-dark{background:rgba(17,24,39,.82);color:#fff;backdrop-filter:blur(4px)}
+.reveal{opacity:0;transform:translateY(18px);transition:.6s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:80;height:64px;background:#fff;border-bottom:1px solid var(--line);transition:var(--t)}
+.nav.scrolled{box-shadow:0 4px 18px rgba(17,24,39,.08)}
+.nav .wrap{height:100%;display:flex;align-items:center;gap:34px}
+.logo{display:flex;align-items:center;gap:9px}
+.logomark{width:32px;height:32px;border-radius:7px;background:var(--green);color:#fff;display:grid;place-items:center;font-family:"Manrope";font-weight:800;font-size:13px}
+.logo b{font-family:"Manrope";font-size:17px;font-weight:800;letter-spacing:.01em;display:block;line-height:1}
+.logo i{font-style:normal;font-size:10.5px;color:var(--muted);letter-spacing:.08em}
+.nav-links{display:flex;gap:24px;margin-left:8px}
+.nav-links a{font-size:14px;font-weight:600;color:var(--ink-2);padding:6px 0;border-bottom:2px solid transparent}
+.nav-links a:hover,.nav-links a.on{color:var(--green);border-bottom-color:var(--green)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.lang{display:flex;border:1px solid var(--border);border-radius:var(--r-s);overflow:hidden}
+.lang button{padding:7px 11px;font-size:12px;font-weight:700;color:var(--muted)}
+.lang button.on{background:var(--surface-2);color:var(--ink)}
+
+/* HERO */
+.hero{position:relative;min-height:520px;display:flex;align-items:center;padding:56px 0 64px;background:#0B1220}
+.hero-img{position:absolute;inset:0;overflow:hidden}
+.hero-img img{width:100%;height:100%;object-fit:cover;opacity:.55}
+.hero-img:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,18,32,.72),rgba(11,18,32,.55) 40%,rgba(11,18,32,.9))}
+.hero .wrap{position:relative;z-index:2;width:100%}
+.hero h1{color:#fff;font-size:44px;font-weight:800;line-height:1.1;max-width:760px}
+.hero h1 span{color:#8FE3B8}
+.hero p.lead{color:#CBD5E1;font-size:16px;margin-top:14px;max-width:600px}
+
+/* SEARCH */
+.searchbox{margin-top:30px;background:#fff;border-radius:var(--r-l);box-shadow:var(--sh-lg);overflow:hidden}
+.stabs{display:flex;gap:0;border-bottom:1px solid var(--line);padding:0 8px}
+.stab{padding:16px 18px;font-family:"Manrope";font-size:14.5px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+.stab:hover{color:var(--ink)}
+.stab.on{color:var(--green);border-bottom-color:var(--green)}
+.stab.ai{margin-left:auto;color:var(--ink);display:flex;align-items:center;gap:7px}
+.stab.ai .sp{width:18px;height:18px;border-radius:5px;background:linear-gradient(135deg,var(--green),#5BC98F);color:#fff;display:grid;place-items:center;font-size:11px}
+.sbody{padding:16px}
+.frow{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr auto;gap:10px;align-items:center}
+.field{position:relative;height:52px;border:1px solid var(--border);border-radius:var(--r-s);display:flex;align-items:center;gap:9px;padding:0 12px;background:#fff;transition:var(--t)}
+.field:focus-within,.field:hover{border-color:var(--green)}
+.field svg{flex:none;color:var(--faint)}
+.field input,.field select{border:0;outline:0;width:100%;background:transparent;font-size:14.5px;font-weight:500;appearance:none}
+.field label{position:absolute;top:7px;left:12px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.field.lab{padding-top:14px;align-items:flex-end;padding-bottom:7px}
+.field.sel:after{content:"";position:absolute;right:12px;top:50%;width:7px;height:7px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.frow .btn{height:52px;padding:0 30px;font-size:15px}
+.sfoot{display:flex;align-items:center;gap:10px;margin-top:13px;flex-wrap:wrap}
+.sfoot .m{font-size:12.5px;color:var(--muted);font-weight:600}
+.chip{border:1px solid var(--border);background:#fff;border-radius:var(--pill);padding:7px 14px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.chip:hover{border-color:var(--green);color:var(--green);background:var(--green-l)}
+.chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.aibar{display:none;gap:10px;align-items:center}
+.aibar.show{display:flex}
+.frow.hide{display:none}
+.aibar .field{flex:1;height:52px}
+.results{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.3,.7,.3,1);border-top:0 solid var(--line)}
+.results.open{max-height:420px;border-top-width:1px;margin-top:16px}
+.rin{padding:16px 0 4px}
+.rhead{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:9px}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rcard{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;gap:10px;transition:var(--t)}
+.rcard:hover{box-shadow:var(--sh-sm);border-color:var(--green)}
+.rcard img{width:96px;height:88px;object-fit:cover;flex:none}
+.rb{padding:9px 8px 9px 0}
+.rb .t{font-family:"Manrope";font-weight:700;font-size:13.5px;margin-top:5px}
+.rb .p{font-family:"Manrope";font-weight:800;font-size:15px;color:var(--green-t);margin-top:3px}
+
+/* TRUST STRIP */
+.strip{border-bottom:1px solid var(--line);background:var(--surface)}
+.strip .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:16px;padding-bottom:16px}
+.strip .it{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.strip .ic{width:30px;height:30px;border-radius:8px;background:var(--green-l);color:var(--green-t);display:grid;place-items:center;font-size:14px}
+
+/* CITY TILES */
+.cities{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.city{position:relative;height:170px;border-radius:var(--r);overflow:hidden}
+.city img{width:100%;height:100%;object-fit:cover;transition:.5s}
+.city:hover img{transform:scale(1.06)}
+.city:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(11,18,32,.82))}
+.city .cl{position:absolute;left:16px;bottom:14px;z-index:2;color:#fff}
+.city .cl b{font-family:"Manrope";font-size:18px;font-weight:800;display:block}
+.city .cl span{font-size:12.5px;opacity:.85}
+
+/* LISTINGS */
+.filters{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{border:1px solid var(--border);border-radius:var(--r);background:#fff;overflow:hidden;transition:var(--t);display:flex;flex-direction:column}
+.card:hover{box-shadow:var(--sh);transform:translateY(-3px);border-color:#D6DEE7}
+.cmedia{position:relative;height:212px;overflow:hidden;background:var(--surface-2)}
+.cmedia img{width:100%;height:100%;object-fit:cover;transition:.5s}
+.card:hover .cmedia img{transform:scale(1.05)}
+.cbadges{position:absolute;top:12px;left:12px;display:flex;gap:6px}
+.heart{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.94);display:grid;place-items:center;box-shadow:var(--sh-xs)}
+.heart svg{width:17px;height:17px;stroke:var(--ink-2);fill:none;stroke-width:1.9;transition:var(--t)}
+.heart.on svg{fill:var(--red);stroke:var(--red)}
+.heart:hover{transform:scale(1.08)}
+.cphotos{position:absolute;right:12px;bottom:12px;background:rgba(17,24,39,.75);color:#fff;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:5px;display:flex;gap:6px;align-items:center}
+.cbody{padding:15px 16px 0;flex:1}
+.crow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.price{font-size:21px;font-weight:800}
+.price small{font-size:12.5px;font-weight:600;color:var(--muted);letter-spacing:0}
+.ctype{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:2px}
+.ctitle{font-family:"Manrope";font-size:15px;font-weight:700;margin-top:10px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cloc{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin-top:6px}
+.specs{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.spec{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.spec svg{color:var(--faint)}
+.aitag{display:flex;align-items:center;gap:7px;margin-top:12px;background:var(--green-l);color:var(--green-t);border-radius:6px;padding:8px 10px;font-size:12.5px;font-weight:700}
+.cfoot{display:flex;align-items:center;gap:10px;padding:13px 16px;margin-top:14px;border-top:1px solid var(--line);background:#FCFDFE}
+.agency{width:34px;height:34px;border-radius:6px;background:var(--surface-2);display:grid;place-items:center;font-family:"Manrope";font-weight:800;font-size:11px;color:var(--ink-2);flex:none}
+.agency-n{font-size:12px;line-height:1.3}
+.agency-n b{display:block;font-size:12.5px;font-weight:700}
+.agency-n span{color:var(--faint)}
+.cactions{margin-left:auto;display:flex;gap:7px}
+.iconbtn{width:34px;height:34px;border-radius:6px;border:1px solid var(--border);display:grid;place-items:center;color:var(--ink-2);background:#fff}
+.iconbtn:hover{border-color:var(--green);color:var(--green);background:var(--green-l)}
+.iconbtn.wa:hover{border-color:#25D366;color:#25D366;background:#E9FBF0}
+
+/* AI FEATURES */
+.aisec{background:var(--surface)}
+.aigrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.acard{background:#fff;border:1px solid var(--border);border-radius:var(--r-l);padding:22px;display:flex;flex-direction:column}
+.aicon{width:40px;height:40px;border-radius:10px;background:var(--green-l);color:var(--green-t);display:grid;place-items:center;font-size:18px;margin-bottom:14px}
+.acard h3{font-size:18px;font-weight:800}
+.acard p{color:var(--muted);font-size:14px;margin-top:8px;line-height:1.6}
+.mock{margin-top:16px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:12px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;min-height:214px}
+.msg{max-width:88%;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.5;margin-top:8px;opacity:0;transform:translateY(8px);animation:pop .4s forwards}
+@keyframes pop{to{opacity:1;transform:none}}
+.msg.me{margin-left:auto;background:var(--green);color:#fff;border-bottom-right-radius:3px}
+.msg.ai{background:#fff;border:1px solid var(--border);border-bottom-left-radius:3px}
+.typing{display:inline-flex;gap:4px;padding:11px 13px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-top:8px;width:fit-content}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--faint);animation:bl 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.gauge{text-align:center;padding:8px 0}
+.gauge .v{font-family:"Manrope";font-size:30px;font-weight:800;color:var(--green-t)}
+.gauge .l{font-size:12.5px;color:var(--muted);margin-top:2px}
+.bar{height:7px;border-radius:99px;background:var(--surface-2);margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),#5BC98F);border-radius:99px;width:0;transition:width 1.2s cubic-bezier(.3,.8,.3,1)}
+.krow{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:10px;font-weight:600}
+.krow b{color:var(--ink)}
+.slider{position:relative;border-radius:var(--r-s);overflow:hidden;height:190px;cursor:ew-resize;user-select:none;margin-top:2px}
+.slider img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.slider .after{clip-path:inset(0 0 0 50%)}
+.handle{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+.handle:after{content:"⇄";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;font-size:13px;box-shadow:var(--sh-sm)}
+.sl-tag{position:absolute;bottom:10px;font-size:11px;font-weight:700;background:rgba(17,24,39,.78);color:#fff;padding:4px 8px;border-radius:4px}
+
+/* HOW */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.step{border:1px solid var(--border);border-radius:var(--r-l);padding:22px;background:#fff;position:relative}
+.step .n{width:34px;height:34px;border-radius:9px;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:"Manrope";font-weight:800;font-size:14px}
+.step h4{font-size:16.5px;font-weight:800;margin-top:14px}
+.step p{color:var(--muted);font-size:13.5px;margin-top:7px;line-height:1.6}
+
+/* NEIGHBORHOOD */
+.nbgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.nb{border:1px solid var(--border);border-radius:var(--r-l);overflow:hidden;background:#fff}
+.nb .nbtop{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.nb h4{font-size:16.5px;font-weight:800}
+.nb .sc{font-family:"Manrope";font-weight:800;font-size:17px;color:var(--green-t)}
+.nb .nbb{padding:16px 18px}
+.metric{margin-bottom:12px}
+.metric .ml{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.metric .mb{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.metric .mb i{display:block;height:100%;width:0;background:var(--green);border-radius:99px;transition:width 1.1s cubic-bezier(.3,.8,.3,1)}
+
+/* BROKERS */
+.brokers{background:#0B1220;color:#fff}
+.bkgrid{display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:center}
+.brokers h2{font-size:32px;font-weight:800;line-height:1.15}
+.brokers p{color:#94A3B8;font-size:15px;margin-top:12px;line-height:1.7}
+.bklist{margin-top:22px;display:flex;flex-direction:column;gap:12px}
+.bkitem{display:flex;gap:11px;align-items:flex-start;font-size:14px;color:#CBD5E1}
+.tick{width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:11px;flex:none;margin-top:1px}
+.crm{background:#fff;color:var(--ink);border-radius:var(--r-l);overflow:hidden;box-shadow:var(--sh-lg)}
+.crm-top{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--surface)}
+.dot{width:9px;height:9px;border-radius:50%;background:#E5E9EE}
+.crm-body{padding:16px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.kpi{border:1px solid var(--border);border-radius:var(--r-s);padding:12px}
+.kpi b{font-family:"Manrope";font-size:19px;font-weight:800;display:block}
+.kpi span{font-size:11.5px;color:var(--muted);font-weight:600}
+.lead-row{display:flex;align-items:center;gap:11px;padding:10px;border:1px solid var(--line);border-radius:var(--r-s);margin-bottom:8px}
+.av{width:32px;height:32px;border-radius:50%;background:var(--green-l);color:var(--green-t);display:grid;place-items:center;font-weight:800;font-size:12px;font-family:"Manrope"}
+.lead-row .nm{font-size:13.5px;font-weight:700}
+.lead-row .sb{font-size:12px;color:var(--muted)}
+
+/* APP */
+.appband{background:var(--green-l);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.appgrid{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+.appband h2{font-size:28px;font-weight:800}
+.appband p{color:var(--ink-2);margin-top:8px;font-size:15px}
+.stores{display:flex;gap:12px;margin-top:18px}
+.store{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;padding:11px 18px;border-radius:var(--r-s)}
+.store span{font-size:10px;opacity:.75;display:block;line-height:1.2}
+.store b{font-family:"Manrope";font-size:14px}
+.qr{width:130px;height:130px;border-radius:var(--r);background:#fff;border:1px solid var(--border);display:grid;place-items:center;font-size:11px;color:var(--muted);text-align:center;padding:10px}
+
+/* FOOTER */
+footer{background:#0B1220;color:#94A3B8;padding:56px 0 26px;font-size:13.5px}
+.fgrid{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:34px}
+footer h5{color:#fff;font-family:"Manrope";font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+footer a{display:block;margin-bottom:9px}
+footer a:hover{color:#fff}
+.fbot{border-top:1px solid rgba(255,255,255,.1);margin-top:38px;padding-top:20px;display:flex;justify-content:space-between;font-size:12.5px}
+</style>
+</head>
+<body>
+
+<!-- 1. NAV -->
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top"><span class="logomark">SR</span><span><b>SMART RE</b><i>سمارت ري</i></span></a>
+    <div class="nav-links">
+      <a href="#listings" class="on">Buy</a><a href="#listings">Rent</a><a href="#listings">Commercial</a>
+      <a href="#neighborhoods">New Projects</a><a href="#brokers">Find Agent</a><a href="#ai">AI Tools</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang"><button data-lang class="on">EN</button><button data-lang>AR</button></div>
+      <a class="btn btn-out btn-sm" href="#">Sign In</a>
+      <a class="btn btn-green btn-sm" href="#">List Your Property</a>
+    </div>
+  </div>
+</nav>
+
+<!-- 2. HERO + 3. SEARCH -->
+<header class="hero" id="top">
+  <div class="hero-img"><img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80" alt="Modern villa exterior in Saudi Arabia" /></div>
+  <div class="wrap">
+    <h1>Find the right property in <span>Saudi Arabia</span></h1>
+    <p class="lead">Search 50,000+ verified listings across Riyadh, Jeddah, Dammam and Al Khobar — with filters you know, and AI when you want it.</p>
+
+    <div class="searchbox" id="search">
+      <div class="stabs" id="stabs">
+        <button class="stab on" data-tab="buy">Buy</button>
+        <button class="stab" data-tab="rent">Rent</button>
+        <button class="stab" data-tab="commercial">Commercial</button>
+        <button class="stab" data-tab="projects">New Projects</button>
+        <button class="stab ai" data-tab="ai"><span class="sp">✦</span> AI Search</button>
+      </div>
+      <div class="sbody">
+        <div class="frow" id="manual">
+          <div class="field lab">
+            <label>Location</label>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <input id="loc" placeholder="City, district or community" />
+          </div>
+          <div class="field lab sel"><label>Property Type</label>
+            <select id="ptype"><option>All Types</option><option>Villa</option><option>Apartment</option><option>Townhouse</option><option>Land</option><option>Office</option></select>
+          </div>
+          <div class="field lab sel"><label>Beds &amp; Baths</label>
+            <select id="beds"><option>Any</option><option>1 Bed</option><option>2 Beds</option><option>3 Beds</option><option>4 Beds</option><option>5+ Beds</option></select>
+          </div>
+          <div class="field lab sel"><label>Price (SAR)</label>
+            <select id="pricef"><option>Any Price</option><option>Up to 500K</option><option>500K – 1M</option><option>1M – 2M</option><option>2M – 5M</option><option>5M+</option></select>
+          </div>
+          <button class="btn btn-green" id="goManual">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            Search
+          </button>
+        </div>
+
+        <div class="aibar" id="aibar">
+          <div class="field">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2z"/></svg>
+            <input id="q" placeholder="3 bedroom villa with a pool near a school in North Riyadh under SAR 2M…" />
+          </div>
+          <button class="btn btn-green" id="goSearch">Ask AI →</button>
+        </div>
+
+        <div class="sfoot">
+          <span class="m" id="sfootLabel">Popular:</span>
+          <button class="chip" data-fill="Villa with pool, Hittin, Riyadh">Villas in Riyadh</button>
+          <button class="chip" data-fill="Apartment for rent, Al Hamra, Jeddah">Apartments in Jeddah</button>
+          <button class="chip" data-fill="Townhouse under SAR 1.5M, Al Khobar">Townhouses in Khobar</button>
+          <button class="chip" data-fill="High yield investment property Dammam">Investment picks</button>
+        </div>
+
+        <div class="results" id="results"><div class="rin">
+          <div class="rhead"><span class="badge b-green">AI Match</span> 3 strong matches ranked by intent, budget and district score</div>
+          <div class="rgrid">
+            <div class="rcard"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80" alt="Villa in Hittin" /><div class="rb"><span class="badge b-green">96% match</span><div class="t">Villa · Hittin, Riyadh</div><div class="p">SAR 1,940,000</div></div></div>
+            <div class="rcard"><img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=400&q=80" alt="Villa in Al Nakheel" /><div class="rb"><span class="badge b-green">91% match</span><div class="t">Villa · Al Nakheel</div><div class="p">SAR 1,780,000</div></div></div>
+            <div class="rcard"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=400&q=80" alt="Townhouse in Al Malqa" /><div class="rb"><span class="badge b-green">88% match</span><div class="t">Townhouse · Al Malqa</div><div class="p">SAR 1,650,000</div></div></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TRUST STRIP -->
+<div class="strip">
+  <div class="wrap">
+    <div class="it"><span class="ic">✓</span> Every listing ownership-verified</div>
+    <div class="it"><span class="ic">✦</span> AI price check on every property</div>
+    <div class="it"><span class="ic">⌂</span> 12,000+ licensed brokers</div>
+    <div class="it"><span class="ic">◷</span> Updated every 15 minutes</div>
+    <div class="it"><span class="ic">ع</span> Full Arabic &amp; English support</div>
+  </div>
+</div>
+
+<!-- CITIES -->
+<section class="sec tight">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div><h2 class="sec-title">Browse by city</h2><p class="sec-sub">Explore the most searched markets in the Kingdom</p></div>
+      <a class="link" href="#listings">See all cities →</a>
+    </div>
+    <div class="cities reveal">
+      <a class="city" href="#listings"><img src="https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?auto=format&fit=crop&w=800&q=80" alt="Riyadh skyline" /><span class="cl"><b>Riyadh</b><span>21,480 listings</span></span></a>
+      <a class="city" href="#listings"><img src="https://images.unsplash.com/photo-1590077428593-a55bb07c4665?auto=format&fit=crop&w=800&q=80" alt="Jeddah waterfront" /><span class="cl"><b>Jeddah</b><span>13,206 listings</span></span></a>
+      <a class="city" href="#listings"><img src="https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?auto=format&fit=crop&w=800&q=80" alt="Dammam city" /><span class="cl"><b>Dammam</b><span>7,932 listings</span></span></a>
+      <a class="city" href="#listings"><img src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=800&q=80" alt="Al Khobar corniche" /><span class="cl"><b>Al Khobar</b><span>5,411 listings</span></span></a>
+    </div>
+  </div>
+</section>
+
+<!-- 4. LISTINGS -->
+<section class="sec" id="listings" style="padding-top:16px">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div><h2 class="sec-title">Featured properties for sale</h2><p class="sec-sub">Verified listings, AI price-checked against the last 90 days of transactions</p></div>
+      <a class="link" href="#">View all 21,480 →</a>
+    </div>
+    <div class="filters reveal" id="filters">
+      <button class="chip on" data-f="all">All</button>
+      <button class="chip" data-f="villa">Villas</button>
+      <button class="chip" data-f="apartment">Apartments</button>
+      <button class="chip" data-f="townhouse">Townhouses</button>
+      <button class="chip" data-f="commercial">Commercial</button>
+      <span class="m" style="margin-left:auto;font-size:13px;color:var(--muted);font-weight:600" id="count">Showing 6 of 21,480</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<!-- 5. AI FEATURES -->
+<section class="sec aisec" id="ai">
+  <div class="wrap">
+    <div class="sec-head reveal"><div><span class="badge b-green">Smart RE Intelligence</span><h2 class="sec-title" style="margin-top:10px">AI that does the heavy lifting</h2><p class="sec-sub">Three tools built into every search, listing and negotiation</p></div></div>
+    <div class="aigrid reveal">
+      <div class="acard">
+        <div class="aicon">✦</div>
+        <h3>Conversational search</h3>
+        <p>Describe what you need in Arabic or English. Our intent engine converts it into precise filters.</p>
+        <div class="mock" id="chat"></div>
+      </div>
+      <div class="acard">
+        <div class="aicon">₪</div>
+        <h3>AI price intelligence</h3>
+        <p>Instant fair-value estimate from comparable sales, district momentum and listing quality.</p>
+        <div class="mock" style="justify-content:flex-start">
+          <div class="gauge"><div class="v" id="est">SAR 1,940,000</div><div class="l">Estimated fair value · Villa, Hittin</div></div>
+          <div class="bar"><i id="conf"></i></div>
+          <div class="krow"><span>Confidence <b>93%</b></span><span>Asking <b>SAR 2.05M</b></span></div>
+          <div class="krow"><span>Comparables <b>34 sales</b></span><span>Verdict <b style="color:var(--green-t)">Slightly high</b></span></div>
+          <div class="krow"><span>Time to sell <b>28 days</b></span><span>District <b>+14.2% YoY</b></span></div>
+        </div>
+      </div>
+      <div class="acard">
+        <div class="aicon">◱</div>
+        <h3>Virtual staging</h3>
+        <p>Turn an empty room into a furnished, buyer-ready visual in seconds. Drag to compare.</p>
+        <div class="mock" style="justify-content:flex-start">
+          <div class="slider" id="slider">
+            <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80" alt="Empty room before staging" />
+            <img class="after" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80" alt="Same room after AI virtual staging" />
+            <span class="sl-tag" style="left:10px">Before</span>
+            <span class="sl-tag" style="right:10px">After</span>
+            <span class="handle" id="handle"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. HOW IT WORKS -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head reveal"><div><h2 class="sec-title">How SMART RE works</h2><p class="sec-sub">From first search to signed contract in four steps</p></div></div>
+    <div class="steps reveal">
+      <div class="step"><div class="n">1</div><h4>Search your way</h4><p>Use classic filters for Buy, Rent or Commercial — or just describe the home you want.</p></div>
+      <div class="step"><div class="n">2</div><h4>Compare with AI</h4><p>Every listing shows a fair-value estimate, district score and predicted time-to-sell.</p></div>
+      <div class="step"><div class="n">3</div><h4>Tour &amp; verify</h4><p>Book viewings instantly. Ownership documents are checked before a listing goes live.</p></div>
+      <div class="step"><div class="n">4</div><h4>Close with confidence</h4><p>Licensed brokers, digital contracts and Ejar/REGA-compliant paperwork end to end.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. NEIGHBORHOODS -->
+<section class="sec aisec" id="neighborhoods">
+  <div class="wrap">
+    <div class="sec-head reveal"><div><h2 class="sec-title">Neighborhood intelligence</h2><p class="sec-sub">District scores built from schools, transport, amenities and price momentum</p></div><a class="link" href="#">Explore all districts →</a></div>
+    <div class="nbgrid reveal" id="nb">
+      <div class="nb"><div class="nbtop"><div><h4>Hittin</h4><div class="ctype">North Riyadh</div></div><span class="sc">92</span></div><div class="nbb">
+        <div class="metric"><div class="ml"><span>Schools</span><span>95</span></div><div class="mb"><i data-w="95"></i></div></div>
+        <div class="metric"><div class="ml"><span>Transport</span><span>88</span></div><div class="mb"><i data-w="88"></i></div></div>
+        <div class="metric"><div class="ml"><span>Amenities</span><span>91</span></div><div class="mb"><i data-w="91"></i></div></div>
+        <div class="metric" style="margin:0"><div class="ml"><span>Price growth</span><span>94</span></div><div class="mb"><i data-w="94"></i></div></div>
+      </div></div>
+      <div class="nb"><div class="nbtop"><div><h4>Al Malqa</h4><div class="ctype">North Riyadh</div></div><span class="sc">89</span></div><div class="nbb">
+        <div class="metric"><div class="ml"><span>Schools</span><span>90</span></div><div class="mb"><i data-w="90"></i></div></div>
+        <div class="metric"><div class="ml"><span>Transport</span><span>84</span></div><div class="mb"><i data-w="84"></i></div></div>
+        <div class="metric"><div class="ml"><span>Amenities</span><span>93</span></div><div class="mb"><i data-w="93"></i></div></div>
+        <div class="metric" style="margin:0"><div class="ml"><span>Price growth</span><span>88</span></div><div class="mb"><i data-w="88"></i></div></div>
+      </div></div>
+      <div class="nb"><div class="nbtop"><div><h4>Al Hamra</h4><div class="ctype">Jeddah</div></div><span class="sc">85</span></div><div class="nbb">
+        <div class="metric"><div class="ml"><span>Schools</span><span>82</span></div><div class="mb"><i data-w="82"></i></div></div>
+        <div class="metric"><div class="ml"><span>Transport</span><span>80</span></div><div class="mb"><i data-w="80"></i></div></div>
+        <div class="metric"><div class="ml"><span>Amenities</span><span>90</span></div><div class="mb"><i data-w="90"></i></div></div>
+        <div class="metric" style="margin:0"><div class="ml"><span>Price growth</span><span>87</span></div><div class="mb"><i data-w="87"></i></div></div>
+      </div></div>
+      <div class="nb"><div class="nbtop"><div><h4>Al Aqrabiyah</h4><div class="ctype">Al Khobar</div></div><span class="sc">83</span></div><div class="nbb">
+        <div class="metric"><div class="ml"><span>Schools</span><span>84</span></div><div class="mb"><i data-w="84"></i></div></div>
+        <div class="metric"><div class="ml"><span>Transport</span><span>78</span></div><div class="mb"><i data-w="78"></i></div></div>
+        <div class="metric"><div class="ml"><span>Amenities</span><span>86</span></div><div class="mb"><i data-w="86"></i></div></div>
+        <div class="metric" style="margin:0"><div class="ml"><span>Price growth</span><span>85</span></div><div class="mb"><i data-w="85"></i></div></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. BROKERS -->
+<section class="sec brokers" id="brokers">
+  <div class="wrap bkgrid">
+    <div class="reveal">
+      <span class="badge b-green">For agencies</span>
+      <h2 style="margin-top:12px">A CRM that closes deals, not tabs</h2>
+      <p>SMART RE gives licensed brokers AI-scored leads, automated valuations and instant listing publishing across the Kingdom.</p>
+      <div class="bklist">
+        <div class="bkitem"><span class="tick">✓</span> AI lead scoring ranks buyers by real intent and budget fit</div>
+        <div class="bkitem"><span class="tick">✓</span> One-click listing creation with auto-generated Arabic &amp; English copy</div>
+        <div class="bkitem"><span class="tick">✓</span> Virtual staging and photo enhancement included on every plan</div>
+        <div class="bkitem"><span class="tick">✓</span> WhatsApp, call and email tracking with response-time analytics</div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:26px"><a class="btn btn-green" href="#">Join as a broker</a><a class="btn btn-out" href="#" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.25)">Book a demo</a></div>
+    </div>
+    <div class="crm reveal">
+      <div class="crm-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:8px;font-size:12.5px;font-weight:700;color:var(--muted)">SMART RE Broker Console</span></div>
+      <div class="crm-body">
+        <div class="kpis">
+          <div class="kpi"><b>146</b><span>Active leads</span></div>
+          <div class="kpi"><b>32</b><span>Listings live</span></div>
+          <div class="kpi"><b>4.8m</b><span>Avg. response</span></div>
+        </div>
+        <div class="lead-row"><span class="av">FA</span><div><div class="nm">Faisal Al-Otaibi</div><div class="sb">Villa · Hittin · SAR 1.9M budget</div></div><span class="badge b-green" style="margin-left:auto">Hot · 94</span></div>
+        <div class="lead-row"><span class="av">NM</span><div><div class="nm">Noura Al-Mutairi</div><div class="sb">Apartment · Al Malqa · rent</div></div><span class="badge b-gold" style="margin-left:auto">Warm · 71</span></div>
+        <div class="lead-row" style="margin:0"><span class="av">SK</span><div><div class="nm">Sami Khalid</div><div class="sb">Office · Jeddah · 400 m²</div></div><span class="badge b-green" style="margin-left:auto">Hot · 88</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. APP -->
+<section class="sec tight appband">
+  <div class="wrap appgrid">
+    <div class="reveal">
+      <h2>Take SMART RE with you</h2>
+      <p>Saved searches, instant alerts and AI valuations — on iOS and Android, in Arabic and English.</p>
+      <div class="stores">
+        <a class="store" href="#"><b style="font-size:19px">▲</b><span>Download on the<b>App Store</b></span></a>
+        <a class="store" href="#"><b style="font-size:19px">▶</b><span>Get it on<b>Google Play</b></span></a>
+      </div>
+    </div>
+    <div class="qr reveal">Scan to download the SMART RE app</div>
+  </div>
+</section>
+
+<!-- 10. FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <a class="logo" href="#top" style="margin-bottom:14px"><span class="logomark">SR</span><span><b style="color:#fff">SMART RE</b><i style="color:#64748B">سمارت ري</i></span></a>
+        <p style="max-width:280px;line-height:1.7">Saudi Arabia's AI-powered property marketplace. Licensed by REGA. Buy, rent, invest and manage — with intelligence built in.</p>
+      </div>
+      <div><h5>Buy</h5><a href="#">Villas for sale</a><a href="#">Apartments for sale</a><a href="#">Land</a><a href="#">New projects</a></div>
+      <div><h5>Rent</h5><a href="#">Apartments for rent</a><a href="#">Villas for rent</a><a href="#">Offices</a><a href="#">Short term</a></div>
+      <div><h5>Company</h5><a href="#">About us</a><a href="#">Careers</a><a href="#">Newsroom</a><a href="#">Contact</a></div>
+      <div><h5>Legal</h5><a href="#">Terms of use</a><a href="#">Privacy policy</a><a href="#">REGA licence</a><a href="#">Ejar compliance</a></div>
+    </div>
+    <div class="fbot"><span>© 2026 SMART RE (سمارت ري). All rights reserved.</span><span>Riyadh · Jeddah · Dammam · Al Khobar</span></div>
+  </div>
+</footer>
+
+<script>
+/* NAV shadow */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>8));
+
+/* Language pills */
+document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('[data-lang]').forEach(x=>x.classList.remove('on'));b.classList.add('on');});
+
+/* Search tabs */
+const manual=document.getElementById('manual'),aibar=document.getElementById('aibar'),results=document.getElementById('results');
+document.querySelectorAll('.stab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.stab').forEach(x=>x.classList.remove('on'));t.classList.add('on');
+  const ai=t.dataset.tab==='ai';
+  manual.classList.toggle('hide',ai);aibar.classList.toggle('show',ai);
+  document.getElementById('sfootLabel').textContent=ai?'Try:':'Popular:';
+  if(!ai)results.classList.remove('open');
+});
+
+/* Chips */
+document.querySelectorAll('[data-fill]').forEach(c=>c.onclick=()=>{
+  const ai=aibar.classList.contains('show');
+  if(ai){document.getElementById('q').value=c.dataset.fill;results.classList.add('open');}
+  else{document.getElementById('loc').value=c.dataset.fill;}
+});
+document.getElementById('goSearch').onclick=()=>results.classList.toggle('open');
+document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')results.classList.add('open');});
+document.getElementById('goManual').onclick=()=>document.getElementById('listings').scrollIntoView({behavior:'smooth'});
+
+/* LISTINGS */
+const props=[
+ {t:'Luxury 5-bedroom villa with private pool and majlis',loc:'Hittin, North Riyadh',p:'2,050,000',type:'villa',cat:'For Sale',b:5,ba:6,a:'480 m²',img:'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80',ai:'AI fair value SAR 1.94M · slightly high',ag:'AQ',agn:'Aqar Elite',ph:24,ft:true},
+ {t:'Modern 3-bedroom apartment with skyline views',loc:'Al Malqa, Riyadh',p:'1,180,000',type:'apartment',cat:'For Sale',b:3,ba:3,a:'210 m²',img:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=80',ai:'AI fair value SAR 1.21M · good deal',ag:'RH',agn:'Riyadh Homes',ph:18},
+ {t:'Family townhouse in gated community near schools',loc:'Al Nakheel, Riyadh',p:'1,650,000',type:'townhouse',cat:'For Sale',b:4,ba:4,a:'320 m²',img:'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=900&q=80',ai:'AI fair value SAR 1.66M · fairly priced',ag:'DR',agn:'Dar Realty',ph:31},
+ {t:'Sea-view 4-bedroom apartment on the Corniche',loc:'Al Hamra, Jeddah',p:'2,400,000',type:'apartment',cat:'For Sale',b:4,ba:4,a:'285 m²',img:'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80',ai:'AI fair value SAR 2.35M · fairly priced',ag:'JB',agn:'Jeddah Bay',ph:27,ft:true},
+ {t:'Grade-A office floor in a new business tower',loc:'King Abdullah Rd, Dammam',p:'3,750,000',type:'commercial',cat:'For Sale',b:0,ba:4,a:'640 m²',img:'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80',ai:'AI yield estimate 8.4% net',ag:'GC',agn:'Gulf Commercial',ph:15},
+ {t:'Contemporary 6-bedroom villa with landscaped garden',loc:'Al Aqrabiyah, Al Khobar',p:'2,890,000',type:'villa',cat:'For Sale',b:6,ba:7,a:'560 m²',img:'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80',ai:'AI fair value SAR 2.79M · slightly high',ag:'KP',agn:'Khobar Prime',ph:36}
+];
+const bed=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 18v-6h18v6"/><path d="M3 12V7"/><path d="M21 18v2"/><path d="M3 18v2"/><path d="M7 12V9h10v3"/></svg>`;
+const bath=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 12h16v3a4 4 0 01-4 4H8a4 4 0 01-4-4v-3z"/><path d="M7 12V6a2 2 0 114 0"/></svg>`;
+const area=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M4 9h16"/></svg>`;
+const pin=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
+const grid=document.getElementById('grid');
+function render(f){
+  const list=props.filter(p=>f==='all'||p.type===f);
+  document.getElementById('count').textContent=`Showing ${list.length} of 21,480`;
+  grid.innerHTML=list.map(p=>`
+  <article class="card">
+    <div class="cmedia">
+      <img src="${p.img}" alt="${p.t}" loading="lazy" />
+      <div class="cbadges"><span class="badge b-green">Verified</span>${p.ft?'<span class="badge b-gold">Featured</span>':''}</div>
+      <button class="heart" aria-label="Save property"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.7-9.5-9A5.2 5.2 0 0112 5.6 5.2 5.2 0 0121.5 12c-2 4.3-9.5 9-9.5 9z"/></svg></button>
+      <span class="cphotos">▣ ${p.ph} photos</span>
+    </div>
+    <div class="cbody">
+      <div class="crow"><div class="price">SAR ${p.p}</div><span class="ctype">${p.cat}</span></div>
+      <div class="ctype" style="margin-top:4px">${p.type.charAt(0).toUpperCase()+p.type.slice(1)}</div>
+      <h3 class="ctitle">${p.t}</h3>
+      <div class="cloc">${pin} ${p.loc}</div>
+      <div class="specs">
+        ${p.b?`<span class="spec">${bed} ${p.b}</span>`:''}
+        <span class="spec">${bath} ${p.ba}</span>
+        <span class="spec">${area} ${p.a}</span>
+      </div>
+      <div class="aitag">✦ ${p.ai}</div>
+    </div>
+    <div class="cfoot">
+      <span class="agency">${p.ag}</span>
+      <span class="agency-n"><b>${p.agn}</b><span>Licensed broker</span></span>
+      <span class="cactions">
+        <button class="iconbtn" aria-label="Call"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 2 .7 2.9a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.9.6 2.9.7a2 2 0 011.7 2z"/></svg></button>
+        <button class="iconbtn" aria-label="Email"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></button>
+        <button class="iconbtn wa" aria-label="WhatsApp"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 12a9 9 0 01-13.3 7.9L3 21l1.2-4.6A9 9 0 1121 12z"/></svg></button>
+      </span>
+    </div>
+  </article>`).join('');
+  grid.querySelectorAll('.heart').forEach(h=>h.onclick=()=>h.classList.toggle('on'));
+}
+render('all');
+document.querySelectorAll('#filters .chip').forEach(c=>c.onclick=()=>{
+  document.querySelectorAll('#filters .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');render(c.dataset.f);});
+
+/* CHAT typing */
+const chat=document.getElementById('chat');
+const script=[
+ {r:'me',t:'أبغى فيلا ٤ غرف في شمال الرياض تحت ٢ مليون'},
+ {r:'ai',t:'Got it — 4-bed villa, North Riyadh, budget SAR 2M. 47 matches found.'},
+ {r:'me',t:'Near a good school, with a pool'},
+ {r:'ai',t:'Narrowed to 9. Top pick: Hittin villa, 480 m², 300 m from Manarat School.'}
+];
+let ci=0;
+function step(){
+  if(ci>=script.length){setTimeout(()=>{chat.innerHTML='';ci=0;step();},3600);return;}
+  const m=script[ci];
+  if(m.r==='ai'){
+    const t=document.createElement('div');t.className='typing';t.innerHTML='<i></i><i></i><i></i>';chat.appendChild(t);
+    setTimeout(()=>{t.remove();add(m);},900);
+  } else add(m);
+}
+function add(m){
+  const d=document.createElement('div');d.className='msg '+m.r;d.textContent=m.t;chat.appendChild(d);
+  ci++;setTimeout(step,1100);
+}
+step();
+
+/* SLIDER */
+const sl=document.getElementById('slider'),hd=document.getElementById('handle'),af=sl.querySelector('.after');
+let drag=false;
+function move(x){
+  const r=sl.getBoundingClientRect();
+  let p=Math.min(100,Math.max(0,((x-r.left)/r.width)*100));
+  af.style.clipPath=`inset(0 0 0 ${p}%)`;hd.style.left=p+'%';
+}
+sl.addEventListener('mousedown',e=>{drag=true;move(e.clientX);});
+addEventListener('mousemove',e=>drag&&move(e.clientX));
+addEventListener('mouseup',()=>drag=false);
+sl.addEventListener('touchmove',e=>move(e.touches[0].clientX),{passive:true});
+
+/* REVEAL + bars */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  e.target.classList.add('in');
+  e.target.querySelectorAll('[data-w]').forEach((b,i)=>setTimeout(()=>b.style.width=b.dataset.w+'%',i*90));
+  if(e.target.classList.contains('aigrid'))setTimeout(()=>document.getElementById('conf').style.width='93%',250);
+  io.unobserve(e.target);
+}),{threshold:.18});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+
+<style>
+#cbWrap{position:fixed;right:24px;bottom:24px;z-index:900;font-family:"DM Sans",sans-serif}
+#cbBtn{width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;background:var(--green);color:#fff;font-size:23px;display:grid;place-items:center;box-shadow:0 10px 26px rgba(30,158,98,.38);transition:transform .18s,background .18s}
+#cbBtn:hover{background:var(--green-d);transform:translateY(-2px)}
+#cbBtn .dot{position:absolute;top:-2px;right:-2px;width:14px;height:14px;border-radius:50%;background:#EF4444;border:2px solid #fff}
+#cbPanel{position:absolute;right:0;bottom:72px;width:360px;max-width:calc(100vw - 40px);background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 24px 60px rgba(15,23,42,.22);overflow:hidden;display:none;flex-direction:column}
+#cbWrap.open #cbPanel{display:flex;animation:cbIn .22s ease-out}
+@keyframes cbIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.cb-head{background:var(--green);color:#fff;padding:13px 15px;display:flex;align-items:center;gap:10px}
+.cb-head .ava{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:16px}
+.cb-head b{font-family:"Manrope";font-size:14.5px;display:block}
+.cb-head span{font-size:11.5px;opacity:.85}
+.cb-head .x{margin-left:auto;background:none;border:none;color:#fff;font-size:19px;cursor:pointer;opacity:.8;line-height:1}
+.cb-body{padding:14px;height:320px;overflow-y:auto;background:var(--surface,#F7F9F8);display:flex;flex-direction:column;gap:9px}
+.cb-msg{max-width:82%;padding:9px 12px;border-radius:12px;font-size:13.3px;line-height:1.5}
+.cb-msg.bot{background:#fff;border:1px solid var(--border);border-bottom-left-radius:3px}
+.cb-msg.me{margin-left:auto;background:var(--green);color:#fff;border-bottom-right-radius:3px}
+.cb-typing{display:flex;gap:4px;padding:11px 13px;background:#fff;border:1px solid var(--border);border-radius:12px;width:fit-content}
+.cb-typing i{width:6px;height:6px;border-radius:50%;background:#9CA3AF;animation:cbBl 1s infinite}
+.cb-typing i:nth-child(2){animation-delay:.15s}.cb-typing i:nth-child(3){animation-delay:.3s}
+@keyframes cbBl{0%,60%,100%{opacity:.3}30%{opacity:1}}
+.cb-sug{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 0}
+.cb-sug button{border:1px solid var(--border);background:#fff;border-radius:99px;padding:6px 11px;font-size:12px;cursor:pointer;color:#374151;font-family:inherit}
+.cb-sug button:hover{border-color:var(--green);color:var(--green);background:var(--green-l)}
+.cb-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:#fff}
+.cb-form input{flex:1;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13.3px;font-family:inherit;outline:none}
+.cb-form input:focus{border-color:var(--green)}
+.cb-form button{background:var(--green);color:#fff;border:none;border-radius:8px;width:40px;cursor:pointer;font-size:15px}
+.cb-form button:hover{background:var(--green-d)}
+</style>
+
+<div id="cbWrap">
+  <div id="cbPanel" role="dialog" aria-label="SMART RE AI assistant">
+    <div class="cb-head">
+      <div class="ava">🏠</div>
+      <div><b>SMART RE Assistant</b><span>AI • replies instantly</span></div>
+      <button class="x" id="cbClose" aria-label="Close chat">×</button>
+    </div>
+    <div class="cb-body" id="cbBody">
+      <div class="cb-msg bot">Hi 👋 I'm your SMART RE assistant. Ask me about prices, neighborhoods, or let me find a property for you.</div>
+    </div>
+    <div class="cb-sug" id="cbSug">
+      <button>3-bed villa in Riyadh</button>
+      <button>Is Al Malqa a good area?</button>
+      <button>Rent budget 90k/yr</button>
+    </div>
+    <form class="cb-form" id="cbForm">
+      <input id="cbInput" placeholder="Type your message…" autocomplete="off" />
+      <button type="submit" aria-label="Send">➤</button>
+    </form>
+  </div>
+  <button id="cbBtn" aria-label="Open chat">💬<span class="dot"></span></button>
+</div>
+
+<script>
+(function(){
+  const wrap=document.getElementById('cbWrap'),body=document.getElementById('cbBody'),
+        form=document.getElementById('cbForm'),input=document.getElementById('cbInput');
+  const REPLIES=[
+    [/villa|فيلا/i,"I found 24 villas matching that. Top pick: a 4-bed villa in Al Malqa, Riyadh at SAR 2.85M — our AI prices it 4% below market. Want me to open the listing?"],
+    [/malqa|neighborhood|area|حي/i,"Al Malqa scores 92/100 — strong on schools (94), amenities (90) and 3-year price growth (+18%). It's one of Riyadh's best family districts."],
+    [/rent|إيجار|budget|price|سعر/i,"With that budget I can show apartments in Jeddah Al Shati and Riyadh Al Yasmin. Average rent is SAR 78k–95k/yr for 3 bedrooms. Shall I filter the listings?"],
+    [/mortgage|finance|loan/i,"At 4.2% over 25 years, a SAR 2.5M home needs ~SAR 500k down and about SAR 11,200/month. I can connect you with a financing partner."],
+    [/agent|broker|call|contact/i,"I can arrange a call with a verified SMART RE agent within 15 minutes. What's the best time for you?"]
+  ];
+  function add(text,who){const d=document.createElement('div');d.className='cb-msg '+who;d.textContent=text;body.appendChild(d);body.scrollTop=body.scrollHeight;return d;}
+  function reply(q){
+    const t=document.createElement('div');t.className='cb-typing';t.innerHTML='<i></i><i></i><i></i>';
+    body.appendChild(t);body.scrollTop=body.scrollHeight;
+    const hit=REPLIES.find(r=>r[0].test(q));
+    setTimeout(()=>{t.remove();add(hit?hit[1]:"Got it — I'm scanning 12,400 verified listings across Riyadh, Jeddah, Dammam and Al Khobar. Tell me your city, budget and bedrooms and I'll shortlist the best matches.",'bot');},900);
+  }
+  function send(v){if(!v.trim())return;add(v.trim(),'me');reply(v);input.value='';}
+  document.getElementById('cbBtn').onclick=()=>{wrap.classList.toggle('open');if(wrap.classList.contains('open'))setTimeout(()=>input.focus(),80);};
+  document.getElementById('cbClose').onclick=()=>wrap.classList.remove('open');
+  form.onsubmit=e=>{e.preventDefault();send(input.value);};
+  document.querySelectorAll('#cbSug button').forEach(b=>b.onclick=()=>send(b.textContent));
+})();
+</script>
+</body>
+</html>
 
