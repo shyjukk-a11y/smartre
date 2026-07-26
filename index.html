@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMART RE — AI-Powered Property Marketplace in Saudi Arabia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SMART RE — Design System
+   ============================================================ */
+:root{
+  --font-head:"Sora",system-ui,sans-serif;
+  --navy:#1B3A6B;
+  --navy-800:#16305A;
+  --navy-700:#22447C;
+  --navy-600:#2E5493;
+  --gold:#C9A84C;
+  --gold-soft:#E4D19A;
+  --bg:#FFFFFF;
+  --surface:#F8FAFC;
+  --text:#111827;
+  --muted:#6B7280;
+  --border:#E5E7EB;
+
+  --indigo:#4F46E5;
+  --blue:#2563EB;
+  --green:#16A34A;
+  --amber:#D97706;
+
+  --r-card:12px;
+  --r-input:8px;
+  --r-pill:40px;
+
+  --sh-xs:0 1px 2px rgba(17,24,39,.05);
+  --sh-sm:0 1px 3px rgba(17,24,39,.06), 0 1px 2px rgba(17,24,39,.04);
+  --sh-md:0 8px 24px rgba(17,24,39,.08);
+  --sh-lg:0 24px 60px rgba(17,24,39,.14);
+  --sh-gold:0 12px 30px rgba(201,168,76,.30);
+
+  --maxw:1200px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"DM Sans",system-ui,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--font-head);color:var(--navy);line-height:1.12;letter-spacing:-.015em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+section{scroll-margin-top:88px}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 40px}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-family:"DM Sans";font-weight:600;font-size:15px;
+  padding:0 24px;height:48px;border-radius:var(--r-pill);
+  transition:all .2s var(--ease);white-space:nowrap;
+}
+.btn-navy{background:var(--navy);color:#fff;box-shadow:0 8px 20px rgba(27,58,107,.22)}
+.btn-navy:hover{background:var(--navy-800);transform:translateY(-2px);box-shadow:0 14px 28px rgba(27,58,107,.30)}
+.btn-gold{background:var(--gold);color:var(--navy);font-weight:700;box-shadow:var(--sh-gold)}
+.btn-gold:hover{background:#d4b660;transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--navy);background:var(--surface);transform:translateY(-2px)}
+.btn-sm{height:40px;padding:0 18px;font-size:14px}
+.arrow{transition:transform .2s var(--ease)}
+.btn:hover .arrow{transform:translateX(4px)}
+
+/* Section heading helpers */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:"DM Sans";font-weight:600;font-size:12.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:16px;
+}
+.sec-title{font-size:40px;font-weight:700}
+.sec-sub{color:var(--muted);font-size:17px;margin-top:14px;max-width:620px}
+.center{text-align:center}
+.center .sec-sub{margin-left:auto;margin-right:auto}
+
+/* ============================================================
+   1. NAVIGATION
+   ============================================================ */
+.nav{
+  position:sticky;top:0;z-index:100;height:64px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  transition:box-shadow .3s var(--ease),background .3s var(--ease);
+}
+.nav.scrolled{box-shadow:0 6px 24px rgba(17,24,39,.07);background:rgba(255,255,255,.97)}
+.nav-inner{max-width:var(--maxw);margin:0 auto;padding:0 40px;height:100%;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;flex-direction:column;line-height:1;gap:2px}
+.logo .en{font-family:var(--font-head);font-weight:800;font-size:22px;color:var(--navy);letter-spacing:.5px}
+.logo .ar{font-size:13px;font-weight:600;color:var(--gold);letter-spacing:1px}
+.nav-links{display:flex;gap:34px;align-items:center}
+.nav-links a{
+  font-size:15px;font-weight:500;color:#374151;position:relative;padding:6px 0;
+  transition:color .2s var(--ease);
+}
+.nav-links a::after{
+  content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--gold);
+  transition:width .25s var(--ease);
+}
+.nav-links a:hover{color:var(--navy)}
+.nav-links a:hover::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:14px}
+.lang-toggle{display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--muted);border:1px solid var(--border);border-radius:var(--r-pill);overflow:hidden}
+.lang-toggle span{padding:6px 12px;transition:all .2s var(--ease);cursor:pointer}
+.lang-toggle span.active{background:var(--navy);color:#fff}
+
+/* ============================================================
+   2. HERO
+   ============================================================ */
+.hero{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px;overflow:visible;padding:50px 0 56px;text-align:center}
+.hero-bg{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none}
+.hero-blob{
+  position:absolute;top:-32%;left:50%;transform:translateX(-50%);width:1180px;height:760px;border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(46,84,147,.09),rgba(201,168,76,.05) 45%,transparent 68%);
+  z-index:0;pointer-events:none;
+}
+.hero-dot-grid{
+  position:absolute;left:-40px;bottom:40px;width:180px;height:180px;z-index:0;opacity:.5;
+  background-image:radial-gradient(var(--border) 1.6px,transparent 1.6px);background-size:20px 20px;
+}
+.hero-intro{max-width:860px;margin:0 auto;padding:0 40px;width:100%;position:relative;z-index:2}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,.14);color:#8a6d1f;
+  font-weight:600;font-size:13.5px;padding:8px 16px;border-radius:var(--r-pill);
+  border:1px solid rgba(201,168,76,.3);margin-bottom:16px;
+}
+.hero h1{font-size:44px;font-weight:800;margin-bottom:14px}
+.underline-word{position:relative;display:inline-block;color:var(--navy)}
+.wavy{position:absolute;left:0;right:0;bottom:-12px;width:100%;height:14px}
+.hero-sub{font-size:17px;color:var(--muted);max-width:600px;margin:0 auto 18px}
+.hero-cta{display:flex;gap:14px;margin-bottom:38px}
+.trust{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.trust-item{font-size:14.5px;font-weight:600;color:#374151}
+.trust-item b{color:var(--navy);font-weight:700}
+.trust-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+
+/* Hero property cards */
+.hero-visual{position:relative;height:520px;display:flex;align-items:center;justify-content:center}
+.pcard-behind{
+  position:absolute;top:44px;right:6px;width:340px;height:430px;background:#fff;
+  border-radius:var(--r-card);box-shadow:var(--sh-md);transform:rotate(-6deg);z-index:1;
+  border:1px solid var(--border);overflow:hidden;
+}
+.pcard-behind img{width:100%;height:100%;object-fit:cover;opacity:.9}
+.pcard-front{
+  position:relative;z-index:3;width:370px;background:#fff;border-radius:var(--r-card);
+  box-shadow:var(--sh-lg);overflow:hidden;border:1px solid var(--border);
+  animation:floaty 6s ease-in-out infinite;
+}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.pcard-imgwrap{position:relative;height:250px}
+.pcard-imgwrap img{width:100%;height:100%;object-fit:cover}
+.ai-badge{
+  position:absolute;top:14px;right:14px;background:var(--navy);color:var(--gold);
+  font-size:12px;font-weight:700;padding:7px 13px;border-radius:var(--r-pill);
+  display:flex;align-items:center;gap:6px;box-shadow:0 6px 16px rgba(0,0,0,.2);
+}
+.pcard-body{padding:20px}
+.pcard-name{font-family:var(--font-head);font-weight:700;font-size:19px;color:var(--navy);margin-bottom:4px}
+.pcard-loc{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13.5px;margin-bottom:14px}
+.pcard-price{font-size:24px;font-weight:700;color:var(--navy);font-family:"DM Sans";margin-bottom:14px}
+.conf-row{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.conf-row b{color:var(--gold)}
+.conf-bar{height:7px;background:var(--surface);border-radius:10px;overflow:hidden;margin-bottom:16px;border:1px solid var(--border)}
+.conf-fill{height:100%;width:87%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));border-radius:10px}
+.pcard-stats{display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:16px}
+.pstat{text-align:center;flex:1}
+.pstat .v{font-weight:700;font-size:14px;color:var(--navy)}
+.pstat .l{font-size:11px;color:var(--muted)}
+.pcard-actions{display:flex;gap:10px}
+.pcard-actions .btn{flex:1;height:44px;font-size:14px}
+.heart-btn{
+  width:44px;height:44px;flex:0 0 44px;border-radius:10px;border:1.5px solid var(--border);
+  background:#fff;display:flex;align-items:center;justify-content:center;transition:all .2s var(--ease);
+}
+.heart-btn:hover{border-color:#ef4444;background:#fef2f2}
+.heart-btn svg{width:19px;height:19px;stroke:#9ca3af;fill:none;transition:all .2s var(--ease)}
+.heart-btn.liked svg{fill:#ef4444;stroke:#ef4444}
+.heart-btn.liked{border-color:#fecaca;background:#fef2f2}
+
+/* ============================================================
+   3. AI SEARCH BAR
+   ============================================================ */
+.searchsec{border-top:1px solid var(--border);background:linear-gradient(180deg,#fff,var(--surface));padding:70px 0 76px}
+.searchsec .head{text-align:center;max-width:760px;margin:0 auto 32px}
+.searchsec h2{font-size:34px;margin-bottom:10px}
+.searchsec .head p{color:var(--muted);font-size:16.5px}
+.search-shell{max-width:900px;margin:0 auto}
+.search-input-wrap{
+  display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--border);
+  border-radius:16px;padding:8px 8px 8px 8px;box-shadow:var(--sh-md);transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
+}
+.search-input-wrap:focus-within{border-color:var(--navy);box-shadow:0 12px 34px rgba(27,58,107,.14)}
+.ai-orb{
+  width:48px;height:48px;flex:0 0 48px;border-radius:50%;margin-left:6px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-600));
+  display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 6px 16px rgba(27,58,107,.28);
+}
+#searchInput{flex:1;border:none;outline:none;font-family:"DM Sans";font-size:16px;color:var(--text);height:40px;background:transparent}
+#searchInput::placeholder{color:#9ca3af}
+.lang-badges{display:flex;gap:5px;padding-right:6px}
+.lang-badges span{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:4px 9px;border-radius:var(--r-pill)}
+.search-btn{height:48px;padding:0 22px;border-radius:12px;background:var(--navy);color:#fff;font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px;transition:all .2s var(--ease)}
+.search-btn:hover{background:var(--navy-800)}
+.chips{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+.chip{
+  font-size:14px;font-weight:500;color:#374151;background:#fff;border:1.5px solid var(--border);
+  padding:9px 18px;border-radius:var(--r-pill);transition:all .2s var(--ease);
+}
+.chip:hover{background:var(--navy);color:#fff;border-color:var(--navy);transform:translateY(-2px)}
+
+/* Results panel */
+.results{max-height:0;overflow:hidden;transition:max-height .5s var(--ease),margin-top .4s var(--ease);opacity:0}
+.results.open{max-height:640px;margin-top:32px;opacity:1}
+.results-head{display:flex;align-items:center;gap:10px;margin-bottom:18px;font-weight:600;color:var(--navy)}
+.results-head .tag{background:rgba(201,168,76,.16);color:#8a6d1f;font-size:12px;font-weight:700;padding:4px 12px;border-radius:var(--r-pill)}
+.results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+
+/* ============================================================
+   Generic property card (featured + results)
+   ============================================================ */
+.prop{
+  background:#fff;border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease);cursor:pointer;
+}
+.prop:hover{transform:translateY(-6px);box-shadow:var(--sh-lg)}
+.prop-img{position:relative;height:200px}
+.prop-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.prop:hover .prop-img img{transform:scale(1.06)}
+.prop-tag{position:absolute;top:12px;left:12px;font-size:12px;font-weight:700;padding:6px 12px;border-radius:var(--r-pill);color:#fff;backdrop-filter:blur(4px)}
+.tag-featured{background:rgba(27,58,107,.92)}
+.tag-new{background:rgba(22,163,74,.92)}
+.tag-ai{background:rgba(201,168,76,.95);color:var(--navy)}
+.prop .heart-btn{position:absolute;top:10px;right:10px;width:38px;height:38px;flex:0 0 38px;opacity:0;transform:translateY(-4px);transition:all .2s var(--ease)}
+.prop:hover .heart-btn{opacity:1;transform:translateY(0)}
+.prop .heart-btn.liked{opacity:1;transform:translateY(0)}
+.prop-body{padding:18px}
+.prop-type{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin-bottom:8px}
+.prop-title{font-family:"DM Sans";font-weight:700;font-size:16px;color:var(--text);margin-bottom:6px}
+.prop-price{font-size:21px;font-weight:700;color:var(--navy);margin-bottom:14px}
+.prop-stats{display:flex;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.prop-stats .s{display:flex;align-items:center;gap:6px;font-size:13px;color:#4b5563;font-weight:500}
+.prop-agent{display:flex;align-items:center;justify-content:space-between}
+.agent-info{display:flex;align-items:center;gap:10px}
+.agent-av{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--surface)}
+.agent-name{font-size:13px;font-weight:600;color:var(--text)}
+.agent-name span{display:block;font-size:11px;color:var(--muted);font-weight:400}
+
+/* ============================================================
+   4. FEATURED
+   ============================================================ */
+.featured{padding:90px 0}
+.featured-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px}
+.view-all{color:var(--gold);font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:6px}
+.view-all:hover .arrow{transform:translateX(4px)}
+.filter-tabs{display:flex;gap:10px;margin-bottom:34px;flex-wrap:wrap}
+.tab{
+  font-size:14px;font-weight:600;color:var(--muted);background:var(--surface);border:1px solid var(--border);
+  padding:9px 20px;border-radius:var(--r-pill);transition:all .2s var(--ease);
+}
+.tab:hover{color:var(--navy)}
+.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.prop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.prop.hide{display:none}
+
+/* ============================================================
+   5. AI FEATURES SHOWCASE
+   ============================================================ */
+.aifeat{background:var(--surface);padding:96px 0}
+.feat-row{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;margin-top:64px}
+.feat-row.rev .feat-visual{order:2}
+.feat-text .num{
+  display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;
+  background:rgba(201,168,76,.15);color:var(--gold);font-weight:800;font-size:18px;font-family:var(--font-head);margin-bottom:20px;
+}
+.feat-text h3{font-size:30px;margin-bottom:16px}
+.feat-text p{color:var(--muted);font-size:16.5px;margin-bottom:16px}
+.feat-quote{font-size:17px;font-weight:600;color:var(--navy);border-left:3px solid var(--gold);padding-left:16px}
+.feat-list{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:11px}
+.feat-list li{display:flex;align-items:center;gap:10px;font-size:15px;color:#374151;font-weight:500}
+.feat-list .tick{width:22px;height:22px;flex:0 0 22px;border-radius:50%;background:rgba(22,163,74,.12);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+
+/* Chat mockup */
+.chat-mock{background:#fff;border-radius:20px;box-shadow:var(--sh-lg);border:1px solid var(--border);overflow:hidden}
+.chat-top{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface)}
+.chat-top .dot{width:11px;height:11px;border-radius:50%}
+.chat-top .avatar{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--navy)}
+.chat-top .avatar .ai{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-600));display:flex;align-items:center;justify-content:center;font-size:14px}
+.chat-body{padding:22px 20px;display:flex;flex-direction:column;gap:16px;min-height:340px}
+.bubble{max-width:82%;padding:13px 16px;border-radius:16px;font-size:14.5px;line-height:1.5}
+.bubble.user{align-self:flex-end;background:var(--navy);color:#fff;border-bottom-right-radius:4px}
+.bubble.ai{align-self:flex-start;background:var(--surface);color:var(--text);border-bottom-left-radius:4px;border:1px solid var(--border)}
+.typing{align-self:flex-start;background:var(--surface);border:1px solid var(--border);padding:14px 18px;border-radius:16px;border-bottom-left-radius:4px;display:flex;gap:5px}
+.typing.hidden{display:none}
+.typing span{width:8px;height:8px;border-radius:50%;background:#c3ccd8;animation:blink 1.4s infinite both}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-4px)}}
+.reveal{opacity:0;transform:translateY(8px);transition:all .4s var(--ease)}
+.reveal.show{opacity:1;transform:translateY(0)}
+.chat-prop{margin-top:10px;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;gap:0;box-shadow:var(--sh-sm)}
+.chat-prop img{width:96px;height:96px;object-fit:cover;flex:0 0 96px}
+.chat-prop .cp{padding:12px 14px}
+.chat-prop .cp .t{font-weight:700;font-size:14px;color:var(--navy)}
+.chat-prop .cp .l{font-size:12px;color:var(--muted);margin:3px 0 8px}
+.chat-prop .cp .pr{font-weight:700;color:var(--navy);font-size:15px}
+.chat-prop .cp .m{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;color:#8a6d1f;background:rgba(201,168,76,.16);padding:2px 8px;border-radius:var(--r-pill)}
+
+/* Pricing widget */
+.price-widget{background:#fff;border-radius:20px;box-shadow:var(--sh-lg);border:1px solid var(--border);padding:30px}
+.pw-addr{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13.5px;margin-bottom:8px}
+.pw-price{font-size:42px;font-weight:800;color:var(--navy);font-family:"DM Sans";letter-spacing:-1px;margin-bottom:4px}
+.pw-est{font-size:13px;color:var(--muted);margin-bottom:22px}
+.pw-mid{display:flex;gap:26px;align-items:center;margin-bottom:24px}
+.pw-range{flex:1}
+.pw-range .lbl{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px}
+.pw-track{height:9px;background:var(--surface);border-radius:10px;position:relative;border:1px solid var(--border)}
+.pw-track .fill{position:absolute;left:18%;right:24%;top:0;bottom:0;background:linear-gradient(90deg,var(--gold-soft),var(--gold));border-radius:10px}
+.pw-track .knob{position:absolute;left:56%;top:50%;width:16px;height:16px;background:#fff;border:3px solid var(--gold);border-radius:50%;transform:translate(-50%,-50%);box-shadow:var(--sh-sm)}
+.pw-range .vals{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;color:var(--navy);margin-top:8px}
+.donut{width:96px;height:96px;flex:0 0 96px;position:relative}
+.donut svg{transform:rotate(-90deg)}
+.donut .ctxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut .ctxt b{font-size:22px;font-weight:800;color:var(--navy)}
+.donut .ctxt small{font-size:10px;color:var(--muted);font-weight:600}
+.pw-comps{border-top:1px solid var(--border);padding-top:16px}
+.pw-comps .h{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.comp{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:13.5px}
+.comp .a{display:flex;align-items:center;gap:9px;color:#374151;font-weight:500}
+.comp .a .sq{width:8px;height:8px;border-radius:2px;background:var(--gold)}
+.comp .p{font-weight:700;color:var(--navy)}
+.sell-badge{display:inline-flex;align-items:center;gap:7px;margin-top:18px;background:rgba(22,163,74,.1);color:var(--green);font-weight:700;font-size:13px;padding:8px 15px;border-radius:var(--r-pill)}
+
+/* Staging before/after */
+.stage-wrap{position:relative;border-radius:20px;overflow:hidden;box-shadow:var(--sh-lg);border:1px solid var(--border);user-select:none;height:420px}
+.stage-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.stage-clip{clip-path:inset(0 50% 0 0)}
+.stage-label{position:absolute;bottom:16px;font-size:12px;font-weight:700;color:#fff;background:rgba(17,24,39,.66);padding:6px 13px;border-radius:var(--r-pill);backdrop-filter:blur(4px);z-index:4}
+.stage-label.orig{left:16px}
+.stage-label.staged{right:16px}
+.stage-divider{position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;transform:translateX(-50%);z-index:5;cursor:ew-resize;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.stage-handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;background:#fff;border-radius:50%;box-shadow:var(--sh-md);display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:16px;font-weight:700;gap:2px}
+.style-pills{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.spill{font-size:13.5px;font-weight:600;color:var(--muted);background:#fff;border:1.5px solid var(--border);padding:8px 18px;border-radius:var(--r-pill);transition:all .2s var(--ease)}
+.spill:hover{border-color:var(--navy);color:var(--navy)}
+.spill.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* ============================================================
+   6. HOW IT WORKS
+   ============================================================ */
+.how{padding:96px 0;background:#fff}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:60px;position:relative}
+.steps::before{content:"";position:absolute;top:34px;left:12.5%;right:12.5%;height:2px;background-image:linear-gradient(90deg,var(--border) 60%,transparent 40%);background-size:14px 2px;z-index:0}
+.step{text-align:center;position:relative;z-index:1}
+.step-circle{width:70px;height:70px;border-radius:50%;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;position:relative;box-shadow:0 12px 26px rgba(17,24,39,.14)}
+.step-num{position:absolute;top:-6px;right:-6px;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--navy);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm);border:1px solid var(--border)}
+.step h4{font-size:19px;margin-bottom:10px}
+.step p{font-size:14.5px;color:var(--muted);max-width:230px;margin:0 auto}
+.c-indigo{background:linear-gradient(135deg,#6366F1,#4F46E5)}
+.c-blue{background:linear-gradient(135deg,#3B82F6,#2563EB)}
+.c-green{background:linear-gradient(135deg,#22C55E,#16A34A)}
+.c-gold{background:linear-gradient(135deg,#E4D19A,#C9A84C)}
+
+/* ============================================================
+   7. NEIGHBORHOOD INTELLIGENCE
+   ============================================================ */
+.hoods{padding:96px 0;background:var(--surface)}
+.hood-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:56px}
+.hood-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:30px;box-shadow:var(--sh-sm);transition:box-shadow .25s var(--ease)}
+.hood-card:hover{box-shadow:var(--sh-md)}
+.hood-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:26px}
+.hood-name{font-size:24px;margin-bottom:4px}
+.hood-city{color:var(--muted);font-size:14px;display:flex;align-items:center;gap:6px}
+.hood-score{text-align:center;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.04));border:1px solid rgba(201,168,76,.3);border-radius:14px;padding:12px 18px;min-width:104px}
+.hood-score b{font-size:34px;font-weight:800;color:var(--gold);font-family:"DM Sans";line-height:1}
+.hood-score small{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
+.score-item{margin-bottom:16px}
+.score-item .row{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-bottom:7px}
+.score-item .row .v{color:var(--navy)}
+.score-track{height:8px;background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.score-fill{height:100%;width:0;border-radius:10px;transition:width 1.3s cubic-bezier(.22,1,.36,1)}
+.f-blue{background:linear-gradient(90deg,#3B82F6,#60A5FA)}
+.f-green{background:linear-gradient(90deg,#16A34A,#4ADE80)}
+.f-navy{background:linear-gradient(90deg,var(--navy),var(--navy-600))}
+.f-amber{background:linear-gradient(90deg,#D97706,#FBBF24)}
+.hood-card .btn{margin-top:12px;width:100%}
+
+/* ============================================================
+   8. BROKER SECTION
+   ============================================================ */
+.brokers{background:var(--navy);padding:96px 0;position:relative;overflow:hidden}
+.brokers::before{content:"";position:absolute;top:-120px;right:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.16),transparent 70%)}
+.brokers .head{text-align:center;position:relative;z-index:1;margin-bottom:56px}
+.brokers h2{color:#fff;font-size:40px}
+.brokers .head p{color:var(--gold);font-size:17px;font-weight:600;margin-top:12px}
+.bcards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative;z-index:1;margin-bottom:48px}
+.bcard{background:var(--navy-700);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:30px;transition:transform .25s var(--ease),background .25s var(--ease)}
+.bcard:hover{transform:translateY(-6px);background:var(--navy-600)}
+.bcard .ic{width:54px;height:54px;border-radius:14px;background:rgba(201,168,76,.16);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:20px}
+.bcard h4{color:#fff;font-size:20px;margin-bottom:10px}
+.bcard p{color:rgba(255,255,255,.72);font-size:14.5px}
+.crm{background:var(--navy-800);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:30px;position:relative;z-index:1}
+.crm-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:14px}
+.crm-head .t{color:#fff;font-family:var(--font-head);font-size:20px;font-weight:700}
+.crm-head .t span{display:block;font-family:"DM Sans";font-size:13px;font-weight:400;color:rgba(255,255,255,.6);margin-top:3px}
+.pipeline{display:flex;gap:12px;flex-wrap:wrap}
+.stage{flex:1;min-width:120px;background:var(--navy-700);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 16px;position:relative}
+.stage .arw{position:absolute;right:-13px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.35);font-size:18px;z-index:2}
+.stage:last-child .arw{display:none}
+.stage .sname{color:rgba(255,255,255,.7);font-size:12.5px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.stage .sdot{width:8px;height:8px;border-radius:50%}
+.stage .scount{color:#fff;font-size:26px;font-weight:800;font-family:"DM Sans"}
+.d-new{background:#60A5FA}.d-contacted{background:#C9A84C}.d-viewing{background:#A78BFA}.d-offer{background:#FB923C}.d-closed{background:#4ADE80}
+
+/* ============================================================
+   9. APP DOWNLOAD
+   ============================================================ */
+.appdl{background:linear-gradient(135deg,#EEF2F8,#F8FAFC);padding:80px 0;overflow:hidden}
+.appdl-inner{display:grid;grid-template-columns:1fr auto 1fr;gap:40px;align-items:center}
+.appdl h2{font-size:36px;margin-bottom:14px}
+.appdl p{color:var(--muted);font-size:17px;margin-bottom:28px;max-width:400px}
+.store-btns{display:flex;gap:14px;flex-wrap:wrap}
+.store-btn{display:flex;align-items:center;gap:11px;background:var(--navy);color:#fff;padding:11px 20px;border-radius:12px;transition:all .2s var(--ease)}
+.store-btn:hover{background:var(--navy-800);transform:translateY(-2px)}
+.store-btn .ic{font-size:26px}
+.store-btn .tx{line-height:1.2}
+.store-btn .tx small{font-size:10.5px;opacity:.8;display:block}
+.store-btn .tx b{font-size:16px;font-weight:700}
+.phone-wrap{display:flex;justify-content:center}
+.phone{width:210px;height:428px;background:var(--navy);border-radius:34px;padding:11px;box-shadow:var(--sh-lg);position:relative}
+.phone::before{content:"";position:absolute;top:20px;left:50%;transform:translateX(-50%);width:56px;height:5px;background:rgba(255,255,255,.3);border-radius:10px;z-index:3}
+.phone-screen{width:100%;height:100%;background:var(--surface);border-radius:26px;overflow:hidden;position:relative}
+.ph-hero{height:150px;background-size:cover;background-position:center;position:relative}
+.ph-hero .ph-badge{position:absolute;bottom:10px;left:12px;background:var(--gold);color:var(--navy);font-size:9px;font-weight:800;padding:3px 9px;border-radius:var(--r-pill)}
+.ph-body{padding:14px}
+.ph-body .ph-t{font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--navy)}
+.ph-body .ph-l{font-size:10px;color:var(--muted);margin:2px 0 8px}
+.ph-body .ph-p{font-weight:800;color:var(--navy);font-size:16px}
+.ph-mini{display:flex;gap:8px;margin-top:14px}
+.ph-mini .m{flex:1;height:56px;border-radius:9px;background-size:cover;background-position:center}
+.ph-search{margin-top:14px;height:34px;background:#fff;border:1px solid var(--border);border-radius:var(--r-pill);display:flex;align-items:center;padding:0 12px;gap:7px;font-size:10px;color:var(--muted)}
+.ph-search .o{width:18px;height:18px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:9px}
+
+/* ============================================================
+   10. FOOTER
+   ============================================================ */
+.footer{background:#fff;border-top:1px solid var(--border);padding:66px 0 0}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1fr;gap:40px;padding-bottom:52px}
+.foot-brand .logo{margin-bottom:16px}
+.foot-brand p{color:var(--muted);font-size:14.5px;max-width:270px;margin-bottom:20px}
+.social{display:flex;gap:10px}
+.social a{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s var(--ease)}
+.social a:hover{background:var(--navy);color:#fff;border-color:var(--navy);transform:translateY(-2px)}
+.foot-col h5{font-family:"DM Sans";font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);margin-bottom:18px}
+.foot-col a{display:block;color:var(--muted);font-size:14.5px;margin-bottom:12px;transition:color .2s var(--ease)}
+.foot-col a:hover{color:var(--gold)}
+.foot-bottom{border-top:1px solid var(--border);padding:24px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.foot-bottom p{font-size:13.5px;color:var(--muted)}
+.foot-bottom .links{display:flex;gap:22px}
+.foot-bottom .links a{font-size:13.5px;color:var(--muted)}
+.foot-bottom .links a:hover{color:var(--navy)}
+
+/* ============================================================
+   HERO SEARCH WIDGET (Buy/Rent + manual filters + AI)
+   ============================================================ */
+.hero-search-wrap{max-width:1060px;margin:0 auto;padding:0 40px;width:100%;position:relative;z-index:3}
+.hero-search{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh-lg);overflow:visible}
+.hs-tabs{display:flex;align-items:center;gap:6px;padding:10px 12px;border-bottom:1px solid var(--border)}
+.hs-tab{font-size:14.5px;font-weight:600;color:var(--muted);padding:9px 20px;border-radius:var(--r-pill);transition:all .2s var(--ease)}
+.hs-tab:hover{color:var(--navy)}
+.hs-tab.active{background:var(--navy);color:#fff}
+.hs-ai-toggle{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:#8a6d1f;background:rgba(201,168,76,.14);border:1px solid rgba(201,168,76,.34);padding:9px 16px;border-radius:var(--r-pill);transition:all .2s var(--ease)}
+.hs-ai-toggle:hover{background:rgba(201,168,76,.24)}
+.hs-ai-toggle.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.hs-body{padding:16px}
+.hs-manual{display:flex;align-items:stretch;gap:10px}
+.hs-loc{flex:1 1 auto;display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:0 16px;min-width:210px;transition:all .2s var(--ease)}
+.hs-loc:focus-within{border-color:var(--navy);background:#fff}
+.hs-loc .pin{font-size:16px}
+.hs-loc input{border:none;outline:none;background:transparent;font-family:"DM Sans";font-size:15px;height:56px;width:100%;color:var(--text)}
+.hs-loc input::placeholder{color:#9ca3af}
+.hsel{position:relative;flex:0 0 auto}
+.hsel-btn{height:56px;min-width:158px;width:100%;padding:0 15px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:"DM Sans";transition:all .2s var(--ease)}
+.hsel-btn:hover{border-color:#c4ccd8}
+.hsel-btn .cap{color:var(--muted);font-weight:500;font-size:11px;display:block;line-height:1.2}
+.hsel-btn .val{font-weight:600;font-size:14.5px;color:var(--text);line-height:1.3;white-space:nowrap}
+.hsel-btn .txt{text-align:left;overflow:hidden}
+.hsel-btn .chev{color:var(--muted);font-size:11px;transition:transform .2s var(--ease)}
+.hsel.open .hsel-btn{border-color:var(--navy);background:#fff}
+.hsel.open .hsel-btn .chev{transform:rotate(180deg)}
+.hsel-panel{position:absolute;top:calc(100% + 8px);left:0;min-width:240px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--sh-lg);padding:10px;z-index:40;display:none}
+.hsel.open .hsel-panel{display:block;animation:selin .16s var(--ease)}
+@keyframes selin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.hsel-panel.right{right:0;left:auto}
+.hsel-panel.up{top:auto;bottom:calc(100% + 8px)}
+.opt{padding:10px 12px;border-radius:8px;font-size:14px;color:var(--text);cursor:pointer;transition:background .15s}
+.opt:hover{background:var(--surface)}
+.opt.sel{background:rgba(27,58,107,.08);color:var(--navy);font-weight:600}
+.hs-search-btn{height:56px;padding:0 26px;background:var(--navy);color:#fff;border-radius:10px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px;transition:all .2s var(--ease);white-space:nowrap;box-shadow:0 8px 20px rgba(27,58,107,.22)}
+.hs-search-btn:hover{background:var(--navy-800);transform:translateY(-1px)}
+.bb-group{margin-bottom:12px}
+.bb-group .lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:2px 2px 8px}
+.bb-pills{display:flex;flex-wrap:wrap;gap:6px}
+.bb-pill{min-width:42px;text-align:center;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;transition:all .15s}
+.bb-pill:hover{border-color:var(--navy)}
+.bb-pill.sel{background:var(--navy);color:#fff;border-color:var(--navy)}
+.price-group{margin-bottom:12px}
+.price-group .lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:2px 2px 7px}
+.price-group select{width:100%;height:46px;border:1.5px solid var(--border);border-radius:8px;padding:0 12px;font-family:"DM Sans";font-size:14px;color:var(--text);background:#fff;cursor:pointer}
+.hsel-apply{width:100%;margin-top:4px}
+.hs-ai-row{display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:7px 7px 7px 7px}
+.hs-ai-row:focus-within{border-color:var(--navy);background:#fff}
+.hs-ai-row .ai-orb{width:44px;height:44px;flex:0 0 44px;margin-left:4px}
+.hs-ai-row input{flex:1;border:none;outline:none;background:transparent;font-family:"DM Sans";font-size:15.5px;height:44px;color:var(--text)}
+.hs-ai-row input::placeholder{color:#9ca3af}
+.hs-popular{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.hs-popular .plabel{font-size:13px;color:var(--muted);font-weight:600}
+.hs-results{padding:0 16px 16px}
+
+/* ============================================================
+   FLOATING CHATBOT
+   ============================================================ */
+.cbot-fab{position:fixed;bottom:26px;right:26px;z-index:900;width:62px;height:62px;border-radius:50%;
+  background:linear-gradient(135deg,var(--navy),var(--navy-600));color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 14px 34px rgba(27,58,107,.42);cursor:pointer;border:none;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.cbot-fab:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 18px 42px rgba(27,58,107,.5)}
+.cbot-fab svg{width:27px;height:27px;pointer-events:none}
+.cbot-fab .cbot-badge{pointer-events:none}
+.cbot-fab .ic-close{display:none}
+.cbot-fab.open .ic-open{display:none}
+.cbot-fab.open .ic-close{display:block}
+.cbot-fab .pulse{position:absolute;inset:0;border-radius:50%;animation:cpulse 2.6s infinite;pointer-events:none}
+@keyframes cpulse{0%{box-shadow:0 0 0 0 rgba(201,168,76,.5)}70%{box-shadow:0 0 0 15px rgba(201,168,76,0)}100%{box-shadow:0 0 0 0 rgba(201,168,76,0)}}
+.cbot-badge{position:absolute;top:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--navy);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.cbot-fab.open .cbot-badge,.cbot-fab.open .pulse{display:none}
+
+.cbot-panel{position:fixed;bottom:100px;right:26px;z-index:900;width:384px;max-width:calc(100vw - 36px);height:568px;max-height:calc(100vh - 130px);
+  background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:0 30px 80px rgba(17,24,39,.3);
+  display:flex;flex-direction:column;overflow:hidden;opacity:0;transform:translateY(18px) scale(.97);transform-origin:bottom right;pointer-events:none;transition:opacity .26s var(--ease),transform .26s var(--ease)}
+.cbot-panel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.cbot-head{background:linear-gradient(135deg,var(--navy),var(--navy-700));color:#fff;padding:15px 18px;display:flex;align-items:center;gap:12px}
+.cbot-head .av{width:42px;height:42px;flex:0 0 42px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:22px;position:relative}
+.cbot-head .av .on{position:absolute;bottom:0;right:0;width:11px;height:11px;border-radius:50%;background:#4ADE80;border:2px solid var(--navy)}
+.cbot-head .t{flex:1;line-height:1.3}
+.cbot-head .t b{font-family:var(--font-head);font-size:15.5px;font-weight:600;display:block}
+.cbot-head .t span{font-size:12px;opacity:.82}
+.cbot-head .x{width:32px;height:32px;border-radius:9px;color:#fff;background:rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:background .2s}
+.cbot-head .x:hover{background:rgba(255,255,255,.24)}
+.cbot-body{flex:1;overflow-y:auto;padding:18px;background:var(--surface);display:flex;flex-direction:column;gap:11px}
+.cbot-msg{max-width:86%;padding:11px 14px;border-radius:15px;font-size:14px;line-height:1.5;animation:cbin .25s var(--ease)}
+@keyframes cbin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.cbot-msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--border);border-bottom-left-radius:5px;color:var(--text)}
+.cbot-msg.user{align-self:flex-end;background:var(--navy);color:#fff;border-bottom-right-radius:5px}
+.cbot-typing{align-self:flex-start;background:#fff;border:1px solid var(--border);padding:13px 16px;border-radius:15px;border-bottom-left-radius:5px;display:flex;gap:5px}
+.cbot-typing span{width:7px;height:7px;border-radius:50%;background:#c3ccd8;animation:blink 1.4s infinite both}
+.cbot-typing span:nth-child(2){animation-delay:.2s}.cbot-typing span:nth-child(3){animation-delay:.4s}
+.cbot-card{margin-top:9px;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--sh-sm)}
+.cbot-card img{width:100%;height:104px;object-fit:cover}
+.cbot-card .cc{padding:10px 12px}
+.cbot-card .cc .t{font-weight:700;font-size:13.5px;color:var(--navy)}
+.cbot-card .cc .l{font-size:11.5px;color:var(--muted);margin:2px 0 6px}
+.cbot-card .cc .p{font-weight:700;color:var(--navy);font-size:14px}
+.cbot-card .cc .m{display:inline-block;margin-top:5px;font-size:10.5px;font-weight:700;color:#8a6d1f;background:rgba(201,168,76,.16);padding:2px 8px;border-radius:var(--r-pill)}
+.cbot-quick{display:flex;flex-wrap:wrap;gap:7px;padding:2px 16px 12px;background:var(--surface)}
+.cbot-quick button{font-size:12.5px;font-weight:600;color:var(--navy);background:#fff;border:1.5px solid var(--border);padding:7px 12px;border-radius:var(--r-pill);cursor:pointer;transition:all .18s var(--ease)}
+.cbot-quick button:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cbot-input{display:flex;align-items:center;gap:9px;padding:12px 14px;border-top:1px solid var(--border);background:#fff}
+.cbot-input input{flex:1;border:1.5px solid var(--border);border-radius:var(--r-pill);height:44px;padding:0 16px;font-family:"DM Sans";font-size:14px;color:var(--text);outline:none;transition:border-color .2s}
+.cbot-input input:focus{border-color:var(--navy)}
+.cbot-send{width:44px;height:44px;flex:0 0 44px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:background .2s,transform .2s}
+.cbot-send:hover{background:var(--navy-800);transform:scale(1.05)}
+
+/* responsive nicety */
+@media(max-width:1080px){
+  .nav-links{display:none}
+  .hero-inner{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .feat-row{grid-template-columns:1fr;gap:32px}
+  .feat-row.rev .feat-visual{order:0}
+  .prop-grid,.results-grid,.bcards{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:repeat(2,1fr);gap:40px}
+  .steps::before{display:none}
+  .hood-grid,.appdl-inner,.foot-grid{grid-template-columns:1fr}
+  .hero h1{font-size:46px}
+  .hs-manual{flex-wrap:wrap}
+  .hs-loc{flex:1 1 100%}
+  .hsel{flex:1 1 calc(50% - 5px)}
+  .hsel-btn{min-width:0}
+  .hs-search-btn{flex:1 1 100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. NAV ============ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo">
+      <span class="en">SMART RE</span>
+      <span class="ar">سمارت ري</span>
+    </a>
+    <div class="nav-links">
+      <a href="#heroSearch" onclick="setPurpose('Buy')">Buy</a>
+      <a href="#heroSearch" onclick="setPurpose('Rent')">Rent</a>
+      <a href="#heroSearch" onclick="setPurpose('New Projects')">New Developments</a>
+      <a href="#brokers">Brokers</a>
+      <a href="#hoods">Market Insights</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle">
+        <span>AR</span><span class="active">EN</span>
+      </div>
+      <button class="btn btn-outline btn-sm">Sign In</button>
+      <button class="btn btn-navy btn-sm">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<span id="top"></span>
+
+<!-- ============ 2. HERO ============ -->
+<header class="hero">
+  <div class="hero-bg">
+    <div class="hero-blob"></div>
+    <div class="hero-dot-grid"></div>
+  </div>
+  <div class="hero-intro">
+    <span class="hero-badge">🤖 AI-Powered Property Search</span>
+    <h1>Find Your Perfect Property<br>in Saudi <span class="underline-word">Arabia
+      <svg class="wavy" viewBox="0 0 240 14" preserveAspectRatio="none" fill="none">
+        <path d="M2 9 Q30 1 60 8 T118 8 T176 8 T238 6" stroke="#C9A84C" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+    </span></h1>
+    <p class="hero-sub">Choose Buy or Rent and filter by type, beds and price — or just describe what you want and let our AI find it, in Arabic or English.</p>
+    <div class="trust">
+      <span class="trust-item"><b>50,000+</b> Listings</span>
+      <span class="trust-dot"></span>
+      <span class="trust-item"><b>12,000+</b> Brokers</span>
+      <span class="trust-dot"></span>
+      <span class="trust-item">Riyadh · Jeddah · Dammam</span>
+    </div>
+  </div>
+
+  <!-- ===== SEARCH WIDGET (in banner) ===== -->
+  <div class="hero-search-wrap">
+    <div class="hero-search" id="heroSearch">
+      <div class="hs-tabs">
+        <button class="hs-tab active" data-purpose="Buy" onclick="setPurpose('Buy',this)">Buy</button>
+        <button class="hs-tab" data-purpose="Rent" onclick="setPurpose('Rent',this)">Rent</button>
+        <button class="hs-tab" data-purpose="Commercial" onclick="setPurpose('Commercial',this)">Commercial</button>
+        <button class="hs-tab" data-purpose="New Projects" onclick="setPurpose('New Projects',this)">New Projects</button>
+        <button class="hs-ai-toggle" id="aiToggle" onclick="toggleAI()">✨ Ask AI</button>
+      </div>
+
+      <!-- MANUAL SEARCH -->
+      <div class="hs-body" id="hsManualBody">
+        <div class="hs-manual">
+          <label class="hs-loc">
+            <span class="pin">📍</span>
+            <input id="locInput" type="text" placeholder="City or district — e.g. Al Malqa, Riyadh">
+          </label>
+
+          <div class="hsel" id="selType">
+            <button class="hsel-btn" onclick="toggleSel('selType')">
+              <span class="txt"><span class="cap">Property Type</span><span class="val" id="typeVal">Any Type</span></span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="hsel-panel" id="typePanel"></div>
+          </div>
+
+          <div class="hsel" id="selBeds">
+            <button class="hsel-btn" onclick="toggleSel('selBeds')">
+              <span class="txt"><span class="cap">Beds &amp; Baths</span><span class="val" id="bedsVal">Any</span></span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="hsel-panel" id="bedsPanel">
+              <div class="bb-group">
+                <div class="lbl">Bedrooms</div>
+                <div class="bb-pills" id="bedPills">
+                  <span class="bb-pill sel" data-v="Any">Any</span>
+                  <span class="bb-pill" data-v="Studio">Studio</span>
+                  <span class="bb-pill" data-v="1">1</span>
+                  <span class="bb-pill" data-v="2">2</span>
+                  <span class="bb-pill" data-v="3">3</span>
+                  <span class="bb-pill" data-v="4">4</span>
+                  <span class="bb-pill" data-v="5">5</span>
+                  <span class="bb-pill" data-v="6+">6+</span>
+                </div>
+              </div>
+              <div class="bb-group">
+                <div class="lbl">Bathrooms</div>
+                <div class="bb-pills" id="bathPills">
+                  <span class="bb-pill sel" data-v="Any">Any</span>
+                  <span class="bb-pill" data-v="1">1</span>
+                  <span class="bb-pill" data-v="2">2</span>
+                  <span class="bb-pill" data-v="3">3</span>
+                  <span class="bb-pill" data-v="4">4</span>
+                  <span class="bb-pill" data-v="5+">5+</span>
+                </div>
+              </div>
+              <button class="btn btn-navy btn-sm hsel-apply" onclick="applyBeds()">Apply</button>
+            </div>
+          </div>
+
+          <div class="hsel" id="selPrice">
+            <button class="hsel-btn" onclick="toggleSel('selPrice')">
+              <span class="txt"><span class="cap">Price (SAR)</span><span class="val" id="priceVal">Any Price</span></span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="hsel-panel right" id="pricePanel" style="min-width:280px">
+              <div class="price-group"><div class="lbl">Minimum</div><select id="priceMin"></select></div>
+              <div class="price-group"><div class="lbl">Maximum</div><select id="priceMax"></select></div>
+              <button class="btn btn-navy btn-sm hsel-apply" onclick="applyPrice()">Apply</button>
+            </div>
+          </div>
+
+          <button class="hs-search-btn" onclick="runManualSearch()">🔍 Search</button>
+        </div>
+
+        <div class="hs-popular">
+          <span class="plabel">Popular:</span>
+          <button class="chip" onclick="quickSearch('Villa','Riyadh')">Villas in Riyadh</button>
+          <button class="chip" onclick="quickSearch('Apartment','Jeddah')">Apartments in Jeddah</button>
+          <button class="chip" onclick="quickSearch('Office','Al Khobar')">Offices in Al Khobar</button>
+          <button class="chip" onclick="quickSearch('Townhouse','Dammam')">Townhouses in Dammam</button>
+        </div>
+      </div>
+
+      <!-- AI SEARCH -->
+      <div class="hs-body" id="hsAiBody" style="display:none">
+        <div class="hs-ai-row">
+          <div class="ai-orb">🤖</div>
+          <input id="searchInput" type="text" placeholder="3 bedroom villa near a school in North Riyadh under SAR 2M...">
+          <div class="lang-badges"><span>AR</span><span>EN</span></div>
+          <button class="search-btn" onclick="runSearch()">Search with AI <span class="arrow">→</span></button>
+        </div>
+        <div class="hs-popular">
+          <span class="plabel">Try:</span>
+          <button class="chip" onclick="fillSearch(this)">Villa with pool in Riyadh</button>
+          <button class="chip" onclick="fillSearch(this)">Apartment under SAR 600K Jeddah</button>
+          <button class="chip" onclick="fillSearch(this)">Investment property high yield</button>
+          <button class="chip" onclick="fillSearch(this)">Family home near schools</button>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="hs-results">
+        <div class="results" id="results">
+          <div class="results-head">
+            <span class="tag" id="resultsTag">🔎 Results</span>
+            <span id="resultsText">Matching listings</span>
+          </div>
+          <div class="results-grid" id="resultsGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 4. FEATURED ============ -->
+<section class="featured" id="featured">
+  <div class="wrap">
+    <div class="featured-head">
+      <div>
+        <span class="eyebrow">Handpicked</span>
+        <h2 class="sec-title">Featured Properties</h2>
+      </div>
+      <a href="#" class="view-all">View All <span class="arrow">→</span></a>
+    </div>
+    <div class="filter-tabs" id="filterTabs">
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="villa">Villas</button>
+      <button class="tab" data-filter="apartment">Apartments</button>
+      <button class="tab" data-filter="commercial">Commercial</button>
+      <button class="tab" data-filter="new">New Developments</button>
+    </div>
+    <div class="prop-grid" id="propGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 5. AI FEATURES ============ -->
+<section class="aifeat" id="aifeat">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow" style="display:block">The SMART RE Advantage</span>
+      <h2 class="sec-title">Intelligence Built Into Every Step</h2>
+      <p class="sec-sub">Features that Bayut and Wasalt don't have — engineered for the Saudi market.</p>
+    </div>
+
+    <!-- Feature 1: Conversational Search -->
+    <div class="feat-row">
+      <div class="feat-visual">
+        <div class="chat-mock">
+          <div class="chat-top">
+            <span class="dot" style="background:#FF5F57"></span>
+            <span class="dot" style="background:#FEBC2E"></span>
+            <span class="dot" style="background:#28C840"></span>
+            <span class="avatar"><span class="ai">🤖</span> SMART RE Assistant</span>
+          </div>
+          <div class="chat-body" id="chatBody">
+            <div class="bubble user">I want a villa near a school in North Riyadh, 4 beds, garden, under SAR 2.5M</div>
+            <div class="typing" id="typingDots"><span></span><span></span><span></span></div>
+            <div class="bubble ai reveal" id="aiBubble">
+              I found <b>12 villas</b> matching your needs. The top match is in <b>Al Malqa</b> — 4 beds, large garden, 680m from King Abdullah School. <b>SAR 2.35M</b>.
+              <div class="chat-prop">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=300&q=80" alt="">
+                <div class="cp">
+                  <div class="t">Al Malqa Garden Villa</div>
+                  <div class="l">📍 Al Malqa, Riyadh</div>
+                  <div class="pr">SAR 2,350,000</div>
+                  <span class="m">AI Match 96%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="feat-text">
+        <span class="num">1</span>
+        <h3>Talk to Search</h3>
+        <p>Our conversational AI parses natural language in Arabic and English — understanding budget, location intent, lifestyle needs and proximity, then ranks every listing for you.</p>
+        <p class="feat-quote">"No filters. No dropdowns. Just describe what you want."</p>
+      </div>
+    </div>
+
+    <!-- Feature 2: AI Pricing -->
+    <div class="feat-row rev">
+      <div class="feat-visual">
+        <div class="price-widget">
+          <div class="pw-addr">📍 Villa 24, Hittin District, Riyadh</div>
+          <div class="pw-price">SAR 2,850,000</div>
+          <div class="pw-est">AI-estimated fair market value · updated today</div>
+          <div class="pw-mid">
+            <div class="pw-range">
+              <div class="lbl"><span>Low estimate</span><span>High estimate</span></div>
+              <div class="pw-track"><div class="fill"></div><div class="knob"></div></div>
+              <div class="vals"><span>SAR 2.61M</span><span>SAR 3.08M</span></div>
+            </div>
+            <div class="donut">
+              <svg width="96" height="96" viewBox="0 0 96 96">
+                <circle cx="48" cy="48" r="40" fill="none" stroke="#F1F5F9" stroke-width="9"/>
+                <circle cx="48" cy="48" r="40" fill="none" stroke="#C9A84C" stroke-width="9" stroke-linecap="round"
+                  stroke-dasharray="251.2" stroke-dashoffset="32.6"/>
+              </svg>
+              <div class="ctxt"><b>87%</b><small>Confidence</small></div>
+            </div>
+          </div>
+          <div class="pw-comps">
+            <div class="h">Comparable Sales</div>
+            <div class="comp"><span class="a"><span class="sq"></span>Villa 19, Hittin · 375 sqm</span><span class="p">SAR 2.79M</span></div>
+            <div class="comp"><span class="a"><span class="sq"></span>Villa 8, Al Nakheel · 390 sqm</span><span class="p">SAR 2.92M</span></div>
+            <div class="comp"><span class="a"><span class="sq"></span>Villa 41, Hittin · 360 sqm</span><span class="p">SAR 2.74M</span></div>
+          </div>
+          <span class="sell-badge">⚡ Predicted to sell in 28 days</span>
+        </div>
+      </div>
+      <div class="feat-text">
+        <span class="num">2</span>
+        <h3>Know the Right Price</h3>
+        <p>Our pricing engine analyses thousands of comparable transactions, district trends and property attributes to produce a fair-market valuation with a transparent confidence score.</p>
+        <ul class="feat-list">
+          <li><span class="tick">✓</span> Live comparable sales in the same district</li>
+          <li><span class="tick">✓</span> Confidence-scored valuation range</li>
+          <li><span class="tick">✓</span> Predicted days-to-sell forecast</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Feature 3: Virtual Staging -->
+    <div class="feat-row">
+      <div class="feat-visual">
+        <div class="stage-wrap" id="stageWrap">
+          <img class="stage-layer" id="stageStaged" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80" alt="AI staged furnished room">
+          <img class="stage-layer stage-clip" id="stageOriginal" src="https://images.unsplash.com/photo-1625585598750-3535fe40efb3?auto=format&fit=crop&w=900&q=80" alt="Original empty room">
+          <span class="stage-label orig">Original</span>
+          <span class="stage-label staged">AI Staged</span>
+          <div class="stage-divider" id="stageDivider">
+            <div class="stage-handle">↔</div>
+          </div>
+        </div>
+        <div class="style-pills" id="stylePills">
+          <button class="spill active" data-img="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80">Modern</button>
+          <button class="spill" data-img="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=80">Luxury</button>
+          <button class="spill" data-img="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=900&q=80">Scandi</button>
+          <button class="spill" data-img="https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=900&q=80">Art Deco</button>
+        </div>
+      </div>
+      <div class="feat-text">
+        <span class="num">3</span>
+        <h3>See the Potential</h3>
+        <p>Empty rooms don't sell. Our AI virtual staging furnishes any space in seconds — drag the slider to reveal the transformation and switch interior styles instantly.</p>
+        <p class="feat-quote">"Buyers imagine living there — and offers arrive faster."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. HOW IT WORKS ============ -->
+<section class="how" id="how">
+  <div class="wrap center">
+    <span class="eyebrow" style="display:block">Simple by Design</span>
+    <h2 class="sec-title">From Search to Signed — All in One Platform</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle c-indigo">🗣️<span class="step-num">1</span></div>
+        <h4>Describe What You Want</h4>
+        <p>Type or speak in Arabic or English — our AI understands.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle c-blue">🏠<span class="step-num">2</span></div>
+        <h4>Explore &amp; Tour</h4>
+        <p>Browse listings, take virtual 360° tours, use AI staging.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle c-green">📅<span class="step-num">3</span></div>
+        <h4>Book a Viewing</h4>
+        <p>AI coordinates buyer, seller, and broker — one click.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle c-gold">✍️<span class="step-num">4</span></div>
+        <h4>Sign &amp; Close</h4>
+        <p>Generate bilingual contracts, sign digitally, done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. NEIGHBORHOODS ============ -->
+<section class="hoods" id="hoods">
+  <div class="wrap center">
+    <span class="eyebrow" style="display:block">Neighborhood Intelligence</span>
+    <h2 class="sec-title">Explore by Neighborhood</h2>
+    <p class="sec-sub">AI-powered district scores help you choose the right area.</p>
+  </div>
+  <div class="wrap">
+    <div class="hood-grid" id="hoodGrid">
+      <!-- Card 1 -->
+      <div class="hood-card">
+        <div class="hood-top">
+          <div>
+            <h3 class="hood-name">Al Malqa</h3>
+            <div class="hood-city">📍 Riyadh</div>
+          </div>
+          <div class="hood-score"><b>87</b><small>/ 100 Overall</small></div>
+        </div>
+        <div class="score-item"><div class="row"><span>School Proximity</span><span class="v">92/100</span></div><div class="score-track"><div class="score-fill f-blue" data-w="92"></div></div></div>
+        <div class="score-item"><div class="row"><span>Amenities</span><span class="v">88/100</span></div><div class="score-track"><div class="score-fill f-green" data-w="88"></div></div></div>
+        <div class="score-item"><div class="row"><span>Infrastructure</span><span class="v">90/100</span></div><div class="score-track"><div class="score-fill f-navy" data-w="90"></div></div></div>
+        <div class="score-item"><div class="row"><span>Connectivity</span><span class="v">84/100</span></div><div class="score-track"><div class="score-fill f-amber" data-w="84"></div></div></div>
+        <button class="btn btn-outline">View Properties <span class="arrow">→</span></button>
+      </div>
+      <!-- Card 2 -->
+      <div class="hood-card">
+        <div class="hood-top">
+          <div>
+            <h3 class="hood-name">Al Rawdah</h3>
+            <div class="hood-city">📍 Jeddah</div>
+          </div>
+          <div class="hood-score"><b>82</b><small>/ 100 Overall</small></div>
+        </div>
+        <div class="score-item"><div class="row"><span>School Proximity</span><span class="v">79/100</span></div><div class="score-track"><div class="score-fill f-blue" data-w="79"></div></div></div>
+        <div class="score-item"><div class="row"><span>Amenities</span><span class="v">91/100</span></div><div class="score-track"><div class="score-fill f-green" data-w="91"></div></div></div>
+        <div class="score-item"><div class="row"><span>Infrastructure</span><span class="v">74/100</span></div><div class="score-track"><div class="score-fill f-navy" data-w="74"></div></div></div>
+        <div class="score-item"><div class="row"><span>Connectivity</span><span class="v">86/100</span></div><div class="score-track"><div class="score-fill f-amber" data-w="86"></div></div></div>
+        <button class="btn btn-outline">View Properties <span class="arrow">→</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. BROKERS ============ -->
+<section class="brokers" id="brokers">
+  <div class="wrap">
+    <div class="head">
+      <h2>For Real Estate Professionals</h2>
+      <p>AI tools that help brokers close more deals</p>
+    </div>
+    <div class="bcards">
+      <div class="bcard">
+        <div class="ic">🎯</div>
+        <h4>AI Lead Scoring</h4>
+        <p>Every lead scored automatically. Focus on buyers who are ready to transact.</p>
+      </div>
+      <div class="bcard">
+        <div class="ic">✍️</div>
+        <h4>AI Follow-Up Drafting</h4>
+        <p>AI writes personalised messages per lead. You review and send.</p>
+      </div>
+      <div class="bcard">
+        <div class="ic">📅</div>
+        <h4>Smart Scheduling</h4>
+        <p>Viewing coordination handled automatically across all parties.</p>
+      </div>
+    </div>
+
+    <div class="crm">
+      <div class="crm-head">
+        <div class="t">Your Deal Pipeline <span>Live view · Ahmed Al-Rashidi · Riyadh Office</span></div>
+        <button class="btn btn-gold btn-sm">Join 12,000+ Brokers</button>
+      </div>
+      <div class="pipeline">
+        <div class="stage"><div class="sname"><span class="sdot d-new"></span>New</div><div class="scount">12</div><span class="arw">→</span></div>
+        <div class="stage"><div class="sname"><span class="sdot d-contacted"></span>Contacted</div><div class="scount">8</div><span class="arw">→</span></div>
+        <div class="stage"><div class="sname"><span class="sdot d-viewing"></span>Viewing</div><div class="scount">5</div><span class="arw">→</span></div>
+        <div class="stage"><div class="sname"><span class="sdot d-offer"></span>Offer</div><div class="scount">3</div><span class="arw">→</span></div>
+        <div class="stage"><div class="sname"><span class="sdot d-closed"></span>Closed</div><div class="scount">2</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9. APP DOWNLOAD ============ -->
+<section class="appdl">
+  <div class="wrap appdl-inner">
+    <div class="appdl-text">
+      <h2>Take SMART RE Everywhere</h2>
+      <p>Full platform on iOS and Android. Search, tour, and close deals in Arabic and English — wherever you are.</p>
+      <div class="store-btns">
+        <a class="store-btn"><span class="ic"></span><span class="tx"><small>Download on the</small><b>App Store</b></span></a>
+        <a class="store-btn"><span class="ic">▶</span><span class="tx"><small>GET IT ON</small><b>Google Play</b></span></a>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-hero" style="background-image:url('https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=500&q=80')">
+            <span class="ph-badge">🤖 AI PRICED</span>
+          </div>
+          <div class="ph-body">
+            <div class="ph-t">Al Malqa Villa</div>
+            <div class="ph-l">📍 North Riyadh</div>
+            <div class="ph-p">SAR 2,850,000</div>
+            <div class="ph-search"><span class="o">🤖</span> Describe your dream home...</div>
+            <div class="ph-mini">
+              <div class="m" style="background-image:url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=300&q=80')"></div>
+              <div class="m" style="background-image:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=300&q=80')"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div></div>
+  </div>
+</section>
+
+<!-- ============ 10. FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+        <div class="social">
+          <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.2 8h4.6v14H.2V8zm7.4 0h4.4v1.9h.06c.6-1.1 2.08-2.26 4.28-2.26 4.58 0 5.42 3 5.42 6.9V22h-4.6v-6.6c0-1.58-.03-3.6-2.2-3.6-2.2 0-2.54 1.72-2.54 3.5V22H7.6V8z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" aria-label="X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2h3.3l-7.2 8.3L23.5 22h-6.6l-5.2-6.8L5.8 22H2.5l7.7-8.8L1.5 2h6.8l4.7 6.2L18.9 2zm-1.2 18h1.8L7.1 3.9H5.2L17.7 20z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>Platform</h5>
+        <a href="#">Buy</a><a href="#">Rent</a><a href="#">New Developments</a><a href="#">Market Insights</a><a href="#">Mortgage Calculator</a>
+      </div>
+      <div class="foot-col">
+        <h5>For Brokers</h5>
+        <a href="#">Join as Broker</a><a href="#">AI CRM</a><a href="#">Pricing Tool</a><a href="#">Success Stories</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="#">About</a><a href="#">Careers</a><a href="#">Press</a><a href="#">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h5>Connect</h5>
+        <a href="#">LinkedIn</a><a href="#">Instagram</a><a href="#">Twitter / X</a><a href="#">Support</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved. · Available on iOS &amp; Android · Arabic &amp; English</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookie Policy</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- Property data ---------- */
+const PROPS = [
+  {img:"1613490493576-7fde63acd811",tag:"Featured",tagClass:"tag-featured",type:"Villa",cat:"villa",title:"Hittin Modern Villa",loc:"Hittin, Riyadh",price:"SAR 3,450,000",beds:5,baths:6,sqm:420,agent:"Ahmed Al-Rashidi",role:"Luxury Specialist",av:"1500648767791-00dcc994a43e"},
+  {img:"1600596542815-ffad4c1539a9",tag:"AI Match 94%",tagClass:"tag-ai",type:"Villa",cat:"villa",title:"Al Nakheel Family Home",loc:"Al Nakheel, Riyadh",price:"SAR 2,650,000",beds:4,baths:5,sqm:360,agent:"Sara Al-Otaibi",role:"Residential Advisor",av:"1544005313-94ddf0286df2"},
+  {img:"1600585154340-be6161a56a0c",tag:"New",tagClass:"tag-new",type:"Apartment",cat:"apartment",title:"Al Hamra Sky Residence",loc:"Al Hamra, Jeddah",price:"SAR 1,180,000",beds:3,baths:3,sqm:190,agent:"Khalid Al-Harbi",role:"Sales Broker",av:"1507003211169-0a1dd7228f2d"},
+  {img:"1512917774080-9991f1c4c750",tag:"Featured",tagClass:"tag-featured",type:"Villa",cat:"villa",title:"Corniche Grand Villa",loc:"Al Khobar, Dammam",price:"SAR 4,200,000",beds:6,baths:7,sqm:520,agent:"Ahmed Al-Rashidi",role:"Luxury Specialist",av:"1500648767791-00dcc994a43e"},
+  {img:"1497366754035-f200968a6e72",tag:"Commercial",tagClass:"tag-featured",type:"Office Floor",cat:"commercial",title:"KAFD Office Suite",loc:"Al Aqiq, Riyadh",price:"SAR 6,800,000",beds:0,baths:4,sqm:640,agent:"Sara Al-Otaibi",role:"Commercial Advisor",av:"1544005313-94ddf0286df2"},
+  {img:"1580216643062-cf460548a66a",tag:"New",tagClass:"tag-new",type:"New Development",cat:"new",title:"Diriyah Gate Townhouse",loc:"Diriyah, Riyadh",price:"SAR 2,950,000",beds:4,baths:4,sqm:340,agent:"Khalid Al-Harbi",role:"Off-Plan Broker",av:"1507003211169-0a1dd7228f2d"}
+];
+
+const RESULTS = [
+  {img:"1600585154340-be6161a56a0c",tag:"AI Match 96%",tagClass:"tag-ai",type:"Villa",cat:"villa",title:"Al Malqa Garden Villa",loc:"Al Malqa, Riyadh",price:"SAR 2,350,000",beds:4,baths:4,sqm:340,agent:"Ahmed Al-Rashidi",role:"Luxury Specialist",av:"1500648767791-00dcc994a43e"},
+  {img:"1600607687939-ce8a6c25118c",tag:"AI Match 91%",tagClass:"tag-ai",type:"Villa",cat:"villa",title:"Hittin Courtyard Villa",loc:"Hittin, Riyadh",price:"SAR 2,480,000",beds:4,baths:5,sqm:365,agent:"Sara Al-Otaibi",role:"Residential Advisor",av:"1544005313-94ddf0286df2"},
+  {img:"1600047509807-ba8f99d2cdde",tag:"AI Match 88%",tagClass:"tag-ai",type:"Villa",cat:"villa",title:"Al Nakheel Modern Villa",loc:"Al Nakheel, Riyadh",price:"SAR 2,290,000",beds:4,baths:4,sqm:330,agent:"Khalid Al-Harbi",role:"Sales Broker",av:"1507003211169-0a1dd7228f2d"}
+];
+
+function u(id,w){return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w||600}&q=80`;}
+
+function heartSVG(){return '<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.9-10-9.3C.4 8.4 2 4.5 5.5 4.5c2 0 3.4 1.2 4.5 2.6 1.1-1.4 2.5-2.6 4.5-2.6 3.5 0 5.1 3.9 3.5 7.2C19.5 16.1 12 21 12 21z" stroke-width="1.8"/></svg>';}
+
+function propCard(p){
+  const bedStat = p.beds>0 ? `<span class="s">🛏 ${p.beds} Beds</span>` : `<span class="s">🏢 Open Plan</span>`;
+  return `<article class="prop" data-cat="${p.cat}">
+    <div class="prop-img">
+      <img src="${u(p.img,600)}" alt="${p.title}" loading="lazy">
+      <span class="prop-tag ${p.tagClass}">${p.tag}</span>
+      <button class="heart-btn" onclick="toggleHeart(this,event)" aria-label="Save">${heartSVG()}</button>
+    </div>
+    <div class="prop-body">
+      <div class="prop-type">🏡 ${p.type} · 📍 ${p.loc}</div>
+      <div class="prop-title">${p.title}</div>
+      <div class="prop-price">${p.price}</div>
+      <div class="prop-stats">
+        ${bedStat}
+        <span class="s">🛁 ${p.baths} Baths</span>
+        <span class="s">📐 ${p.sqm} sqm</span>
+      </div>
+      <div class="prop-agent">
+        <div class="agent-info">
+          <img class="agent-av" src="${u(p.av,80)}" alt="${p.agent}">
+          <div class="agent-name">${p.agent}<span>${p.role}</span></div>
+        </div>
+        <button class="btn btn-navy btn-sm">Contact</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+document.getElementById('propGrid').innerHTML = PROPS.map(propCard).join('');
+
+/* ---------- Heart toggle ---------- */
+function toggleHeart(el,e){ if(e){e.stopPropagation();} el.classList.toggle('liked'); }
+
+/* ---------- Nav shadow on scroll ---------- */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{ nav.classList.toggle('scrolled', window.scrollY>10); });
+
+/* ---------- Language toggle (visual) ---------- */
+document.querySelectorAll('#langToggle span').forEach(s=>{
+  s.addEventListener('click',()=>{
+    document.querySelectorAll('#langToggle span').forEach(x=>x.classList.remove('active'));
+    s.classList.add('active');
+  });
+});
+
+/* ============ HERO SEARCH WIDGET ============ */
+const PTYPES=['Any Type','Villa','Apartment','Townhouse','Penthouse','Duplex','Compound','Land','Office','Shop'];
+const PRICES=[['300000','SAR 300K'],['500000','SAR 500K'],['750000','SAR 750K'],['1000000','SAR 1M'],['1500000','SAR 1.5M'],['2000000','SAR 2M'],['3000000','SAR 3M'],['5000000','SAR 5M'],['7500000','SAR 7.5M'],['10000000','SAR 10M+']];
+const state={purpose:'Buy',type:'Any Type',beds:'Any',baths:'Any',min:'0',max:'0'};
+
+/* build type options + price selects */
+document.getElementById('typePanel').innerHTML = PTYPES.map(t=>`<div class="opt${t==='Any Type'?' sel':''}" data-v="${t}" onclick="pickType(this)">${t}</div>`).join('');
+const _minSel=document.getElementById('priceMin'), _maxSel=document.getElementById('priceMax');
+_minSel.innerHTML='<option value="0">No min</option>'+PRICES.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('');
+_maxSel.innerHTML='<option value="0">No max</option>'+PRICES.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('');
+
+/* purpose tabs (Buy / Rent / Commercial / New Projects) */
+function setPurpose(p){
+  state.purpose=p;
+  document.querySelectorAll('.hs-tab').forEach(x=>x.classList.toggle('active', x.dataset.purpose===p));
+}
+
+/* dropdown open/close */
+function toggleSel(id){
+  const el=document.getElementById(id), wasOpen=el.classList.contains('open');
+  document.querySelectorAll('.hsel').forEach(s=>s.classList.remove('open'));
+  if(!wasOpen){
+    el.classList.add('open');
+    // open upward if there isn't enough room below the button
+    const btn=el.querySelector('.hsel-btn'), panel=el.querySelector('.hsel-panel');
+    const spaceBelow=window.innerHeight - btn.getBoundingClientRect().bottom;
+    panel.classList.toggle('up', spaceBelow < 300);
+  }
+}
+document.addEventListener('click',e=>{ if(!e.target.closest('.hsel')) document.querySelectorAll('.hsel').forEach(s=>s.classList.remove('open')); });
+
+function pickType(el){
+  document.querySelectorAll('#typePanel .opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel'); state.type=el.dataset.v;
+  document.getElementById('typeVal').textContent=el.dataset.v;
+  document.getElementById('selType').classList.remove('open');
+}
+
+/* beds & baths */
+let _beds='Any',_baths='Any';
+document.querySelectorAll('#bedPills .bb-pill').forEach(p=>p.addEventListener('click',()=>{
+  document.querySelectorAll('#bedPills .bb-pill').forEach(x=>x.classList.remove('sel')); p.classList.add('sel'); _beds=p.dataset.v;
+}));
+document.querySelectorAll('#bathPills .bb-pill').forEach(p=>p.addEventListener('click',()=>{
+  document.querySelectorAll('#bathPills .bb-pill').forEach(x=>x.classList.remove('sel')); p.classList.add('sel'); _baths=p.dataset.v;
+}));
+function applyBeds(){
+  state.beds=_beds; state.baths=_baths;
+  const parts=[];
+  if(_beds==='Studio') parts.push('Studio'); else if(_beds!=='Any') parts.push(_beds+' Bd');
+  if(_baths!=='Any') parts.push(_baths+' Ba');
+  document.getElementById('bedsVal').textContent = parts.length?parts.join(' · '):'Any';
+  document.getElementById('selBeds').classList.remove('open');
+}
+
+/* price */
+function applyPrice(){
+  state.min=_minSel.value; state.max=_maxSel.value;
+  const fmt=v=>{ const f=PRICES.find(p=>p[0]===v); return f?f[1]:''; };
+  const mn=state.min!=='0'?fmt(state.min):'', mx=state.max!=='0'?fmt(state.max):'';
+  document.getElementById('priceVal').textContent = (mn||mx) ? (mn||'Any')+' – '+(mx||'Any') : 'Any Price';
+  document.getElementById('selPrice').classList.remove('open');
+}
+
+/* AI <-> Manual toggle */
+function toggleAI(){
+  const btn=document.getElementById('aiToggle');
+  const on=btn.classList.toggle('on');
+  btn.innerHTML = on ? '⌨ Manual' : '✨ Ask AI';
+  document.getElementById('hsManualBody').style.display = on?'none':'block';
+  document.getElementById('hsAiBody').style.display = on?'block':'none';
+  setTimeout(()=>{ const t=on?document.getElementById('searchInput'):document.getElementById('locInput'); if(t) t.focus(); },40);
+}
+
+/* results */
+function openResults(){
+  const panel=document.getElementById('results');
+  panel.classList.add('open');
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),140);
+}
+
+function runManualSearch(){
+  const loc=document.getElementById('locInput').value.trim();
+  const noun = state.type!=='Any Type' ? state.type+'s' : (state.purpose==='Commercial'?'Commercial units':'Properties');
+  let s = noun + ' ' + (state.purpose==='Rent'?'for rent':state.purpose==='New Projects'?'in new developments':state.purpose==='Commercial'?'available':'for sale');
+  if(loc) s += ' in ' + loc;
+  const bb=document.getElementById('bedsVal').textContent; if(bb!=='Any') s+=' · '+bb;
+  const pr=document.getElementById('priceVal').textContent; if(pr!=='Any Price') s+=' · '+pr;
+  document.getElementById('resultsTag').textContent='🔎 '+state.purpose;
+  document.getElementById('resultsText').textContent = RESULTS.length+' listings — '+s;
+  document.getElementById('resultsGrid').innerHTML = RESULTS.map(propCard).join('');
+  openResults();
+}
+
+function quickSearch(type,city){
+  if(document.getElementById('aiToggle').classList.contains('on')) toggleAI();
+  document.getElementById('locInput').value=city;
+  const opt=[...document.querySelectorAll('#typePanel .opt')].find(o=>o.dataset.v===type);
+  if(opt) pickType(opt);
+  runManualSearch();
+}
+
+/* AI natural-language search */
+function fillSearch(el){ const i=document.getElementById('searchInput'); i.value = el.textContent.trim(); i.focus(); }
+function runSearch(){
+  const q=document.getElementById('searchInput').value.trim();
+  document.getElementById('resultsTag').textContent='🤖 AI';
+  document.getElementById('resultsText').textContent = q
+    ? `Found 3 AI matches for "${q.length>46?q.slice(0,46)+'…':q}"`
+    : 'Found 3 AI matches based on your description';
+  document.getElementById('resultsGrid').innerHTML = RESULTS.map(propCard).join('');
+  openResults();
+}
+document.getElementById('searchInput').addEventListener('keydown',e=>{ if(e.key==='Enter') runSearch(); });
+document.getElementById('locInput').addEventListener('keydown',e=>{ if(e.key==='Enter') runManualSearch(); });
+
+/* ---------- Filter tabs ---------- */
+document.querySelectorAll('#filterTabs .tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('#filterTabs .tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const f=tab.dataset.filter;
+    document.querySelectorAll('#propGrid .prop').forEach(card=>{
+      card.classList.toggle('hide', !(f==='all' || card.dataset.cat===f));
+    });
+  });
+});
+
+/* ---------- Chat typing animation on load ---------- */
+function playChat(){
+  const dots=document.getElementById('typingDots');
+  const bubble=document.getElementById('aiBubble');
+  dots.classList.remove('hidden'); bubble.classList.remove('show');
+  setTimeout(()=>{ dots.classList.add('hidden'); bubble.classList.add('show'); }, 2400);
+}
+setTimeout(playChat, 700);
+/* Replay chat whenever it re-enters view */
+const chatObs=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{ if(en.isIntersecting){ playChat(); } });
+},{threshold:.5});
+chatObs.observe(document.getElementById('chatBody'));
+
+/* ---------- Neighborhood score bars (Intersection Observer) ---------- */
+const hoodObs=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      en.target.querySelectorAll('.score-fill').forEach((bar,i)=>{
+        setTimeout(()=>{ bar.style.width = bar.dataset.w + '%'; }, i*140);
+      });
+      hoodObs.unobserve(en.target);
+    }
+  });
+},{threshold:.35});
+document.querySelectorAll('.hood-card').forEach(c=>hoodObs.observe(c));
+
+/* ---------- Before/After draggable divider ---------- */
+(function(){
+  const wrap=document.getElementById('stageWrap');
+  const orig=document.getElementById('stageOriginal');
+  const divider=document.getElementById('stageDivider');
+  let dragging=false;
+  function setPos(clientX){
+    const r=wrap.getBoundingClientRect();
+    let x=(clientX-r.left)/r.width*100;
+    x=Math.max(4,Math.min(96,x));
+    orig.style.clipPath='inset(0 '+(100-x)+'% 0 0)';
+    divider.style.left=x+'%';
+  }
+  const start=()=>dragging=true;
+  const end=()=>dragging=false;
+  divider.addEventListener('mousedown',start);
+  window.addEventListener('mouseup',end);
+  window.addEventListener('mousemove',e=>{ if(dragging) setPos(e.clientX); });
+  // click anywhere on the image to move divider
+  wrap.addEventListener('click',e=>{ if(e.target!==divider && !divider.contains(e.target)) setPos(e.clientX); });
+  // touch
+  divider.addEventListener('touchstart',start,{passive:true});
+  window.addEventListener('touchend',end);
+  window.addEventListener('touchmove',e=>{ if(dragging && e.touches[0]) setPos(e.touches[0].clientX); },{passive:true});
+})();
+
+/* ---------- Staging style pills ---------- */
+document.querySelectorAll('#stylePills .spill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('#stylePills .spill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    const img=document.getElementById('stageStaged');
+    img.style.opacity=0;
+    setTimeout(()=>{ img.src=p.dataset.img; img.style.opacity=1; },160);
+  });
+});
+document.getElementById('stageStaged').style.transition='opacity .25s ease';
+
+/* ---------- Smooth scroll offset handled by CSS scroll-margin ---------- */
+
+/* ============ FLOATING CHATBOT ============ */
+let cbotOpen=false, cbotGreeted=false;
+const CBOT_GREETING="👋 Hi! I'm your SMART RE assistant. Tell me what you're looking for — like <b>\"3-bed villa in Al Malqa under SAR 2.5M\"</b> — in Arabic or English.";
+function cbotEsc(s){ return s.replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function cbotScroll(){ const b=document.getElementById('cbotBody'); b.scrollTop=b.scrollHeight; }
+function cbotAppend(html,cls){ const b=document.getElementById('cbotBody'); const d=document.createElement('div'); d.className='cbot-msg '+cls; d.innerHTML=html; b.appendChild(d); cbotScroll(); }
+function toggleChat(){
+  cbotOpen=!cbotOpen;
+  document.getElementById('cbotPanel').classList.toggle('open',cbotOpen);
+  document.getElementById('cbotFab').classList.toggle('open',cbotOpen);
+  if(cbotOpen && !cbotGreeted){ cbotGreeted=true; setTimeout(()=>cbotAppend(CBOT_GREETING,'bot'),340); }
+  if(cbotOpen) setTimeout(()=>document.getElementById('cbotInput').focus(),320);
+}
+function cbotCard(img,t,l,p,m){
+  return `<div class="cbot-card"><img src="${u(img,320)}" alt=""><div class="cc"><div class="t">${t}</div><div class="l">📍 ${l}</div><div class="p">${p}</div><span class="m">${m}</span></div></div>`;
+}
+function cbotReply(text){
+  const q=text.toLowerCase();
+  if(/(villa|buy|sale|riyadh|malqa|hittin|nakheel)/.test(q))
+    return "Great choice! I found <b>12 villas</b> matching your criteria. Here's the top AI match 👇"+cbotCard('1600585154340-be6161a56a0c','Al Malqa Garden Villa','Al Malqa, Riyadh','SAR 2,350,000','AI Match 96%')+"Want me to <b>book a viewing</b> or show more options?";
+  if(/(rent|lease|apartment|flat|jeddah)/.test(q))
+    return "Here are rentals that fit 👇 flexible terms in prime areas."+cbotCard('1600047509807-ba8f99d2cdde','Al Hamra Sky Apartment','Al Hamra, Jeddah','SAR 85,000 / year','AI Match 92%')+"Shall I filter by budget or number of bedrooms?";
+  if(/(book|viewing|visit|tour|schedule|appointment)/.test(q))
+    return "I can arrange that 📅 Our AI coordinates the buyer, seller and broker automatically — one click. What day works, this week or next?";
+  if(/(broker|agent|contact|call|human|speak)/.test(q))
+    return "I'll connect you with a top-rated broker 👤<br><b>Ahmed Al-Rashidi</b> — Luxury Specialist, Riyadh · 4.9★. Want me to share your details so he reaches out?";
+  if(/(price|value|worth|valuation|estimate|invest)/.test(q))
+    return "Our AI pricing engine estimates fair market value from thousands of comparable sales — with a confidence score and a days-to-sell forecast. Share an address and I'll price it for you.";
+  if(/(hi|hello|hey|salam|مرحبا|السلام|اهلا)/.test(q))
+    return "Hello! 👋 How can I help today — <b>buying, renting, pricing</b>, or <b>booking a viewing</b>?";
+  return "Got it! I can help you <b>buy, rent, price a property, or book a viewing</b>. Tell me a city, budget or property type — e.g. <i>\"villa in Hittin under SAR 3M\"</i>.";
+}
+function cbotFlow(text){
+  const b=document.getElementById('cbotBody');
+  const ty=document.createElement('div'); ty.className='cbot-typing'; ty.id='cbotTyping';
+  ty.innerHTML='<span></span><span></span><span></span>'; b.appendChild(ty); cbotScroll();
+  setTimeout(()=>{ const t=document.getElementById('cbotTyping'); if(t) t.remove(); cbotAppend(cbotReply(text),'bot'); }, 1000+Math.random()*500);
+}
+function cbotSend(){
+  const inp=document.getElementById('cbotInput'); const text=inp.value.trim(); if(!text) return;
+  inp.value=''; cbotAppend(cbotEsc(text),'user'); cbotFlow(text);
+}
+function cbotQuick(text){ if(!cbotGreeted){cbotGreeted=true;} cbotAppend(cbotEsc(text),'user'); cbotFlow(text); }
+</script>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span>
+  <span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head">
+    <div class="av">🤖<span class="on"></span></div>
+    <div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div>
+    <div class="x" onclick="toggleChat()" aria-label="Close chat">✕</div>
+  </div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick">
+    <button onclick="cbotQuick('Villas in Riyadh under SAR 3M')">🏡 Villas in Riyadh</button>
+    <button onclick="cbotQuick('I want to rent an apartment in Jeddah')">🔑 Rent in Jeddah</button>
+    <button onclick="cbotQuick('Book a viewing')">📅 Book a viewing</button>
+    <button onclick="cbotQuick('Connect me with a broker')">👤 Talk to a broker</button>
+  </div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()" aria-label="Send message">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+</body>
+</html>
