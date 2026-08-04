@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map Search — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="index.html#heroSearch">Buy</a>
+      <a href="index.html#heroSearch">Rent</a>
+      <a href="map.html" class="active">Map</a>
+      <a href="compare.html">Compare</a>
+      <a href="blog.html">Insights</a>
+      <a href="invest.html">Invest</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel"><div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div><div class="notif-list" id="notifList"></div></div>
+      </div>
+      <a class="nav-icon-btn" href="saved.html" aria-label="Saved properties">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="nb-count hide" id="savedCount">0</span>
+      </a>
+      <button class="btn btn-outline btn-sm">Sign In</button>
+      <button class="btn btn-navy btn-sm">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<div class="map-layout">
+  <div class="map-side">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span class="cur">Map Search</span></div>
+    <h2 style="font-size:22px;margin:10px 0 16px">Search by Map</h2>
+
+    <div class="field">
+      <label>Center On</label>
+      <select id="districtSel" onchange="onDistrictChange()">
+        <option value="">All Saudi Arabia</option>
+        <option value="Al Malqa">Al Malqa, Riyadh</option>
+        <option value="Hittin">Hittin, Riyadh</option>
+        <option value="Al Nakheel">Al Nakheel, Riyadh</option>
+        <option value="Al Aqiq">Al Aqiq (KAFD), Riyadh</option>
+        <option value="Diriyah">Diriyah, Riyadh</option>
+        <option value="Al Yasmin">Al Yasmin, Riyadh</option>
+        <option value="Al Hamra">Al Hamra, Jeddah</option>
+        <option value="Al Khobar">Al Khobar</option>
+      </select>
+    </div>
+
+    <div class="map-radius-box">
+      <div class="lbl"><span>Search Radius</span><span id="radiusVal">10 km</span></div>
+      <input type="range" id="radiusSlider" min="1" max="40" value="10" oninput="onRadiusChange()">
+    </div>
+
+    <div class="map-count" id="mapCount">Showing all 10 listings</div>
+    <div id="mapList"></div>
+  </div>
+
+  <div id="leafletMap"></div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+      </div>
+      <div class="foot-col"><h5>Platform</h5><a href="index.html">Buy</a><a href="index.html">Rent</a><a href="map.html">Map Search</a><a href="blog.html">Market Insights</a><a href="mortgage-calculator.html">Mortgage Calculator</a></div>
+      <div class="foot-col"><h5>Tools</h5><a href="compare.html">Compare Properties</a><a href="area-compare.html">Compare Areas</a><a href="invest.html">Investment View</a><a href="saved.html">Saved Properties</a></div>
+      <div class="foot-col"><h5>Company</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
+    </div>
+    <div class="foot-trust">
+      <span class="lbl">Integrated With</span>
+      <span class="trust-badge"><span class="ic">🛡️</span> MOJ Deed Verification</span>
+      <span class="trust-badge"><span class="ic">🪪</span> Absher Identity</span>
+      <span class="trust-badge"><span class="ic">🏛️</span> Balady Compliance</span>
+      <span class="trust-badge"><span class="ic">💳</span> Moyasar · Stripe Payments</span>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved.</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span><span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head"><div class="av">🤖<span class="on"></span></div><div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div><div class="x" onclick="toggleChat()">✕</div></div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick"><button onclick="cbotQuick('Villas in Riyadh')">🏡 Villas in Riyadh</button><button onclick="cbotQuick('Book a viewing')">📅 Book a viewing</button></div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const DISTRICTS = {
+  'Al Malqa': [24.8150,46.6200], 'Hittin':[24.7743,46.6215], 'Al Nakheel':[24.7215,46.6480],
+  'Al Aqiq':[24.7659,46.6412], 'Diriyah':[24.7332,46.5750], 'Al Yasmin':[24.8480,46.6550],
+  'Al Hamra':[21.5764,39.1325], 'Al Khobar':[26.2870,50.2083]
+};
+
+const map = L.map('leafletMap').setView([24.75, 46.65], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap contributors' }).addTo(map);
+
+let markers = [];
+let radiusCircle = null;
+
+function priceIcon(p, dim){
+  return L.divIcon({
+    className:'', html:`<div class="map-marker-price${p.tagClass==='tag-ai'?' hi':''}" style="${dim?'opacity:.35':''}">${(p.price/1000).toFixed(0)}K</div>`,
+    iconSize:null, iconAnchor:[26,14]
+  });
+}
+
+function popupHtml(p){
+  return `<div class="map-pin-card">
+    <img src="${u(p.img,300)}" alt="">
+    <div class="b">
+      <div class="t">${p.title}</div>
+      <div style="font-size:11.5px;color:#6B7280;margin-top:2px">📍 ${p.loc}</div>
+      <div class="p">${fmtSAR(p.price)}</div>
+      <a class="btn btn-navy btn-block" href="property.html?id=${p.id}">View Property</a>
+    </div>
+  </div>`;
+}
+
+function buildMarkers(){
+  markers.forEach(m=>map.removeLayer(m.marker));
+  markers = PROPS.map(p=>{
+    const marker = L.marker([p.lat,p.lng], {icon:priceIcon(p,false)}).addTo(map);
+    marker.bindPopup(popupHtml(p));
+    return {p, marker};
+  });
+}
+buildMarkers();
+
+function distanceKm(lat1,lng1,lat2,lng2){
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function applyFilter(){
+  const distSel = document.getElementById('districtSel').value;
+  const radius = +document.getElementById('radiusSlider').value;
+  document.getElementById('radiusVal').textContent = radius+' km';
+
+  if(radiusCircle){ map.removeLayer(radiusCircle); radiusCircle = null; }
+
+  let inRange = PROPS;
+  if(distSel && DISTRICTS[distSel]){
+    const [clat,clng] = DISTRICTS[distSel];
+    radiusCircle = L.circle([clat,clng], { radius: radius*1000, color:'#C9A84C', fillColor:'#C9A84C', fillOpacity:.08, weight:2 }).addTo(map);
+    inRange = PROPS.filter(p => distanceKm(clat,clng,p.lat,p.lng) <= radius);
+    map.fitBounds(radiusCircle.getBounds(), {padding:[30,30]});
+  } else {
+    map.setView([24.75,46.65], 6);
+  }
+
+  markers.forEach(m=>{
+    const within = inRange.includes(m.p);
+    m.marker.setIcon(priceIcon(m.p, !within));
+  });
+
+  document.getElementById('mapCount').textContent = distSel
+    ? `${inRange.length} listing${inRange.length!==1?'s':''} within ${radius} km of ${distSel}`
+    : `Showing all ${PROPS.length} listings`;
+
+  document.getElementById('mapList').innerHTML = inRange.map(p=>`
+    <div class="map-list-card" onclick="focusPin(${p.id})">
+      <img src="${u(p.img,150)}" alt="">
+      <div>
+        <div class="t">${p.title}</div>
+        <div class="l">📍 ${p.loc}</div>
+        <div class="p">${fmtSAR(p.price)}</div>
+      </div>
+    </div>`).join('') || '<div class="empty-state" style="padding:40px 10px"><div class="ic">🗺️</div><p>No listings in this radius — try widening it.</p></div>';
+}
+
+function focusPin(id){
+  const m = markers.find(x=>x.p.id===id);
+  if(!m) return;
+  map.setView([m.p.lat, m.p.lng], 15);
+  m.marker.openPopup();
+}
+
+function onDistrictChange(){ applyFilter(); }
+function onRadiusChange(){ applyFilter(); }
+
+applyFilter();
+</script>
+</body>
+</html>

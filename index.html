@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMART RE — AI-Powered Property Marketplace in Saudi Arabia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ 1. NAV ============ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo">
+      <span class="en">SMART RE</span>
+      <span class="ar">سمارت ري</span>
+    </a>
+    <div class="nav-links">
+      <a href="#heroSearch" onclick="setPurpose('Buy')">Buy</a>
+      <a href="#heroSearch" onclick="setPurpose('Rent')">Rent</a>
+      <a href="map.html">Map</a>
+      <a href="compare.html">Compare</a>
+      <a href="blog.html">Insights</a>
+      <a href="invest.html">Invest</a>
+      <a href="index.html#brokers">Brokers</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle">
+        <span>AR</span><span class="active">EN</span>
+      </div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel">
+          <div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div>
+          <div class="notif-list" id="notifList"></div>
+        </div>
+      </div>
+      <a class="nav-icon-btn" href="saved.html" aria-label="Saved properties">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="nb-count hide" id="savedCount">0</span>
+      </a>
+      <button class="btn btn-outline btn-sm">Sign In</button>
+      <button class="btn btn-navy btn-sm">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<span id="top"></span>
+
+<!-- ============ 2. HERO ============ -->
+<header class="hero">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1758798219572-512a03a60ce0?auto=format&fit=crop&w=2200&q=80" alt="Riyadh skyline at sunset">
+  </div>
+  <div class="hero-intro">
+    <span class="hero-badge">🤖 AI-Powered Property Search</span>
+    <h1>Find Your Perfect Property<br>in Saudi <span class="underline-word">Arabia
+      <svg class="wavy" viewBox="0 0 240 14" preserveAspectRatio="none" fill="none">
+        <path d="M2 9 Q30 1 60 8 T118 8 T176 8 T238 6" stroke="#C9A84C" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+    </span></h1>
+    <p class="hero-sub">Choose Buy or Rent and filter by type, beds and price — or just describe what you want and let our AI find it, in Arabic or English.</p>
+    <div class="trust">
+      <span class="trust-item"><b>50,000+</b> Listings</span>
+      <span class="trust-dot"></span>
+      <span class="trust-item"><b>12,000+</b> Brokers</span>
+      <span class="trust-dot"></span>
+      <span class="trust-item">Riyadh · Jeddah · Dammam</span>
+    </div>
+  </div>
+
+  <!-- ===== SEARCH WIDGET (in banner) ===== -->
+  <div class="hero-search-wrap">
+    <div class="hero-search" id="heroSearch">
+      <div class="hs-tabs">
+        <button class="hs-tab active" data-purpose="Buy" onclick="setPurpose('Buy',this)">Buy</button>
+        <button class="hs-tab" data-purpose="Rent" onclick="setPurpose('Rent',this)">Rent</button>
+        <button class="hs-tab" data-purpose="Commercial" onclick="setPurpose('Commercial',this)">Commercial</button>
+        <button class="hs-tab" data-purpose="New Projects" onclick="setPurpose('New Projects',this)">New Projects</button>
+        <button class="hs-ai-toggle" id="aiToggle" onclick="toggleAI()">✨ Ask AI</button>
+      </div>
+
+      <!-- MANUAL SEARCH -->
+      <div class="hs-body" id="hsManualBody">
+        <div class="hs-manual">
+          <label class="hs-loc">
+            <span class="pin">📍</span>
+            <input id="locInput" type="text" placeholder="City or district — e.g. Al Malqa, Riyadh">
+          </label>
+
+          <div class="hsel" id="selType">
+            <button class="hsel-btn" onclick="toggleSel('selType')">
+              <span class="txt"><span class="cap">Property Type</span><span class="val" id="typeVal">Any Type</span></span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="hsel-panel" id="typePanel"></div>
+          </div>
+
+          <div class="hsel" id="selBeds">
+            <button class="hsel-btn" onclick="toggleSel('selBeds')">
+              <span class="txt"><span class="cap">Beds &amp; Baths</span><span class="val" id="bedsVal">Any</span></span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="hsel-panel" id="bedsPanel">
+              <div class="bb-group">
+                <div class="lbl">Bedrooms</div>
+                <div class="bb-pills" id="bedPills">
+                  <span class="bb-pill sel" data-v="Any">Any</span>
+                  <span class="bb-pill" data-v="Studio">Studio</span>
+                  <span class="bb-pill" data-v="1">1</span>
+                  <span class="bb-pill" data-v="2">2</span>
+                  <span class="bb-pill" data-v="3">3</span>
+                  <span class="bb-pill" data-v="4">4</span>
+                  <span class="bb-pill" data-v="5">5</span>
+                  <span class="bb-pill" data-v="6+">6+</span>
+                </div>
+              </div>
+              <div class="bb-group">
+                <div class="lbl">Bathrooms</div>
+                <div class="bb-pills" id="bathPills">
+                  <span class="bb-pill sel" data-v="Any">Any</span>
+                  <span class="bb-pill" data-v="1">1</span>
+                  <span class="bb-pill" data-v="2">2</span>
+                  <span class="bb-pill" data-v="3">3</span>
+                  <span class="bb-pill" data-v="4">4</span>
+                  <span class="bb-pill" data-v="5+">5+</span>
+                </div>
+              </div>
+              <button class="btn btn-navy btn-sm hsel-apply" onclick="applyBeds()">Apply</button>
+            </div>
+          </div>
+
+          <div class="hsel" id="selPrice">
+            <button class="hsel-btn" onclick="toggleSel('selPrice')">
+              <span class="txt"><span class="cap">Price (SAR)</span><span class="val" id="priceVal">Any Price</span></span>
+              <span class="chev">▼</span>
+            </button>
+            <div class="hsel-panel right" id="pricePanel" style="min-width:280px">
+              <div class="price-group"><div class="lbl">Minimum</div><select id="priceMin"></select></div>
+              <div class="price-group"><div class="lbl">Maximum</div><select id="priceMax"></select></div>
+              <button class="btn btn-navy btn-sm hsel-apply" onclick="applyPrice()">Apply</button>
+            </div>
+          </div>
+
+          <button class="hs-search-btn" onclick="runManualSearch()">🔍 Search</button>
+        </div>
+
+        <div class="hs-popular">
+          <span class="plabel">Popular:</span>
+          <button class="chip" onclick="quickSearch('Villa','Riyadh')">Villas in Riyadh</button>
+          <button class="chip" onclick="quickSearch('Apartment','Jeddah')">Apartments in Jeddah</button>
+          <button class="chip" onclick="quickSearch('Office','Al Khobar')">Offices in Al Khobar</button>
+          <button class="chip" onclick="quickSearch('Land','Riyadh')">Land in Riyadh</button>
+        </div>
+      </div>
+
+      <!-- AI SEARCH -->
+      <div class="hs-body" id="hsAiBody" style="display:none">
+        <div class="hs-ai-row">
+          <div class="ai-orb">🤖</div>
+          <input id="searchInput" type="text" placeholder="3 bedroom villa near a school in North Riyadh under SAR 2M...">
+          <div class="lang-badges"><span>AR</span><span>EN</span></div>
+          <button class="search-btn" onclick="runSearch()">Search with AI <span class="arrow">→</span></button>
+        </div>
+        <div class="hs-popular">
+          <span class="plabel">Try:</span>
+          <button class="chip" onclick="fillSearch(this)">Villa with pool in Riyadh</button>
+          <button class="chip" onclick="fillSearch(this)">Apartment under SAR 600K Jeddah</button>
+          <button class="chip" onclick="fillSearch(this)">Investment property high yield</button>
+          <button class="chip" onclick="fillSearch(this)">Family home near schools</button>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="hs-results">
+        <div class="results" id="results">
+          <div class="results-head">
+            <span class="tag" id="resultsTag">🔎 Results</span>
+            <span id="resultsText">Matching listings</span>
+            <button class="btn btn-outline btn-sm" style="margin-left:auto;height:32px;font-size:12.5px" onclick="saveThisSearch()">💾 Save this search</button>
+          </div>
+          <div class="results-grid" id="resultsGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 4. FEATURED ============ -->
+<section class="featured" id="featured">
+  <div class="wrap">
+    <div class="featured-head">
+      <div>
+        <span class="eyebrow">Handpicked</span>
+        <h2 class="sec-title">Featured Properties</h2>
+      </div>
+      <a href="map.html" class="view-all">View All on Map <span class="arrow">→</span></a>
+    </div>
+    <div class="filter-tabs" id="filterTabs">
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="villa">Villas</button>
+      <button class="tab" data-filter="apartment">Apartments</button>
+      <button class="tab" data-filter="commercial">Commercial</button>
+      <button class="tab" data-filter="land">Land</button>
+      <button class="tab" data-filter="new">New Developments</button>
+    </div>
+    <div class="prop-grid" id="propGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 5. AI FEATURES ============ -->
+<section class="aifeat" id="aifeat">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow" style="display:block">The SMART RE Advantage</span>
+      <h2 class="sec-title">Intelligence Built Into Every Step</h2>
+      <p class="sec-sub">Features that Bayut and Wasalt don't have — engineered for the Saudi market.</p>
+    </div>
+
+    <!-- Feature 1: Conversational Search -->
+    <div class="feat-row">
+      <div class="feat-visual">
+        <div class="chat-mock">
+          <div class="chat-top">
+            <span class="dot" style="background:#FF5F57"></span>
+            <span class="dot" style="background:#FEBC2E"></span>
+            <span class="dot" style="background:#28C840"></span>
+            <span class="avatar"><span class="ai">🤖</span> SMART RE Assistant</span>
+          </div>
+          <div class="chat-body" id="chatBody">
+            <div class="bubble user">I want a villa near a school in North Riyadh, 4 beds, garden, under SAR 2.5M</div>
+            <div class="typing" id="typingDots"><span></span><span></span><span></span></div>
+            <div class="bubble ai reveal" id="aiBubble">
+              I found <b>12 villas</b> matching your needs. The top match is in <b>Al Malqa</b> — 4 beds, large garden, 680m from King Abdullah School. <b>SAR 2.35M</b>.
+              <div class="chat-prop">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=300&q=80" alt="">
+                <div class="cp">
+                  <div class="t">Al Malqa Garden Villa</div>
+                  <div class="l">📍 Al Malqa, Riyadh</div>
+                  <div class="pr">SAR 2,350,000</div>
+                  <span class="m">AI Match 96%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="feat-text">
+        <span class="num">1</span>
+        <h3>Talk to Search</h3>
+        <p>Our conversational AI parses natural language in Arabic and English — understanding budget, location intent, lifestyle needs and proximity, then ranks every listing for you.</p>
+        <p class="feat-quote">"No filters. No dropdowns. Just describe what you want."</p>
+      </div>
+    </div>
+
+    <!-- Feature 2: AI Pricing -->
+    <div class="feat-row rev">
+      <div class="feat-visual">
+        <div class="price-widget">
+          <div class="pw-addr">📍 Villa 24, Hittin District, Riyadh</div>
+          <div class="pw-price">SAR 2,850,000</div>
+          <div class="pw-est">AI-estimated fair market value · updated today</div>
+          <div class="pw-mid">
+            <div class="pw-range">
+              <div class="lbl"><span>Low estimate</span><span>High estimate</span></div>
+              <div class="pw-track"><div class="fill"></div><div class="knob"></div></div>
+              <div class="vals"><span>SAR 2.61M</span><span>SAR 3.08M</span></div>
+            </div>
+            <div class="donut">
+              <svg width="96" height="96" viewBox="0 0 96 96">
+                <circle cx="48" cy="48" r="40" fill="none" stroke="#F1F5F9" stroke-width="9"/>
+                <circle cx="48" cy="48" r="40" fill="none" stroke="#C9A84C" stroke-width="9" stroke-linecap="round"
+                  stroke-dasharray="251.2" stroke-dashoffset="32.6"/>
+              </svg>
+              <div class="ctxt"><b>87%</b><small>Confidence</small></div>
+            </div>
+          </div>
+          <div class="pw-comps">
+            <div class="h">Comparable Sales</div>
+            <div class="comp"><span class="a"><span class="sq"></span>Villa 19, Hittin · 375 sqm</span><span class="p">SAR 2.79M</span></div>
+            <div class="comp"><span class="a"><span class="sq"></span>Villa 8, Al Nakheel · 390 sqm</span><span class="p">SAR 2.92M</span></div>
+            <div class="comp"><span class="a"><span class="sq"></span>Villa 41, Hittin · 360 sqm</span><span class="p">SAR 2.74M</span></div>
+          </div>
+          <span class="sell-badge">⚡ Predicted to sell in 28 days</span>
+        </div>
+      </div>
+      <div class="feat-text">
+        <span class="num">2</span>
+        <h3>Know the Right Price</h3>
+        <p>Our pricing engine analyses thousands of comparable transactions, district trends and property attributes to produce a fair-market valuation with a transparent confidence score.</p>
+        <ul class="feat-list">
+          <li><span class="tick">✓</span> Live comparable sales in the same district</li>
+          <li><span class="tick">✓</span> Confidence-scored valuation range</li>
+          <li><span class="tick">✓</span> Predicted days-to-sell forecast</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Feature 3: Virtual Staging -->
+    <div class="feat-row">
+      <div class="feat-visual">
+        <div class="stage-wrap" id="stageWrap">
+          <img class="stage-layer" id="stageStaged" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80" alt="AI staged furnished room">
+          <img class="stage-layer stage-clip" id="stageOriginal" src="https://images.unsplash.com/photo-1625585598750-3535fe40efb3?auto=format&fit=crop&w=900&q=80" alt="Original empty room">
+          <span class="stage-label orig">Original</span>
+          <span class="stage-label staged">AI Staged</span>
+          <div class="stage-divider" id="stageDivider">
+            <div class="stage-handle">↔</div>
+          </div>
+        </div>
+        <div class="style-pills" id="stylePills">
+          <button class="spill active" data-img="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80">Modern</button>
+          <button class="spill" data-img="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=80">Luxury</button>
+          <button class="spill" data-img="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=900&q=80">Scandi</button>
+          <button class="spill" data-img="https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=900&q=80">Art Deco</button>
+        </div>
+      </div>
+      <div class="feat-text">
+        <span class="num">3</span>
+        <h3>See the Potential</h3>
+        <p>Empty rooms don't sell. Our AI virtual staging furnishes any space in seconds — drag the slider to reveal the transformation and switch interior styles instantly.</p>
+        <p class="feat-quote">"Buyers imagine living there — and offers arrive faster."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. HOW IT WORKS ============ -->
+<section class="how" id="how">
+  <div class="wrap center">
+    <span class="eyebrow" style="display:block">Simple by Design</span>
+    <h2 class="sec-title">From Search to Signed — All in One Platform</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle c-indigo">🗣️<span class="step-num">1</span></div>
+        <h4>Describe What You Want</h4>
+        <p>Type or speak in Arabic or English — our AI understands.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle c-blue">🏠<span class="step-num">2</span></div>
+        <h4>Explore &amp; Tour</h4>
+        <p>Browse listings, take virtual 360° tours, use AI staging.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle c-green">📅<span class="step-num">3</span></div>
+        <h4>Book a Viewing</h4>
+        <p>AI coordinates buyer, seller, and broker — one click.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle c-gold">✍️<span class="step-num">4</span></div>
+        <h4>Sign &amp; Close</h4>
+        <p>Generate bilingual contracts, sign digitally, done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. NEIGHBORHOODS ============ -->
+<section class="hoods" id="hoods">
+  <div class="wrap center">
+    <span class="eyebrow" style="display:block">Neighborhood Intelligence</span>
+    <h2 class="sec-title">Explore by Neighborhood</h2>
+    <p class="sec-sub">AI-powered district scores help you choose the right area. <a href="area-compare.html" style="color:var(--gold);font-weight:600">Compare more areas →</a></p>
+  </div>
+  <div class="wrap">
+    <div class="hood-grid" id="hoodGrid">
+      <!-- Card 1 -->
+      <div class="hood-card">
+        <div class="hood-top">
+          <div>
+            <h3 class="hood-name">Al Malqa</h3>
+            <div class="hood-city">📍 Riyadh</div>
+          </div>
+          <div class="hood-score"><b>87</b><small>/ 100 Overall</small></div>
+        </div>
+        <div class="score-item"><div class="row"><span>School Proximity</span><span class="v">92/100</span></div><div class="score-track"><div class="score-fill f-blue" data-w="92"></div></div></div>
+        <div class="score-item"><div class="row"><span>Amenities</span><span class="v">88/100</span></div><div class="score-track"><div class="score-fill f-green" data-w="88"></div></div></div>
+        <div class="score-item"><div class="row"><span>Infrastructure</span><span class="v">90/100</span></div><div class="score-track"><div class="score-fill f-navy" data-w="90"></div></div></div>
+        <div class="score-item"><div class="row"><span>Connectivity</span><span class="v">84/100</span></div><div class="score-track"><div class="score-fill f-amber" data-w="84"></div></div></div>
+        <a class="btn btn-outline" href="map.html">View Properties <span class="arrow">→</span></a>
+      </div>
+      <!-- Card 2 -->
+      <div class="hood-card">
+        <div class="hood-top">
+          <div>
+            <h3 class="hood-name">Al Rawdah</h3>
+            <div class="hood-city">📍 Jeddah</div>
+          </div>
+          <div class="hood-score"><b>82</b><small>/ 100 Overall</small></div>
+        </div>
+        <div class="score-item"><div class="row"><span>School Proximity</span><span class="v">79/100</span></div><div class="score-track"><div class="score-fill f-blue" data-w="79"></div></div></div>
+        <div class="score-item"><div class="row"><span>Amenities</span><span class="v">91/100</span></div><div class="score-track"><div class="score-fill f-green" data-w="91"></div></div></div>
+        <div class="score-item"><div class="row"><span>Infrastructure</span><span class="v">74/100</span></div><div class="score-track"><div class="score-fill f-navy" data-w="74"></div></div></div>
+        <div class="score-item"><div class="row"><span>Connectivity</span><span class="v">86/100</span></div><div class="score-track"><div class="score-fill f-amber" data-w="86"></div></div></div>
+        <a class="btn btn-outline" href="map.html">View Properties <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. BROKERS ============ -->
+<section class="brokers" id="brokers">
+  <div class="wrap">
+    <div class="head">
+      <h2>For Real Estate Professionals</h2>
+      <p>AI tools that help brokers close more deals</p>
+    </div>
+    <div class="bcards">
+      <div class="bcard">
+        <div class="ic">🎯</div>
+        <h4>AI Lead Scoring</h4>
+        <p>Every lead scored automatically. Focus on buyers who are ready to transact.</p>
+      </div>
+      <div class="bcard">
+        <div class="ic">✍️</div>
+        <h4>AI Follow-Up Drafting</h4>
+        <p>AI writes personalised messages per lead. You review and send.</p>
+      </div>
+      <div class="bcard">
+        <div class="ic">📅</div>
+        <h4>Smart Scheduling</h4>
+        <p>Viewing coordination handled automatically across all parties.</p>
+      </div>
+    </div>
+
+    <div class="crm">
+      <div class="crm-head">
+        <div class="t">Your Deal Pipeline <span>Live view · Ahmed Al-Rashidi · Riyadh Office</span></div>
+        <button class="btn btn-gold btn-sm">Join 12,000+ Brokers</button>
+      </div>
+      <div class="pipeline">
+        <div class="stage"><div class="sname"><span class="sdot d-new"></span>New</div><div class="scount">12</div><span class="arw">→</span></div>
+        <div class="stage"><div class="sname"><span class="sdot d-contacted"></span>Contacted</div><div class="scount">8</div><span class="arw">→</span></div>
+        <div class="stage"><div class="sname"><span class="sdot d-viewing"></span>Viewing</div><div class="scount">5</div><span class="arw">→</span></div>
+        <div class="stage"><div class="sname"><span class="sdot d-offer"></span>Offer</div><div class="scount">3</div><span class="arw">→</span></div>
+        <div class="stage"><div class="sname"><span class="sdot d-closed"></span>Closed</div><div class="scount">2</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9. APP DOWNLOAD ============ -->
+<section class="appdl">
+  <div class="wrap appdl-inner">
+    <div class="appdl-text">
+      <h2>Take SMART RE Everywhere</h2>
+      <p>Full platform on iOS and Android. Search, tour, and close deals in Arabic and English — wherever you are.</p>
+      <div class="store-btns">
+        <a class="store-btn"><span class="ic"></span><span class="tx"><small>Download on the</small><b>App Store</b></span></a>
+        <a class="store-btn"><span class="ic">▶</span><span class="tx"><small>GET IT ON</small><b>Google Play</b></span></a>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="ph-hero" style="background-image:url('https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=500&q=80')">
+            <span class="ph-badge">🤖 AI PRICED</span>
+          </div>
+          <div class="ph-body">
+            <div class="ph-t">Al Malqa Villa</div>
+            <div class="ph-l">📍 North Riyadh</div>
+            <div class="ph-p">SAR 2,850,000</div>
+            <div class="ph-search"><span class="o">🤖</span> Describe your dream home...</div>
+            <div class="ph-mini">
+              <div class="m" style="background-image:url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=300&q=80')"></div>
+              <div class="m" style="background-image:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=300&q=80')"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div></div>
+  </div>
+</section>
+
+<!-- ============ 10. FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+        <div class="social">
+          <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.2 8h4.6v14H.2V8zm7.4 0h4.4v1.9h.06c.6-1.1 2.08-2.26 4.28-2.26 4.58 0 5.42 3 5.42 6.9V22h-4.6v-6.6c0-1.58-.03-3.6-2.2-3.6-2.2 0-2.54 1.72-2.54 3.5V22H7.6V8z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" aria-label="X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2h3.3l-7.2 8.3L23.5 22h-6.6l-5.2-6.8L5.8 22H2.5l7.7-8.8L1.5 2h6.8l4.7 6.2L18.9 2zm-1.2 18h1.8L7.1 3.9H5.2L17.7 20z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>Platform</h5>
+        <a href="#heroSearch" onclick="setPurpose('Buy')">Buy</a>
+        <a href="#heroSearch" onclick="setPurpose('Rent')">Rent</a>
+        <a href="map.html">Map Search</a>
+        <a href="blog.html">Market Insights</a>
+        <a href="mortgage-calculator.html">Mortgage Calculator</a>
+      </div>
+      <div class="foot-col">
+        <h5>Tools</h5>
+        <a href="compare.html">Compare Properties</a>
+        <a href="area-compare.html">Compare Areas</a>
+        <a href="invest.html">Investment View</a>
+        <a href="saved.html">Saved Properties</a>
+      </div>
+      <div class="foot-col">
+        <h5>For Brokers</h5>
+        <a href="#brokers">Join as Broker</a><a href="#brokers">AI CRM</a><a href="#">Pricing Tool</a><a href="#">Success Stories</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="#">About</a><a href="#">Careers</a><a href="#">Press</a><a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="foot-trust">
+      <span class="lbl">Integrated With</span>
+      <span class="trust-badge"><span class="ic">🛡️</span> MOJ Deed Verification</span>
+      <span class="trust-badge"><span class="ic">🪪</span> Absher Identity</span>
+      <span class="trust-badge"><span class="ic">🏛️</span> Balady Compliance</span>
+      <span class="trust-badge"><span class="ic">💳</span> Moyasar · Stripe Payments</span>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved. · Available on iOS &amp; Android · Arabic &amp; English</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookie Policy</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span>
+  <span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head">
+    <div class="av">🤖<span class="on"></span></div>
+    <div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div>
+    <div class="x" onclick="toggleChat()" aria-label="Close chat">✕</div>
+  </div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick">
+    <button onclick="cbotQuick('Villas in Riyadh under SAR 3M')">🏡 Villas in Riyadh</button>
+    <button onclick="cbotQuick('I want to rent an apartment in Jeddah')">🔑 Rent in Jeddah</button>
+    <button onclick="cbotQuick('Book a viewing')">📅 Book a viewing</button>
+    <button onclick="cbotQuick('Connect me with a broker')">👤 Talk to a broker</button>
+  </div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()" aria-label="Send message">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+/* ---------- Featured grid (shared dataset, compare-enabled) ---------- */
+document.getElementById('propGrid').innerHTML = PROPS.map(p=>propCard(p,{compare:true})).join('');
+
+/* ============ HERO SEARCH WIDGET ============ */
+const PTYPES=['Any Type','Villa','Apartment','Townhouse','Penthouse','Duplex','Compound','Land','Office','Shop'];
+const PRICES=[['300000','SAR 300K'],['500000','SAR 500K'],['750000','SAR 750K'],['1000000','SAR 1M'],['1500000','SAR 1.5M'],['2000000','SAR 2M'],['3000000','SAR 3M'],['5000000','SAR 5M'],['7500000','SAR 7.5M'],['10000000','SAR 10M+']];
+const state={purpose:'Buy',type:'Any Type',beds:'Any',baths:'Any',min:'0',max:'0'};
+
+document.getElementById('typePanel').innerHTML = PTYPES.map(t=>`<div class="opt${t==='Any Type'?' sel':''}" data-v="${t}" onclick="pickType(this)">${t}</div>`).join('');
+const _minSel=document.getElementById('priceMin'), _maxSel=document.getElementById('priceMax');
+_minSel.innerHTML='<option value="0">No min</option>'+PRICES.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('');
+_maxSel.innerHTML='<option value="0">No max</option>'+PRICES.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('');
+
+function setPurpose(p,el){
+  state.purpose=p;
+  document.querySelectorAll('.hs-tab').forEach(x=>x.classList.toggle('active', x.dataset.purpose===p));
+}
+
+function toggleSel(id){
+  const el=document.getElementById(id), wasOpen=el.classList.contains('open');
+  document.querySelectorAll('.hsel').forEach(s=>s.classList.remove('open'));
+  if(!wasOpen){
+    el.classList.add('open');
+    const btn=el.querySelector('.hsel-btn'), panel=el.querySelector('.hsel-panel');
+    const spaceBelow=window.innerHeight - btn.getBoundingClientRect().bottom;
+    panel.classList.toggle('up', spaceBelow < 300);
+  }
+}
+document.addEventListener('click',e=>{ if(!e.target.closest('.hsel')) document.querySelectorAll('.hsel').forEach(s=>s.classList.remove('open')); });
+
+function pickType(el){
+  document.querySelectorAll('#typePanel .opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel'); state.type=el.dataset.v;
+  document.getElementById('typeVal').textContent=el.dataset.v;
+  document.getElementById('selType').classList.remove('open');
+}
+
+let _beds='Any',_baths='Any';
+document.querySelectorAll('#bedPills .bb-pill').forEach(p=>p.addEventListener('click',()=>{
+  document.querySelectorAll('#bedPills .bb-pill').forEach(x=>x.classList.remove('sel')); p.classList.add('sel'); _beds=p.dataset.v;
+}));
+document.querySelectorAll('#bathPills .bb-pill').forEach(p=>p.addEventListener('click',()=>{
+  document.querySelectorAll('#bathPills .bb-pill').forEach(x=>x.classList.remove('sel')); p.classList.add('sel'); _baths=p.dataset.v;
+}));
+function applyBeds(){
+  state.beds=_beds; state.baths=_baths;
+  const parts=[];
+  if(_beds==='Studio') parts.push('Studio'); else if(_beds!=='Any') parts.push(_beds+' Bd');
+  if(_baths!=='Any') parts.push(_baths+' Ba');
+  document.getElementById('bedsVal').textContent = parts.length?parts.join(' · '):'Any';
+  document.getElementById('selBeds').classList.remove('open');
+}
+
+function applyPrice(){
+  state.min=_minSel.value; state.max=_maxSel.value;
+  const fmt=v=>{ const f=PRICES.find(p=>p[0]===v); return f?f[1]:''; };
+  const mn=state.min!=='0'?fmt(state.min):'', mx=state.max!=='0'?fmt(state.max):'';
+  document.getElementById('priceVal').textContent = (mn||mx) ? (mn||'Any')+' – '+(mx||'Any') : 'Any Price';
+  document.getElementById('selPrice').classList.remove('open');
+}
+
+function toggleAI(){
+  const btn=document.getElementById('aiToggle');
+  const on=btn.classList.toggle('on');
+  btn.innerHTML = on ? '⌨ Manual' : '✨ Ask AI';
+  document.getElementById('hsManualBody').style.display = on?'none':'block';
+  document.getElementById('hsAiBody').style.display = on?'block':'none';
+  setTimeout(()=>{ const t=on?document.getElementById('searchInput'):document.getElementById('locInput'); if(t) t.focus(); },40);
+}
+
+function openResults(){
+  const panel=document.getElementById('results');
+  panel.classList.add('open');
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),140);
+}
+
+let lastSearchSummary = '';
+
+function filterProps(){
+  const loc = document.getElementById('locInput').value.trim().toLowerCase();
+  let list = PROPS.filter(p=>{
+    if(state.type!=='Any Type' && p.type!==state.type) return false;
+    if(loc && !(p.loc.toLowerCase().includes(loc) || p.city.toLowerCase().includes(loc))) return false;
+    if(state.min!=='0' && p.price < +state.min) return false;
+    if(state.max!=='0' && p.price > +state.max) return false;
+    if(state.beds!=='Any' && state.beds!=='Studio'){
+      const want = state.beds==='6+' ? 6 : +state.beds;
+      if(state.beds==='6+' ? p.beds<6 : p.beds!==want) return false;
+    }
+    return true;
+  });
+  if(list.length===0) list = PROPS.filter(p=> state.type==='Any Type' || p.type===state.type).slice(0,3);
+  if(list.length===0) list = PROPS.slice(0,3);
+  return list.slice(0,6);
+}
+
+function runManualSearch(){
+  const loc=document.getElementById('locInput').value.trim();
+  const noun = state.type!=='Any Type' ? state.type+'s' : (state.purpose==='Commercial'?'Commercial units':'Properties');
+  let s = noun + ' ' + (state.purpose==='Rent'?'for rent':state.purpose==='New Projects'?'in new developments':state.purpose==='Commercial'?'available':'for sale');
+  if(loc) s += ' in ' + loc;
+  const bb=document.getElementById('bedsVal').textContent; if(bb!=='Any') s+=' · '+bb;
+  const pr=document.getElementById('priceVal').textContent; if(pr!=='Any Price') s+=' · '+pr;
+  const results = filterProps();
+  lastSearchSummary = s;
+  document.getElementById('resultsTag').textContent='🔎 '+state.purpose;
+  document.getElementById('resultsText').textContent = results.length+' listings — '+s;
+  document.getElementById('resultsGrid').innerHTML = results.map(p=>propCard(p)).join('');
+  openResults();
+}
+
+function quickSearch(type,city){
+  if(document.getElementById('aiToggle').classList.contains('on')) toggleAI();
+  document.getElementById('locInput').value=city;
+  const opt=[...document.querySelectorAll('#typePanel .opt')].find(o=>o.dataset.v===type);
+  if(opt) pickType(opt);
+  runManualSearch();
+}
+
+function fillSearch(el){ const i=document.getElementById('searchInput'); i.value = el.textContent.trim(); i.focus(); }
+function runSearch(){
+  const q=document.getElementById('searchInput').value.trim();
+  lastSearchSummary = q || 'AI description search';
+  document.getElementById('resultsTag').textContent='🤖 AI';
+  document.getElementById('resultsText').textContent = q
+    ? `Found 3 AI matches for "${q.length>46?q.slice(0,46)+'…':q}"`
+    : 'Found 3 AI matches based on your description';
+  const results = PROPS.filter(p=>p.aiScore).sort((a,b)=>b.aiScore-a.aiScore).slice(0,3);
+  document.getElementById('resultsGrid').innerHTML = results.map(p=>propCard(p)).join('');
+  openResults();
+}
+document.getElementById('searchInput').addEventListener('keydown',e=>{ if(e.key==='Enter') runSearch(); });
+document.getElementById('locInput').addEventListener('keydown',e=>{ if(e.key==='Enter') runManualSearch(); });
+
+function saveThisSearch(){
+  addSavedSearch(lastSearchSummary || 'Custom search', state.purpose);
+}
+
+/* ---------- Filter tabs ---------- */
+document.querySelectorAll('#filterTabs .tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('#filterTabs .tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const f=tab.dataset.filter;
+    document.querySelectorAll('#propGrid .prop').forEach(card=>{
+      card.classList.toggle('hide', !(f==='all' || card.dataset.cat===f));
+    });
+  });
+});
+
+/* ---------- Chat mockup typing animation ---------- */
+function playChat(){
+  const dots=document.getElementById('typingDots');
+  const bubble=document.getElementById('aiBubble');
+  dots.classList.remove('hidden'); bubble.classList.remove('show');
+  setTimeout(()=>{ dots.classList.add('hidden'); bubble.classList.add('show'); }, 2400);
+}
+setTimeout(playChat, 700);
+const chatObs=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{ if(en.isIntersecting){ playChat(); } });
+},{threshold:.5});
+chatObs.observe(document.getElementById('chatBody'));
+
+/* ---------- Neighborhood score bars ---------- */
+const hoodObs=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      en.target.querySelectorAll('.score-fill').forEach((bar,i)=>{
+        setTimeout(()=>{ bar.style.width = bar.dataset.w + '%'; }, i*140);
+      });
+      hoodObs.unobserve(en.target);
+    }
+  });
+},{threshold:.35});
+document.querySelectorAll('.hood-card').forEach(c=>hoodObs.observe(c));
+
+/* ---------- Before/After draggable divider ---------- */
+(function(){
+  const wrap=document.getElementById('stageWrap');
+  const orig=document.getElementById('stageOriginal');
+  const divider=document.getElementById('stageDivider');
+  let dragging=false;
+  function setPos(clientX){
+    const r=wrap.getBoundingClientRect();
+    let x=(clientX-r.left)/r.width*100;
+    x=Math.max(4,Math.min(96,x));
+    orig.style.clipPath='inset(0 '+(100-x)+'% 0 0)';
+    divider.style.left=x+'%';
+  }
+  const start=()=>dragging=true;
+  const end=()=>dragging=false;
+  divider.addEventListener('mousedown',start);
+  window.addEventListener('mouseup',end);
+  window.addEventListener('mousemove',e=>{ if(dragging) setPos(e.clientX); });
+  wrap.addEventListener('click',e=>{ if(e.target!==divider && !divider.contains(e.target)) setPos(e.clientX); });
+  divider.addEventListener('touchstart',start,{passive:true});
+  window.addEventListener('touchend',end);
+  window.addEventListener('touchmove',e=>{ if(dragging && e.touches[0]) setPos(e.touches[0].clientX); },{passive:true});
+})();
+
+/* ---------- Staging style pills ---------- */
+document.querySelectorAll('#stylePills .spill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('#stylePills .spill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    const img=document.getElementById('stageStaged');
+    img.style.opacity=0;
+    setTimeout(()=>{ img.src=p.dataset.img; img.style.opacity=1; },160);
+  });
+});
+document.getElementById('stageStaged').style.transition='opacity .25s ease';
+</script>
+</body>
+</html>

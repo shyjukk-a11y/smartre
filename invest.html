@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investment View — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.appr-chart{display:flex;align-items:flex-end;gap:18px;height:220px;padding:0 10px}
+.appr-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.appr-bar{width:100%;max-width:64px;background:linear-gradient(180deg,var(--gold-soft),var(--gold));border-radius:8px 8px 0 0;transition:height 1s cubic-bezier(.22,1,.36,1);position:relative}
+.appr-bar .val{position:absolute;top:-24px;left:0;right:0;text-align:center;font-size:12px;font-weight:700;color:var(--navy)}
+.appr-bar-col .yr{margin-top:10px;font-size:12px;color:var(--muted);font-weight:600}
+.appr-slider{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.appr-slider input{flex:1;accent-color:var(--gold)}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="index.html#heroSearch">Buy</a>
+      <a href="index.html#heroSearch">Rent</a>
+      <a href="map.html">Map</a>
+      <a href="compare.html">Compare</a>
+      <a href="blog.html">Insights</a>
+      <a href="invest.html" class="active">Invest</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel"><div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div><div class="notif-list" id="notifList"></div></div>
+      </div>
+      <a class="nav-icon-btn" href="saved.html" aria-label="Saved properties">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="nb-count hide" id="savedCount">0</span>
+      </a>
+      <button class="btn btn-outline btn-sm">Sign In</button>
+      <button class="btn btn-navy btn-sm">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span class="cur">Investment View</span></div>
+    <h1>Investment View</h1>
+    <p>Rental yield, cap rate, cash-on-cash return and appreciation projections — computed per listing.</p>
+  </div>
+</div>
+
+<div class="wrap" style="padding:36px 0 80px">
+  <div class="invest-picker" id="invPicker"></div>
+
+  <div class="invest-tiles" id="invTiles"></div>
+
+  <div class="invest-chart-box">
+    <div class="h">5-Year Value Projection</div>
+    <div class="appr-slider">
+      <span style="font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap">Annual Appreciation</span>
+      <input type="range" id="apprRate" min="1" max="12" step="0.5" value="6" oninput="renderChart()">
+      <span style="font-size:14px;font-weight:700;color:var(--navy);min-width:44px" id="apprRateLbl">6%</span>
+    </div>
+    <div class="appr-chart" id="apprChart"></div>
+  </div>
+
+  <div class="invest-chart-box">
+    <div class="h">How These Numbers Are Calculated</div>
+    <p style="font-size:14px;color:#374151;line-height:1.8">
+      <b>Gross Yield</b> = estimated annual rent ÷ purchase price.
+      <b>Net Yield / Cap Rate</b> assumes 25% of rent goes to management, maintenance and vacancy.
+      <b>Cash-on-Cash Return</b> assumes a 20% down payment at 4.5% APR over 25 years, comparing net income after mortgage payments to your cash invested.
+      These are illustrative estimates for this demo, not a guarantee of investment performance.
+    </p>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+      </div>
+      <div class="foot-col"><h5>Platform</h5><a href="index.html">Buy</a><a href="index.html">Rent</a><a href="map.html">Map Search</a><a href="blog.html">Market Insights</a><a href="mortgage-calculator.html">Mortgage Calculator</a></div>
+      <div class="foot-col"><h5>Tools</h5><a href="compare.html">Compare Properties</a><a href="area-compare.html">Compare Areas</a><a href="invest.html">Investment View</a><a href="saved.html">Saved Properties</a></div>
+      <div class="foot-col"><h5>Company</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
+    </div>
+    <div class="foot-trust">
+      <span class="lbl">Integrated With</span>
+      <span class="trust-badge"><span class="ic">🛡️</span> MOJ Deed Verification</span>
+      <span class="trust-badge"><span class="ic">🪪</span> Absher Identity</span>
+      <span class="trust-badge"><span class="ic">🏛️</span> Balady Compliance</span>
+      <span class="trust-badge"><span class="ic">💳</span> Moyasar · Stripe Payments</span>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved.</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span><span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head"><div class="av">🤖<span class="on"></span></div><div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div><div class="x" onclick="toggleChat()">✕</div></div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick"><button onclick="cbotQuick('Villas in Riyadh')">🏡 Villas in Riyadh</button></div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+const investable = PROPS.filter(p=>p.rentYield);
+let curId = investable[0].id;
+const params = new URLSearchParams(location.search);
+if(params.get('id') && propById(params.get('id'))?.rentYield) curId = +params.get('id');
+
+function renderPicker(){
+  document.getElementById('invPicker').innerHTML = investable.map(p=>
+    `<button class="chip ${p.id===curId?'sel':''}" onclick="pick(${p.id})">${p.title}</button>`).join('');
+}
+function pick(id){ curId = id; renderPicker(); renderTiles(); renderChart(); }
+
+function renderTiles(){
+  const p = propById(curId);
+  const annualRent = p.price * (p.rentYield/100);
+  const monthlyRent = annualRent/12;
+  const opex = 0.25;
+  const noi = annualRent * (1-opex);
+  const netYield = (noi/p.price)*100;
+  const m = calcMortgage(p.price, 20, 4.5, 25);
+  const annualMortgage = m.monthly*12;
+  const cashInvested = m.down;
+  const cashOnCash = ((noi - annualMortgage)/cashInvested)*100;
+
+  const tiles = [
+    ['Gross Rental Yield', p.rentYield.toFixed(1)+'%', 'Annual rent ÷ price', true],
+    ['Net Yield / Cap Rate', netYield.toFixed(1)+'%', 'After 25% operating costs', true],
+    ['Est. Monthly Rent', fmtSAR(Math.round(monthlyRent)), 'Based on gross yield', null],
+    ['Cash-on-Cash Return', cashOnCash.toFixed(1)+'%', '20% down · 4.5% · 25yr', cashOnCash>=0]
+  ];
+  document.getElementById('invTiles').innerHTML = tiles.map(t=>`
+    <div class="invest-tile">
+      <div class="lbl">${t[0]}</div>
+      <div class="val">${t[1]}</div>
+      <div class="sub${t[3]===false?' neg':''}">${t[2]}</div>
+    </div>`).join('');
+}
+
+function renderChart(){
+  const p = propById(curId);
+  const rate = +document.getElementById('apprRate').value;
+  document.getElementById('apprRateLbl').textContent = rate+'%';
+  const years = [0,1,2,3,4,5];
+  const values = years.map(y => p.price * Math.pow(1+rate/100, y));
+  const max = values[values.length-1];
+  document.getElementById('apprChart').innerHTML = years.map((y,i)=>{
+    const h = Math.round((values[i]/max)*180)+20;
+    return `<div class="appr-bar-col">
+      <div class="appr-bar" style="height:${h}px"><span class="val">${(values[i]/1000000).toFixed(2)}M</span></div>
+      <span class="yr">${y===0?'Today':'Year '+y}</span>
+    </div>`;
+  }).join('');
+}
+
+renderPicker();
+renderTiles();
+renderChart();
+</script>
+</body>
+</html>

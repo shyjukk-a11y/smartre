@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Details — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <span class="en">SMART RE</span>
+      <span class="ar">سمارت ري</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#heroSearch">Buy</a>
+      <a href="index.html#heroSearch">Rent</a>
+      <a href="map.html">Map</a>
+      <a href="compare.html">Compare</a>
+      <a href="blog.html">Insights</a>
+      <a href="invest.html">Invest</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel">
+          <div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div>
+          <div class="notif-list" id="notifList"></div>
+        </div>
+      </div>
+      <a class="nav-icon-btn" href="saved.html" aria-label="Saved properties">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="nb-count hide" id="savedCount">0</span>
+      </a>
+      <button class="btn btn-outline btn-sm">Sign In</button>
+      <button class="btn btn-navy btn-sm">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="breadcrumb" style="margin-top:20px">
+    <a href="index.html">Home</a><span class="sep">/</span>
+    <a href="index.html#featured">Properties</a><span class="sep">/</span>
+    <span class="cur" id="bcTitle">Property</span>
+  </div>
+</div>
+
+<div class="wrap pd-layout">
+  <!-- ===== MAIN COLUMN ===== -->
+  <div class="pd-main">
+    <div class="pd-gallery">
+      <div class="pd-gallery-main">
+        <img id="galMain" src="" alt="">
+        <div class="pd-gallery-badges"><span class="prop-tag tag-featured" id="galTag">Featured</span></div>
+        <button class="pd-gallery-nav prev" onclick="galStep(-1)" aria-label="Previous photo">‹</button>
+        <button class="pd-gallery-nav next" onclick="galStep(1)" aria-label="Next photo">›</button>
+        <span class="pd-gallery-count" id="galCount">1 / 1</span>
+        <button class="pd-tour-btn" onclick="openTour()">▶ Video &amp; 360° Tour</button>
+      </div>
+      <div class="pd-gallery-thumbs" id="galThumbs"></div>
+    </div>
+
+    <div class="pd-head">
+      <div class="pd-title">
+        <h1 id="pdTitle">—</h1>
+        <div class="pd-loc">📍 <span id="pdLoc">—</span></div>
+      </div>
+      <div class="pd-price-block">
+        <div class="pd-price" id="pdPrice">—</div>
+        <div class="pd-price-sub" id="pdPriceSub">AI-estimated fair value</div>
+      </div>
+    </div>
+
+    <div class="pd-actions">
+      <button class="btn btn-gold btn-lg" onclick="openReserve()">Reserve This Property</button>
+      <button class="btn btn-navy" onclick="openEnquiry()">✉ Contact Agent</button>
+      <button class="heart-btn" id="pdHeartBtn" style="width:48px;height:48px" onclick="pdToggleSave()" aria-label="Save">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.9-10-9.3C.4 8.4 2 4.5 5.5 4.5c2 0 3.4 1.2 4.5 2.6 1.1-1.4 2.5-2.6 4.5-2.6 3.5 0 5.1 3.9 3.5 7.2C19.5 16.1 12 21 12 21z" stroke-width="1.8"/></svg>
+      </button>
+      <label class="btn btn-outline" style="cursor:pointer">
+        <input type="checkbox" id="pdCompareChk" style="margin-right:2px;accent-color:var(--navy)" onchange="pdToggleCompare(this)"> Add to Compare
+      </label>
+    </div>
+
+    <div class="pd-stats" id="pdStats"></div>
+
+    <div class="pd-tabs">
+      <button class="pd-tab active" data-tab="overview" onclick="pdTab('overview',this)">Overview</button>
+      <button class="pd-tab" data-tab="floorplan" onclick="pdTab('floorplan',this)">Floor Plan</button>
+      <button class="pd-tab" data-tab="location" onclick="pdTab('location',this)">Location</button>
+      <button class="pd-tab" data-tab="pricing" onclick="pdTab('pricing',this)">AI Pricing</button>
+    </div>
+
+    <div class="pd-tabpanel active" id="tab-overview">
+      <p class="pd-desc" id="pdDesc">—</p>
+      <div class="pd-amenities" id="pdAmenities"></div>
+    </div>
+
+    <div class="pd-tabpanel" id="tab-floorplan">
+      <div class="floorplan-box">
+        <div id="floorplanSvgHolder"></div>
+        <div class="floorplan-legend">
+          <div class="li"><span>Total Area</span><b id="fpArea">—</b></div>
+          <div class="li"><span>Bedrooms</span><b id="fpBeds">—</b></div>
+          <div class="li"><span>Bathrooms</span><b id="fpBaths">—</b></div>
+          <div class="li"><span>Year Built</span><b id="fpYear">—</b></div>
+          <p style="margin-top:14px;font-size:12.5px;color:var(--muted)">Schematic layout for illustration — actual room dimensions may vary.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pd-tabpanel" id="tab-location">
+      <div id="pdMiniMap" style="height:340px;border-radius:14px;overflow:hidden;border:1px solid var(--border)"></div>
+      <p style="margin-top:14px;font-size:13.5px;color:var(--muted)">Exact pin location shown for illustration. <a href="map.html" style="color:var(--gold);font-weight:600">Open full map search →</a></p>
+    </div>
+
+    <div class="pd-tabpanel" id="tab-pricing">
+      <div class="price-widget" style="padding:0;box-shadow:none;border:none">
+        <div class="pw-addr">📍 <span id="pwAddr">—</span></div>
+        <div class="pw-price" id="pwPrice">—</div>
+        <div class="pw-est">AI-estimated fair market value · updated today</div>
+        <div class="pw-mid">
+          <div class="pw-range">
+            <div class="lbl"><span>Low estimate</span><span>High estimate</span></div>
+            <div class="pw-track"><div class="fill"></div><div class="knob"></div></div>
+            <div class="vals"><span id="pwLow">—</span><span id="pwHigh">—</span></div>
+          </div>
+          <div class="donut">
+            <svg width="96" height="96" viewBox="0 0 96 96">
+              <circle cx="48" cy="48" r="40" fill="none" stroke="#F1F5F9" stroke-width="9"/>
+              <circle cx="48" cy="48" r="40" fill="none" stroke="#C9A84C" stroke-width="9" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="32.6"/>
+            </svg>
+            <div class="ctxt"><b>87%</b><small>Confidence</small></div>
+          </div>
+        </div>
+        <span class="sell-badge" id="pwSellBadge">⚡ Predicted to sell in 24 days</span>
+      </div>
+    </div>
+
+    <!-- Similar properties -->
+    <div style="margin-top:56px">
+      <h3 style="font-size:22px;margin-bottom:18px">Similar Properties</h3>
+      <div class="similar-row" id="similarRow"></div>
+    </div>
+  </div>
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="pd-side">
+    <div class="agent-card">
+      <div class="top">
+        <img id="agAvatar" src="" alt="">
+        <div><b id="agName">—</b><span id="agRole">—</span><div class="stars">★★★★★ 4.9</div></div>
+      </div>
+      <button class="btn btn-navy btn-block" onclick="openEnquiry()">✉ Send Enquiry</button>
+      <button class="btn btn-outline btn-block" id="agCallBtn">📞 Call Agent</button>
+    </div>
+
+    <div class="mcalc">
+      <div class="h">🧮 Mortgage Estimate</div>
+      <div class="mcalc-row">
+        <div class="lbl"><span>Down payment</span><b id="mDownLbl">20%</b></div>
+        <input type="range" id="mDown" min="10" max="60" value="20" step="5" oninput="mcalcRun()">
+      </div>
+      <div class="mcalc-row">
+        <div class="lbl"><span>Interest rate</span><b id="mRateLbl">4.5%</b></div>
+        <input type="range" id="mRate" min="2" max="8" value="4.5" step="0.1" oninput="mcalcRun()">
+      </div>
+      <div class="mcalc-row">
+        <div class="lbl"><span>Term</span><b id="mYearsLbl">25 yrs</b></div>
+        <input type="range" id="mYears" min="5" max="30" value="25" step="1" oninput="mcalcRun()">
+      </div>
+      <div class="mcalc-result">
+        <div class="big" id="mMonthly">—</div>
+        <div class="sm">Estimated monthly payment</div>
+      </div>
+      <a href="mortgage-calculator.html" class="btn btn-outline btn-block" style="margin-top:14px;height:40px;font-size:13px">Open Full Calculator</a>
+    </div>
+
+    <div class="trust-box">
+      <div class="h">Verified &amp; Compliant</div>
+      <div class="trust-row"><span class="ic">🛡️</span> Deed Verification — MOJ</div>
+      <div class="trust-row"><span class="ic">🪪</span> Identity Verified via Absher</div>
+      <div class="trust-row"><span class="ic">🏛️</span> Balady-Compliant Listing</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+      </div>
+      <div class="foot-col"><h5>Platform</h5><a href="index.html">Buy</a><a href="index.html">Rent</a><a href="map.html">Map Search</a><a href="blog.html">Market Insights</a><a href="mortgage-calculator.html">Mortgage Calculator</a></div>
+      <div class="foot-col"><h5>Tools</h5><a href="compare.html">Compare Properties</a><a href="area-compare.html">Compare Areas</a><a href="invest.html">Investment View</a><a href="saved.html">Saved Properties</a></div>
+      <div class="foot-col"><h5>Company</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
+    </div>
+    <div class="foot-trust">
+      <span class="lbl">Integrated With</span>
+      <span class="trust-badge"><span class="ic">🛡️</span> MOJ Deed Verification</span>
+      <span class="trust-badge"><span class="ic">🪪</span> Absher Identity</span>
+      <span class="trust-badge"><span class="ic">🏛️</span> Balady Compliance</span>
+      <span class="trust-badge"><span class="ic">💳</span> Moyasar · Stripe Payments</span>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved.</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ ENQUIRY MODAL ============ -->
+<div class="modal-overlay" id="enquiryOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Contact Agent</h3><div class="modal-close" onclick="closeModal('enquiryOverlay')">✕</div></div>
+    <div class="modal-body" id="enquiryBody">
+      <form id="enquiryForm" onsubmit="return submitEnquiry(event)">
+        <div class="field" id="fName"><label>Full Name</label><input type="text" id="enqName"><div class="err">Please enter your name</div></div>
+        <div class="field-row">
+          <div class="field" id="fPhone"><label>Phone</label><input type="tel" id="enqPhone" placeholder="+966"><div class="err">Please enter a valid phone</div></div>
+          <div class="field" id="fEmail"><label>Email</label><input type="email" id="enqEmail"><div class="err">Please enter a valid email</div></div>
+        </div>
+        <div class="field"><label>Message</label><textarea id="enqMsg">Hi, I'm interested in this property. Please share more details and availability for a viewing.</textarea></div>
+        <button class="btn btn-navy btn-block btn-lg" type="submit">Send Enquiry</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RESERVE / PAYMENT MODAL ============ -->
+<div class="modal-overlay" id="reserveOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3 id="reserveHeadTitle">Reserve Property</h3><div class="modal-close" onclick="closeModal('reserveOverlay')">✕</div></div>
+    <div class="modal-body" id="reserveBody">
+      <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">A refundable holding deposit secures a 7-day priority viewing window with the agent before the listing is offered to other buyers.</p>
+      <div class="pay-methods">
+        <div class="pay-method sel" data-m="Moyasar" onclick="selectPayMethod(this)"><div class="ic">💳</div><div class="n">Moyasar</div></div>
+        <div class="pay-method" data-m="Mada" onclick="selectPayMethod(this)"><div class="ic">🇸🇦</div><div class="n">Mada</div></div>
+        <div class="pay-method" data-m="Stripe" onclick="selectPayMethod(this)"><div class="ic">🌐</div><div class="n">Stripe</div></div>
+      </div>
+      <div class="pay-summary">
+        <div class="row"><span id="paySumTitle">Property</span><span id="paySumPrice">—</span></div>
+        <div class="row"><span>Refundable holding deposit</span><span>SAR 5,000</span></div>
+        <div class="row total"><span>Due now</span><span>SAR 5,000</span></div>
+      </div>
+      <button class="btn btn-gold btn-block btn-lg" onclick="confirmReserve()">Confirm Reservation — <span id="payMethodLbl">Moyasar</span></button>
+      <div class="pay-secure">🔒 This is a demo checkout screen — no real payment is processed</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 360 / VIDEO TOUR OVERLAY ============ -->
+<div class="tour-overlay" id="tourOverlay">
+  <button class="tour-close" onclick="closeTour()" aria-label="Close tour">✕</button>
+  <div class="tour-pano-wrap" id="tourPanoWrap">
+    <img id="tourPanoImg" src="" alt="360 walkthrough">
+  </div>
+  <div class="tour-hint">↔ Drag to look around</div>
+</div>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span><span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head">
+    <div class="av">🤖<span class="on"></span></div>
+    <div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div>
+    <div class="x" onclick="toggleChat()" aria-label="Close chat">✕</div>
+  </div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick">
+    <button onclick="cbotQuick('Book a viewing')">📅 Book a viewing</button>
+    <button onclick="cbotQuick('What is the mortgage payment')">🧮 Mortgage help</button>
+  </div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()" aria-label="Send message">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const P = propById(params.get('id')) || PROPS[0];
+let galIdx = 0;
+
+function render(){
+  document.title = P.title + " — SMART RE";
+  document.getElementById('bcTitle').textContent = P.title;
+  document.getElementById('galTag').textContent = P.tag;
+  document.getElementById('galTag').className = 'prop-tag ' + P.tagClass;
+  renderThumbs();
+  setGal(0);
+
+  document.getElementById('pdTitle').textContent = P.title;
+  document.getElementById('pdLoc').textContent = P.loc;
+  document.getElementById('pdPrice').textContent = fmtSAR(P.price);
+  document.getElementById('pdPriceSub').textContent = P.type==='Land' ? 'Asking price' : 'AI-estimated fair value';
+  document.getElementById('pdCompareChk').checked = getCompareIds().includes(P.id);
+  setHeart();
+
+  const stats = [];
+  if(P.beds>0) stats.push(['🛏',P.beds,'Beds']);
+  if(P.baths>0) stats.push(['🛁',P.baths,'Baths']);
+  stats.push(['📐',P.sqm+' sqm','Area']);
+  stats.push(['📅',P.year||'—','Year Built']);
+  document.getElementById('pdStats').innerHTML = stats.map(s=>`<div class="pd-stat"><div class="v">${s[0]} ${s[1]}</div><div class="l">${s[2]}</div></div>`).join('');
+
+  document.getElementById('pdDesc').textContent = P.desc;
+  document.getElementById('pdAmenities').innerHTML = P.amenities.map(a=>`<div class="pd-amenity"><span class="tick">✓</span>${a}</div>`).join('');
+
+  document.getElementById('floorplanSvgHolder').innerHTML = floorplanSVG(P.type);
+  document.getElementById('fpArea').textContent = P.sqm + ' sqm';
+  document.getElementById('fpBeds').textContent = P.beds || '—';
+  document.getElementById('fpBaths').textContent = P.baths || '—';
+  document.getElementById('fpYear').textContent = P.year || '—';
+  document.getElementById('tab-floorplan').style.display = P.type==='Land' ? 'none' : '';
+  if(P.type==='Land') document.querySelector('.pd-tab[data-tab="floorplan"]').style.display='none';
+
+  document.getElementById('agAvatar').src = u(P.av,120);
+  document.getElementById('agName').textContent = P.agent;
+  document.getElementById('agRole').textContent = P.role;
+  document.getElementById('agCallBtn').onclick = ()=>toast('Demo mode — calling '+P.agent+' at '+P.phone);
+
+  document.getElementById('pwAddr').textContent = P.title + ', ' + P.loc;
+  document.getElementById('pwPrice').textContent = fmtSAR(P.price);
+  document.getElementById('pwLow').textContent = fmtSAR(Math.round(P.price*0.92));
+  document.getElementById('pwHigh').textContent = fmtSAR(Math.round(P.price*1.08));
+  document.getElementById('pwSellBadge').textContent = '⚡ Predicted to sell in ' + P.sellDays + ' days';
+
+  document.getElementById('paySumTitle').textContent = P.title;
+  document.getElementById('paySumPrice').textContent = fmtSAR(P.price);
+
+  document.getElementById('similarRow').innerHTML = PROPS
+    .filter(x=>x.id!==P.id && (x.city===P.city || x.type===P.type))
+    .slice(0,3).map(x=>propCard(x)).join('');
+
+  initMiniMap();
+}
+
+function renderThumbs(){
+  document.getElementById('galThumbs').innerHTML = P.gallery.map((img,i)=>
+    `<img src="${u(img,200)}" class="${i===0?'active':''}" onclick="setGal(${i})" alt="Photo ${i+1}">`).join('');
+}
+function setGal(i){
+  galIdx = (i+P.gallery.length)%P.gallery.length;
+  document.getElementById('galMain').src = u(P.gallery[galIdx],1100);
+  document.getElementById('galCount').textContent = (galIdx+1)+' / '+P.gallery.length;
+  document.querySelectorAll('.pd-gallery-thumbs img').forEach((t,i)=>t.classList.toggle('active', i===galIdx));
+}
+function galStep(d){ setGal(galIdx+d); }
+
+function pdTab(name, el){
+  document.querySelectorAll('.pd-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pd-tabpanel').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='location') setTimeout(()=>{ if(window._pdMap) window._pdMap.invalidateSize(); },80);
+}
+
+function setHeart(){
+  document.getElementById('pdHeartBtn').classList.toggle('liked', isSaved(P.id));
+}
+function pdToggleSave(){ toggleSaved(P.id); setHeart(); }
+function pdToggleCompare(el){ if(!toggleCompareId(P.id)) el.checked=false; else toast(el.checked?'Added to compare':'Removed from compare','ok'); }
+
+/* ---------- mortgage widget (uses this property's price) ---------- */
+function mcalcRun(){
+  const down = +document.getElementById('mDown').value;
+  const rate = +document.getElementById('mRate').value;
+  const years = +document.getElementById('mYears').value;
+  document.getElementById('mDownLbl').textContent = down+'%';
+  document.getElementById('mRateLbl').textContent = rate.toFixed(1)+'%';
+  document.getElementById('mYearsLbl').textContent = years+' yrs';
+  const r = calcMortgage(P.price, down, rate, years);
+  document.getElementById('mMonthly').textContent = fmtSAR(Math.round(r.monthly)) + '/mo';
+}
+
+/* ---------- modals ---------- */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openEnquiry(){ openModal('enquiryOverlay'); }
+function openReserve(){ document.getElementById('reserveHeadTitle').textContent='Reserve — '+P.title; openModal('reserveOverlay'); }
+document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.remove('open'); }));
+
+function selectPayMethod(el){
+  document.querySelectorAll('.pay-method').forEach(m=>m.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('payMethodLbl').textContent = el.dataset.m;
+}
+function confirmReserve(){
+  document.getElementById('reserveBody').innerHTML = `
+    <div class="form-success">
+      <div class="ic">✓</div>
+      <h3>Reservation Confirmed</h3>
+      <p>Your 7-day priority window on <b>${P.title}</b> starts now. ${P.agent} will contact you within 24 hours to schedule a viewing.</p>
+    </div>`;
+}
+
+function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+function submitEnquiry(e){
+  e.preventDefault();
+  let ok = true;
+  const name = document.getElementById('enqName').value.trim();
+  const phone = document.getElementById('enqPhone').value.trim();
+  const email = document.getElementById('enqEmail').value.trim();
+  toggleField('fName', name.length<2); if(name.length<2) ok=false;
+  toggleField('fPhone', phone.length<7); if(phone.length<7) ok=false;
+  toggleField('fEmail', !validEmail(email)); if(!validEmail(email)) ok=false;
+  if(!ok) return false;
+  document.getElementById('enquiryBody').innerHTML = `
+    <div class="form-success">
+      <div class="ic">✓</div>
+      <h3>Enquiry Sent</h3>
+      <p>${P.agent} usually replies within a few hours. A confirmation has been noted for <b>${P.title}</b>.</p>
+    </div>`;
+  return false;
+}
+function toggleField(id, invalid){ document.getElementById(id).classList.toggle('invalid', invalid); }
+
+/* ---------- 360 / video tour (interactive draggable panorama) ---------- */
+function openTour(){
+  document.getElementById('tourPanoImg').src = 'https://images.unsplash.com/photo-'+P.gallery[0]+'?auto=format&fit=crop&w=2600&h=1000&q=80';
+  document.getElementById('tourOverlay').classList.add('open');
+}
+function closeTour(){ document.getElementById('tourOverlay').classList.remove('open'); }
+(function(){
+  const wrap = document.getElementById('tourPanoWrap');
+  const img = document.getElementById('tourPanoImg');
+  let dragging=false, startX=0, startLeft=0;
+  wrap.addEventListener('mousedown', e=>{ dragging=true; wrap.classList.add('dragging'); startX=e.clientX; startLeft=img.offsetLeft; });
+  window.addEventListener('mouseup', ()=>{ dragging=false; wrap.classList.remove('dragging'); });
+  window.addEventListener('mousemove', e=>{
+    if(!dragging) return;
+    let nl = startLeft + (e.clientX-startX);
+    const min = wrap.clientWidth - img.width;
+    nl = Math.max(min, Math.min(0, nl));
+    img.style.left = nl+'px';
+  });
+  wrap.addEventListener('touchstart', e=>{ dragging=true; startX=e.touches[0].clientX; startLeft=img.offsetLeft; },{passive:true});
+  window.addEventListener('touchend', ()=>dragging=false);
+  window.addEventListener('touchmove', e=>{
+    if(!dragging) return;
+    let nl = startLeft + (e.touches[0].clientX-startX);
+    const min = wrap.clientWidth - img.width;
+    nl = Math.max(min, Math.min(0, nl));
+    img.style.left = nl+'px';
+  },{passive:true});
+})();
+
+/* ---------- mini location map ---------- */
+function initMiniMap(){
+  if(window._pdMap) return;
+  window._pdMap = L.map('pdMiniMap', {scrollWheelZoom:false}).setView([P.lat, P.lng], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap' }).addTo(window._pdMap);
+  L.marker([P.lat, P.lng]).addTo(window._pdMap).bindPopup(P.title);
+}
+
+render();
+mcalcRun();
+</script>
+</body>
+</html>

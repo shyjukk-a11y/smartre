@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saved — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="index.html#heroSearch">Buy</a>
+      <a href="index.html#heroSearch">Rent</a>
+      <a href="map.html">Map</a>
+      <a href="compare.html">Compare</a>
+      <a href="blog.html">Insights</a>
+      <a href="invest.html">Invest</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel"><div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div><div class="notif-list" id="notifList"></div></div>
+      </div>
+      <a class="nav-icon-btn" href="saved.html" aria-label="Saved properties">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="nb-count hide" id="savedCount">0</span>
+      </a>
+      <button class="btn btn-outline btn-sm">Sign In</button>
+      <button class="btn btn-navy btn-sm">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span class="cur">Saved</span></div>
+    <h1>Saved Properties &amp; Searches</h1>
+    <p>Everything you've saved, stored right in this browser — heart a listing or save a search to see it here.</p>
+  </div>
+</div>
+
+<div class="wrap" style="padding:30px 0 80px">
+  <div class="saved-tabs">
+    <button class="saved-tab active" data-t="props" onclick="savedTab('props',this)">Saved Properties (<span id="cntProps">0</span>)</button>
+    <button class="saved-tab" data-t="searches" onclick="savedTab('searches',this)">Saved Searches (<span id="cntSearches">0</span>)</button>
+  </div>
+
+  <div id="panel-props">
+    <div class="prop-grid" id="savedGrid"></div>
+  </div>
+
+  <div id="panel-searches" style="display:none">
+    <div id="searchList"></div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+      </div>
+      <div class="foot-col"><h5>Platform</h5><a href="index.html">Buy</a><a href="index.html">Rent</a><a href="map.html">Map Search</a><a href="blog.html">Market Insights</a><a href="mortgage-calculator.html">Mortgage Calculator</a></div>
+      <div class="foot-col"><h5>Tools</h5><a href="compare.html">Compare Properties</a><a href="area-compare.html">Compare Areas</a><a href="invest.html">Investment View</a><a href="saved.html">Saved Properties</a></div>
+      <div class="foot-col"><h5>Company</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
+    </div>
+    <div class="foot-trust">
+      <span class="lbl">Integrated With</span>
+      <span class="trust-badge"><span class="ic">🛡️</span> MOJ Deed Verification</span>
+      <span class="trust-badge"><span class="ic">🪪</span> Absher Identity</span>
+      <span class="trust-badge"><span class="ic">🏛️</span> Balady Compliance</span>
+      <span class="trust-badge"><span class="ic">💳</span> Moyasar · Stripe Payments</span>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved.</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span><span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head"><div class="av">🤖<span class="on"></span></div><div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div><div class="x" onclick="toggleChat()">✕</div></div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick"><button onclick="cbotQuick('Villas in Riyadh')">🏡 Villas in Riyadh</button></div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+function savedTab(t, el){
+  document.querySelectorAll('.saved-tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-props').style.display = t==='props' ? '' : 'none';
+  document.getElementById('panel-searches').style.display = t==='searches' ? '' : 'none';
+}
+
+function renderSavedProps(){
+  const ids = getSavedIds();
+  document.getElementById('cntProps').textContent = ids.length;
+  const grid = document.getElementById('savedGrid');
+  if(ids.length===0){
+    grid.innerHTML = '';
+    grid.insertAdjacentHTML('afterend', '');
+    document.getElementById('panel-props').innerHTML = `<div class="empty-state"><div class="ic">🤍</div><h3>No saved properties yet</h3><p>Tap the heart icon on any listing to save it here.</p><a href="index.html#featured" class="btn btn-navy" style="margin-top:18px">Browse Properties</a></div>`;
+    return;
+  }
+  grid.innerHTML = ids.map(id=>propById(id)).filter(Boolean).map(p=>propCard(p)).join('');
+}
+
+function renderSavedSearches(){
+  const list = getSavedSearches();
+  document.getElementById('cntSearches').textContent = list.length;
+  const box = document.getElementById('searchList');
+  if(list.length===0){
+    box.innerHTML = `<div class="empty-state"><div class="ic">🔍</div><h3>No saved searches yet</h3><p>Run a search on the homepage and tap "Save this search" to get alerted to new matches.</p><a href="index.html#heroSearch" class="btn btn-navy" style="margin-top:18px">Start Searching</a></div>`;
+    return;
+  }
+  box.innerHTML = list.map(s=>`
+    <div class="saved-search-card">
+      <div>
+        <div class="q">${s.query}</div>
+        <div class="meta">${s.meta || ''} · saved ${new Date(s.created).toLocaleDateString()}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:18px">
+        <label class="alert-toggle">
+          Alerts <span class="switch ${s.alerts?'on':''}" onclick="onToggleAlert(${s.id}, this)"></span>
+        </label>
+        <button class="btn btn-danger-outline btn-sm" onclick="onRemoveSearch(${s.id})">Remove</button>
+      </div>
+    </div>`).join('');
+}
+function onToggleAlert(id, el){ toggleSearchAlerts(id); el.classList.toggle('on'); }
+function onRemoveSearch(id){ removeSavedSearch(id); renderSavedSearches(); toast('Saved search removed'); }
+
+renderSavedProps();
+renderSavedSearches();
+</script>
+</body>
+</html>
