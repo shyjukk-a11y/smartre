@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Results — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="styles.css">
+<style>
+.sr-searchbar{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 0}
+.sr-input-row{display:flex;gap:10px;margin-bottom:14px}
+.sr-input-row input{flex:1;height:48px;border:1.5px solid var(--border);border-radius:10px;padding:0 16px;font-family:"DM Sans";font-size:15px;outline:none}
+.sr-input-row input:focus{border-color:var(--navy)}
+.sr-pills{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sr-pill{font-size:13.5px;font-weight:600;color:#374151;background:#fff;border:1.5px solid var(--border);padding:8px 16px;border-radius:var(--r-pill);transition:all .15s;position:relative}
+.sr-pill:hover{border-color:var(--navy)}
+.sr-pill.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.sr-radius-panel{position:absolute;top:calc(100% + 8px);left:0;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:var(--sh-lg);padding:10px;display:none;z-index:30;min-width:160px}
+.sr-radius-panel.open{display:block}
+.sr-radius-panel .opt{padding:9px 12px;border-radius:8px;font-size:13.5px;cursor:pointer}
+.sr-radius-panel .opt:hover{background:var(--surface)}
+.sr-radius-panel .opt.sel{background:rgba(27,58,107,.08);color:var(--navy);font-weight:700}
+
+.sr-toolbar{display:flex;justify-content:space-between;align-items:center;padding:16px 0;flex-wrap:wrap;gap:12px}
+.sr-count{font-size:14.5px;color:#374151}
+.sr-count b{color:var(--navy)}
+.sr-toolbar-right{display:flex;gap:10px;align-items:center}
+.sr-select{height:38px;border:1.5px solid var(--border);border-radius:8px;padding:0 10px;font-family:"DM Sans";font-size:13.5px}
+.sr-view-toggle{display:flex;border:1.5px solid var(--border);border-radius:8px;overflow:hidden}
+.sr-view-toggle button{padding:8px 14px;font-size:13px;font-weight:600;color:var(--muted)}
+.sr-view-toggle button.on{background:var(--navy);color:#fff}
+.sr-save-box{background:#fff;border:1.5px solid var(--gold);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:14px;font-size:13px}
+.sr-save-box b{font-size:13.5px;color:var(--navy)}
+
+.ai-banner{background:linear-gradient(135deg,rgba(27,58,107,.06),rgba(201,168,76,.08));border:1px solid rgba(27,58,107,.15);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.ai-banner .txt{flex:1;font-size:13.5px;color:#374151}
+.ai-banner .txt b{color:var(--navy)}
+.ai-banner .close{width:26px;height:26px;border-radius:50%;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:14px}
+.ai-banner .close:hover{background:rgba(0,0,0,.06)}
+
+.sr-split{display:grid;grid-template-columns:55% 45%;gap:0;align-items:start}
+.sr-list-col{padding-right:28px}
+.sr-map-col{position:sticky;top:88px;height:calc(100vh - 108px);border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+#srMap{width:100%;height:100%}
+
+.sr-hlist-card{display:flex;gap:16px;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;transition:all .2s;cursor:pointer}
+.sr-hlist-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.sr-hlist-card.hl{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.18)}
+.sr-hlist-card img{width:200px;height:150px;object-fit:cover;flex:0 0 200px}
+.sr-hlist-body{padding:14px 16px 14px 0;flex:1;display:flex;flex-direction:column}
+.sr-hlist-top{display:flex;justify-content:space-between;gap:10px}
+.sr-hlist-title{font-weight:700;font-size:15.5px;color:var(--text)}
+.sr-hlist-loc{font-size:12.5px;color:var(--muted);margin:3px 0 8px}
+.sr-hlist-price{font-weight:800;color:var(--navy);font-size:17px}
+.sr-hlist-stats{display:flex;gap:14px;margin:8px 0;font-size:12.5px;color:#4b5563}
+.sr-hlist-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px;border-top:1px solid var(--border)}
+.sr-hlist-agent{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.sr-hlist-agent img{width:24px;height:24px;border-radius:50%;object-fit:cover;flex:none}
+.sr-hlist-actions{display:flex;gap:8px}
+.sr-hlist-actions button{font-size:12px;font-weight:700;padding:6px 12px;border-radius:var(--r-pill)}
+.sr-badge-match{display:inline-block;background:rgba(201,168,76,.16);color:#8a6d1f;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:var(--r-pill);margin-top:6px}
+
+.sr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+
+.sr-map-pin{background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:5px 10px;border-radius:var(--r-pill);box-shadow:0 4px 10px rgba(0,0,0,.25);white-space:nowrap;border:2px solid #fff;cursor:pointer}
+.sr-map-pin.active{background:var(--gold);color:var(--navy);transform:scale(1.12)}
+
+/* area compare slide-out */
+.sr-slideout-overlay{position:fixed;inset:0;background:rgba(11,20,38,.5);z-index:400;opacity:0;pointer-events:none;transition:opacity .2s}
+.sr-slideout-overlay.open{opacity:1;pointer-events:auto}
+.sr-slideout{position:fixed;top:0;right:0;bottom:0;width:460px;max-width:92vw;background:#fff;z-index:401;box-shadow:-20px 0 60px rgba(0,0,0,.2);transform:translateX(100%);transition:transform .25s var(--ease);overflow-y:auto}
+.sr-slideout-overlay.open .sr-slideout{transform:translateX(0)}
+.sr-slideout-head{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff}
+.sr-slideout-body{padding:22px}
+.sr-cmp-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px}
+.sr-cmp-row .lbl{color:var(--muted);font-weight:600}
+.sr-cmp-bar-wrap{flex:1;margin:0 14px;display:flex;gap:4px;align-items:center}
+.sr-cmp-bar{height:8px;border-radius:6px;background:var(--surface);flex:1;overflow:hidden}
+.sr-cmp-bar div{height:100%;border-radius:6px}
+
+@media(max-width:1080px){
+  .sr-split{grid-template-columns:1fr}
+  .sr-map-col{position:static;height:400px;margin-top:20px}
+  .sr-list-col{padding-right:0}
+  .sr-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="search-results.html" class="active">Buy</a>
+      <a href="search-results.html?purpose=Rent">Rent</a>
+      <a href="index.html#featured">New Developments</a>
+      <a href="agent-portal.html">Brokers</a>
+      <a href="blog.html">Market Insights</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel"><div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div><div class="notif-list" id="notifList"></div></div>
+      </div>
+      <a class="nav-icon-btn" href="saved.html" aria-label="Saved properties">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="nb-count hide" id="savedCount">0</span>
+      </a>
+      <button class="btn btn-outline btn-sm" onclick="openSignIn()">Sign In</button>
+      <button class="btn btn-navy btn-sm" onclick="location.href='add-listing.html'">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<div class="sr-searchbar">
+  <div class="wrap">
+    <div class="sr-input-row">
+      <input id="srQuery" type="text" value="3 bedroom villa Riyadh">
+      <button class="btn btn-navy" onclick="runSrSearch()">🔍 Search</button>
+    </div>
+    <div class="sr-pills" id="srPills">
+      <button class="sr-pill on" data-purpose="Buy" onclick="setSrPurpose('Buy',this)">Buy</button>
+      <button class="sr-pill" data-purpose="Rent" onclick="setSrPurpose('Rent',this)">Rent</button>
+      <button class="sr-pill" data-type="Villa" onclick="toggleSrType('Villa',this)">Villa</button>
+      <button class="sr-pill" data-type="Apartment" onclick="toggleSrType('Apartment',this)">Apartment</button>
+      <span style="position:relative">
+        <button class="sr-pill" onclick="toggleRadiusPanel()">Search within radius</button>
+        <div class="sr-radius-panel" id="radiusPanel">
+          <div class="opt" data-r="0.5" onclick="setRadius(0.5,this)">500 m</div>
+          <div class="opt" data-r="1" onclick="setRadius(1,this)">1 km</div>
+          <div class="opt" data-r="2" onclick="setRadius(2,this)">2 km</div>
+          <div class="opt sel" data-r="5" onclick="setRadius(5,this)">5 km</div>
+        </div>
+      </span>
+      <button class="sr-pill" onclick="openAreaCompare()">⚖️ Compare Areas</button>
+      <button class="sr-pill" onclick="toast('Demo mode — more filters')">More Filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sr-toolbar">
+    <div class="sr-count"><b id="srCount">0</b> properties found <span id="srCity">in Riyadh</span></div>
+    <div class="sr-toolbar-right">
+      <div class="sr-save-box">
+        <span>💾 <b>Save this search</b><br><span style="color:var(--muted)">Get alerts on new matches</span></span>
+        <span class="switch" id="srSaveToggle" onclick="toggleSaveThisSearch()"></span>
+      </div>
+      <select class="sr-select" id="srSort" onchange="srSort=this.value;renderResults()">
+        <option value="relevance">Relevance</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="newest">Newest</option>
+        <option value="ai">AI Match Score</option>
+      </select>
+      <div class="sr-view-toggle">
+        <button id="srViewList" class="on" onclick="setSrView('list')">List</button>
+        <button id="srViewGrid" onclick="setSrView('grid')">Grid</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-banner" id="aiBanner">
+    <span style="font-size:20px">🤖</span>
+    <div class="txt"><b id="aiBannerMain">AI found 12 properties matching your description</b><br>Showing best matches first based on your description.</div>
+    <div class="close" onclick="document.getElementById('aiBanner').style.display='none'">✕</div>
+  </div>
+
+  <div class="sr-split">
+    <div class="sr-list-col">
+      <div id="srResults"></div>
+      <div style="text-align:center;margin-top:10px">
+        <button class="btn btn-outline" onclick="loadMore()">Load More Properties</button>
+      </div>
+    </div>
+    <div class="sr-map-col">
+      <div id="srMap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+      </div>
+      <div class="foot-col"><h5>Platform</h5><a href="search-results.html">Buy</a><a href="search-results.html?purpose=Rent">Rent</a><a href="index.html#featured">New Developments</a><a href="blog.html">Market Insights</a><a href="mortgage-calculator.html">Mortgage Calculator</a></div>
+      <div class="foot-col"><h5>For Brokers</h5><a href="agent-portal.html">Agent Portal</a><a href="agency-portal.html">Agency Portal</a><a href="payment.html">Broker Subscription</a></div>
+      <div class="foot-col"><h5>Company</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
+      <div class="foot-col"><h5>Portals</h5><a href="customer-portal.html">Buyer Portal</a><a href="agent-portal.html">Agent Portal</a><a href="agency-portal.html">Agency Portal</a><a href="admin-portal.html">Admin Portal</a></div>
+    </div>
+    <div class="foot-trust">
+      <span class="lbl">Integrated With</span>
+      <span class="trust-badge"><span class="ic">🛡️</span> MOJ Deed Verification</span>
+      <span class="trust-badge"><span class="ic">🪪</span> Absher Identity</span>
+      <span class="trust-badge"><span class="ic">🏛️</span> Balady Compliance</span>
+      <span class="trust-badge"><span class="ic">💳</span> Moyasar · Stripe Payments</span>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved.</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ AREA COMPARE SLIDEOUT ============ -->
+<div class="sr-slideout-overlay" id="areaCompareOverlay" onclick="if(event.target===this)closeAreaCompare()">
+  <div class="sr-slideout">
+    <div class="sr-slideout-head"><h3 style="font-size:18px">Compare Areas</h3><div class="modal-close" onclick="closeAreaCompare()">✕</div></div>
+    <div class="sr-slideout-body">
+      <div class="field-row">
+        <div class="field"><label>District A</label><select id="cmpA" onchange="renderAreaCompare()"></select></div>
+        <div class="field"><label>District B</label><select id="cmpB" onchange="renderAreaCompare()"></select></div>
+      </div>
+      <div id="areaCompareBody"></div>
+      <a href="area-compare.html" class="btn btn-outline btn-block" style="margin-top:16px">Open Full Area Comparison Tool</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SIGN IN MODAL ============ -->
+<div class="modal-overlay" id="signInOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Sign In</h3><div class="modal-close" onclick="closeModal('signInOverlay')">✕</div></div>
+    <div class="modal-body">
+      <form onsubmit="return doSignIn(event)">
+        <div class="field"><label>Email</label><input type="email" id="siEmail" required></div>
+        <div class="field"><label>Password</label><input type="password" id="siPass" required></div>
+        <button class="btn btn-navy btn-block btn-lg" type="submit">Sign In</button>
+      </form>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:12px"><div style="flex:1;height:1px;background:var(--border)"></div>or<div style="flex:1;height:1px;background:var(--border)"></div></div>
+      <button class="btn btn-outline btn-block" style="margin-bottom:10px" onclick="doSignIn(event)">Continue with Google</button>
+      <button class="btn btn-outline btn-block" onclick="doSignIn(event)">Continue with Apple</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span><span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head"><div class="av">🤖<span class="on"></span></div><div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div><div class="x" onclick="toggleChat()">✕</div></div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick"><button onclick="cbotQuick('Villas in Riyadh')">🏡 Villas in Riyadh</button></div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const AREAS = [
+  { key:'malqa', name:'Al Malqa', city:'Riyadh', overall:87, school:92, amenities:88, infra:90, conn:84, pricePerSqm:8700, invest:84 },
+  { key:'hittin', name:'Hittin', city:'Riyadh', overall:85, school:88, amenities:85, infra:89, conn:80, pricePerSqm:8200, invest:80 },
+  { key:'nakheel', name:'Al Nakheel', city:'Riyadh', overall:80, school:81, amenities:83, infra:78, conn:82, pricePerSqm:7100, invest:76 },
+  { key:'aqiq', name:'Al Aqiq (KAFD)', city:'Riyadh', overall:90, school:70, amenities:95, infra:96, conn:93, pricePerSqm:9800, invest:92 },
+  { key:'hamra', name:'Al Rawdah', city:'Jeddah', overall:82, school:79, amenities:91, infra:74, conn:86, pricePerSqm:6900, invest:78 },
+];
+
+let srPurpose='Buy', srTypes=[], srRadius=5, srView='list', srSort='relevance', srPage=1, srCity='';
+const srParams = new URLSearchParams(location.search);
+if(srParams.get('purpose')==='Rent'){ setSrPurpose('Rent', document.querySelector('.sr-pill[data-purpose="Rent"]')); }
+if(srParams.get('city')){
+  srCity = srParams.get('city');
+  document.getElementById('srCity').textContent = 'in ' + srCity;
+}
+
+function setSrPurpose(p, el){
+  srPurpose = p;
+  document.querySelectorAll('.sr-pill[data-purpose]').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  renderResults();
+}
+function toggleSrType(t, el){
+  el.classList.toggle('on');
+  srTypes = [...document.querySelectorAll('.sr-pill[data-type].on')].map(x=>x.dataset.type);
+  renderResults();
+}
+function toggleRadiusPanel(){ document.getElementById('radiusPanel').classList.toggle('open'); }
+function setRadius(r, el){
+  srRadius = r;
+  document.querySelectorAll('#radiusPanel .opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('radiusPanel').classList.remove('open');
+  toast('Showing results within '+r+' km');
+}
+document.addEventListener('click', e=>{ if(!e.target.closest('.sr-pill') || !e.target.closest('span[style]')) { if(!e.target.closest('#radiusPanel') && e.target.textContent!=='Search within radius') document.getElementById('radiusPanel').classList.remove('open'); } });
+
+function setSrView(v){
+  srView = v;
+  document.getElementById('srViewList').classList.toggle('on', v==='list');
+  document.getElementById('srViewGrid').classList.toggle('on', v==='grid');
+  renderResults();
+}
+
+function getFilteredProps(){
+  let list = PROPS.slice();
+  if(srCity) list = list.filter(p=>p.city===srCity);
+  if(srTypes.length) list = list.filter(p=>srTypes.includes(p.type));
+  if(srSort==='price-asc') list.sort((a,b)=>a.price-b.price);
+  else if(srSort==='price-desc') list.sort((a,b)=>b.price-a.price);
+  else if(srSort==='ai') list.sort((a,b)=>(b.aiScore||0)-(a.aiScore||0));
+  else if(srSort==='newest') list.sort((a,b)=>(b.year||0)-(a.year||0));
+  return list;
+}
+
+function hlistCard(p){
+  return `<div class="sr-hlist-card" onclick="window.location.href='property.html?id=${p.id}'" onmouseenter="highlightPin(${p.id},true)" onmouseleave="highlightPin(${p.id},false)">
+    <img src="${u(p.img,400)}" alt="${p.title}">
+    <div class="sr-hlist-body">
+      <div class="sr-hlist-top">
+        <div>
+          <div class="sr-hlist-title">${p.title}</div>
+          <div class="sr-hlist-loc">📍 ${p.loc}</div>
+        </div>
+        <button class="heart-btn ${isSaved(p.id)?'liked':''}" style="width:34px;height:34px;flex:0 0 34px" onclick="event.stopPropagation();toggleHeartBtn(this,${p.id})">${heartSVG()}</button>
+      </div>
+      <div class="sr-hlist-price">${fmtSAR(p.price)}</div>
+      ${p.aiScore?`<span class="sr-badge-match">🤖 AI Match ${p.aiScore}%</span>`:''}
+      <div class="sr-hlist-stats">
+        ${p.beds>0?`<span>🛏 ${p.beds} Beds</span>`:''}
+        ${p.baths>0?`<span>🛁 ${p.baths} Baths</span>`:''}
+        <span>📐 ${p.sqm} sqm</span>
+      </div>
+      <div class="sr-hlist-foot">
+        <div class="sr-hlist-agent"><img src="${u(p.av,60)}" alt="">${p.agent}</div>
+        <div class="sr-hlist-actions">
+          <button class="btn btn-outline btn-sm" style="height:30px" onclick="event.stopPropagation();openEnquiryFor(${p.id})">Contact</button>
+          <button class="btn btn-navy btn-sm" style="height:30px" onclick="event.stopPropagation();toggleHeartBtn(this.closest('.sr-hlist-card').querySelector('.heart-btn'),${p.id})">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+let visibleCount = 6;
+function renderResults(){
+  const list = getFilteredProps();
+  document.getElementById('srCount').textContent = list.length;
+  document.getElementById('srResults').className = srView==='grid' ? 'sr-grid' : '';
+  const shown = list.slice(0, visibleCount);
+  document.getElementById('srResults').innerHTML = srView==='grid'
+    ? shown.map(p=>propCard(p,{compare:true})).join('')
+    : shown.map(hlistCard).join('');
+  buildMapPins(shown);
+}
+function loadMore(){ visibleCount += 6; renderResults(); }
+
+function runSrSearch(){ toast('Searching for "'+document.getElementById('srQuery').value+'"'); renderResults(); }
+
+/* save this search */
+let srSaved = false;
+function toggleSaveThisSearch(){
+  srSaved = !srSaved;
+  document.getElementById('srSaveToggle').classList.toggle('on', srSaved);
+  if(srSaved) addSavedSearch(document.getElementById('srQuery').value || 'Property search', srPurpose);
+}
+
+/* map */
+let srMap, srMarkers=[];
+function initSrMap(){
+  srMap = L.map('srMap').setView([24.75,46.65], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(srMap);
+}
+function buildMapPins(list){
+  srMarkers.forEach(m=>srMap.removeLayer(m.marker));
+  srMarkers = list.map(p=>{
+    const icon = L.divIcon({className:'', html:`<div class="sr-map-pin" id="pin-${p.id}" onclick="window.location.href='property.html?id=${p.id}'">${(p.price/1000).toFixed(0)}K</div>`, iconSize:null});
+    const marker = L.marker([p.lat,p.lng],{icon}).addTo(srMap);
+    return {id:p.id, marker};
+  });
+}
+function highlightPin(id, on){
+  const el = document.getElementById('pin-'+id);
+  if(el) el.classList.toggle('active', on);
+}
+
+/* AI banner text from query */
+document.getElementById('aiBannerMain').textContent = `AI found ${PROPS.length} properties matching "${document.getElementById('srQuery').value}"`;
+
+/* area compare slideout */
+document.getElementById('cmpA').innerHTML = AREAS.map(a=>`<option value="${a.key}">${a.name}, ${a.city}</option>`).join('');
+document.getElementById('cmpB').innerHTML = AREAS.map((a,i)=>`<option value="${a.key}" ${i===1?'selected':''}>${a.name}, ${a.city}</option>`).join('');
+function openAreaCompare(){ document.getElementById('areaCompareOverlay').classList.add('open'); renderAreaCompare(); }
+function closeAreaCompare(){ document.getElementById('areaCompareOverlay').classList.remove('open'); }
+function cmpBar(label,valA,valB,max){
+  const pctA = Math.round(valA/max*100), pctB = Math.round(valB/max*100);
+  return `<div class="sr-cmp-row"><span class="lbl" style="width:70px">${valA}</span>
+    <div class="sr-cmp-bar-wrap"><div class="sr-cmp-bar"><div style="width:${pctA}%;background:var(--navy)"></div></div>
+    <span style="font-size:11px;color:var(--muted);white-space:nowrap">${label}</span>
+    <div class="sr-cmp-bar"><div style="width:${pctB}%;background:var(--gold);margin-left:auto"></div></div></div>
+    <span class="lbl" style="width:70px;text-align:right">${valB}</span></div>`;
+}
+function renderAreaCompare(){
+  const a = AREAS.find(x=>x.key===document.getElementById('cmpA').value);
+  const b = AREAS.find(x=>x.key===document.getElementById('cmpB').value);
+  document.getElementById('areaCompareBody').innerHTML = `
+    <div style="display:flex;justify-content:space-between;margin:18px 0 6px;font-weight:700;color:var(--navy)"><span>${a.name}</span><span>${b.name}</span></div>
+    ${cmpBar('Avg Price/sqm', 'SAR '+a.pricePerSqm.toLocaleString(), 'SAR '+b.pricePerSqm.toLocaleString(), Math.max(a.pricePerSqm,b.pricePerSqm))}
+    ${cmpBar('School Score', a.school, b.school, 100)}
+    ${cmpBar('Amenities', a.amenities, b.amenities, 100)}
+    ${cmpBar('Infrastructure', a.infra, b.infra, 100)}
+    ${cmpBar('Investment Score', a.invest, b.invest, 100)}
+  `;
+}
+
+/* sign in / list modals (shared pattern) */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function openSignIn(){ openModal('signInOverlay'); }
+function doSignIn(e){ if(e) e.preventDefault(); toast('Signed in — redirecting…','ok'); setTimeout(()=>location.href='customer-portal.html', 700); return false; }
+function openEnquiryFor(id){ toast('Demo mode — opening enquiry for '+propById(id).title); }
+document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.remove('open'); }));
+
+initSrMap();
+renderResults();
+</script>
+</body>
+</html>

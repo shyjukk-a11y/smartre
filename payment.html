@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.pay-layout{display:grid;grid-template-columns:1fr 380px;gap:40px;padding:36px 0 80px}
+.pay-plan-box{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+.pay-plan-box .name{font-family:var(--font-head);font-weight:700;font-size:19px;color:var(--navy)}
+.pay-plan-box .price{font-size:28px;font-weight:800;color:var(--navy);margin:6px 0 16px}
+.pay-plan-box .price span{font-size:14px;font-weight:500;color:var(--muted)}
+.pay-feat-list{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:10px}
+.pay-feat-list li{display:flex;gap:9px;font-size:13.5px;color:#374151}
+.pay-feat-list .tick{color:var(--green);font-weight:800}
+
+.pay-tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:22px}
+.pay-tab{font-size:14.5px;font-weight:700;color:var(--muted);padding:11px 18px;border-bottom:2px solid transparent;display:flex;align-items:center;gap:8px}
+.pay-tab.active{color:var(--navy);border-color:var(--gold)}
+.paytab-panel{display:none}
+.paytab-panel.active{display:block}
+.pay-provider-badge{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:18px}
+.pay-provider-badge b{color:var(--navy)}
+
+.quickpay-row{display:flex;gap:12px;margin-bottom:20px}
+.quickpay-btn{flex:1;height:50px;border-radius:10px;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+.qp-apple{background:#000;color:#fff}
+.qp-apple:hover{background:#222}
+.qp-stc{background:#4B0082;color:#fff}
+.qp-stc:hover{background:#5a0f96}
+.pay-or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin:18px 0}
+.pay-or::before,.pay-or::after{content:"";flex:1;height:1px;background:var(--border)}
+
+.card-icons{display:flex;gap:8px;margin-bottom:16px}
+.card-icons span{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:5px 10px;border-radius:6px}
+
+.pay-summary-box{background:var(--surface);border-radius:12px;padding:16px 18px;margin:18px 0}
+.pay-summary-box .row{display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0}
+.pay-summary-box .row.total{border-top:1px solid var(--border);margin-top:6px;padding-top:10px;font-weight:800;color:var(--navy);font-size:15.5px}
+.escrow-note{background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.2);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#1e40af;margin-bottom:18px;display:flex;gap:8px}
+.security-badges{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.security-badges span{font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:5px 10px;border-radius:6px;display:flex;align-items:center;gap:5px}
+
+.deposit-summary{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:20px}
+.deposit-summary img{width:76px;height:76px;border-radius:10px;object-fit:cover;flex:0 0 76px}
+.deposit-summary .t{font-weight:700;font-size:15px}
+.deposit-summary .l{font-size:12.5px;color:var(--muted);margin:3px 0}
+.deposit-summary .p{font-weight:800;color:var(--navy)}
+@media(max-width:1080px){
+  .pay-layout{grid-template-columns:1fr}
+  .quickpay-row{flex-direction:column}
+  .field-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="search-results.html">Buy</a>
+      <a href="search-results.html?purpose=Rent">Rent</a>
+      <a href="index.html#featured">New Developments</a>
+      <a href="agent-portal.html">Brokers</a>
+      <a href="blog.html">Market Insights</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <button class="btn btn-outline btn-sm" onclick="openSignIn()">Sign In</button>
+      <button class="btn btn-navy btn-sm" onclick="location.href='add-listing.html'">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span class="cur">Payment</span></div>
+    <h1>Complete Your Subscription</h1>
+    <p>Secure checkout — this is a demo screen, no real payment is processed.</p>
+  </div>
+</div>
+
+<div class="wrap pay-layout">
+  <div>
+    <!-- ============ SECTION A: BROKER SUBSCRIPTION ============ -->
+    <h2 style="font-size:20px;margin-bottom:16px">Broker Subscription</h2>
+    <div class="pay-plan-box">
+      <div class="name">Professional Broker Plan</div>
+      <div class="price">SAR 499 <span>/ month</span></div>
+      <ul class="pay-feat-list">
+        <li><span class="tick">✓</span> Unlimited active listings</li>
+        <li><span class="tick">✓</span> AI Lead Scoring &amp; Priority Inbox</li>
+        <li><span class="tick">✓</span> AI Follow-Up Drafting</li>
+        <li><span class="tick">✓</span> Smart Viewing Scheduler</li>
+        <li><span class="tick">✓</span> Monthly Market Intelligence Reports</li>
+      </ul>
+      <div style="font-size:12.5px;color:var(--muted)">Billing: Monthly · Cancel anytime</div>
+    </div>
+
+    <div class="pay-tabs" id="payTabsA">
+      <button class="pay-tab active" data-p="Moyasar" onclick="setPayTab('A','Moyasar',this)">💳 Saudi Cards (Moyasar)</button>
+      <button class="pay-tab" data-p="Stripe" onclick="setPayTab('A','Stripe',this)">🌐 International Cards (Stripe)</button>
+    </div>
+
+    <div class="paytab-panel active" id="panelA-Moyasar">
+      <div class="pay-provider-badge">🛡️ Secured by <b>Moyasar</b></div>
+      <div class="quickpay-row">
+        <button class="quickpay-btn qp-apple" onclick="payDemo('A')"> Apple Pay</button>
+        <button class="quickpay-btn qp-stc" onclick="payDemo('A')">STC Pay</button>
+      </div>
+      <div class="pay-or">or pay with card</div>
+      <div class="card-icons"><span>VISA</span><span>Mastercard</span><span>mada</span></div>
+      <div class="field"><label>Card Number</label><input type="text" placeholder="0000 0000 0000 0000" inputmode="numeric" autocomplete="off"></div>
+      <div class="field-row">
+        <div class="field"><label>Expiry</label><input type="text" placeholder="MM / YY" autocomplete="off"></div>
+        <div class="field"><label>CVV</label><input type="text" placeholder="•••" inputmode="numeric" autocomplete="off"></div>
+      </div>
+      <button class="btn btn-navy btn-block btn-lg" onclick="payDemo('A')">Pay SAR 499</button>
+      <div class="security-badges"><span>🔒 256-bit SSL</span><span>✓ PCI DSS Compliant</span></div>
+    </div>
+
+    <div class="paytab-panel" id="panelA-Stripe">
+      <div class="pay-provider-badge">🛡️ Secured by <b>Stripe</b></div>
+      <div class="card-icons"><span>VISA</span><span>Mastercard</span><span>Amex</span></div>
+      <div class="field"><label>Card Number</label><input type="text" placeholder="0000 0000 0000 0000" inputmode="numeric" autocomplete="off"></div>
+      <div class="field-row">
+        <div class="field"><label>Expiry</label><input type="text" placeholder="MM / YY" autocomplete="off"></div>
+        <div class="field"><label>CVV</label><input type="text" placeholder="•••" inputmode="numeric" autocomplete="off"></div>
+      </div>
+      <button class="btn btn-navy btn-block btn-lg" onclick="payDemo('A')">Pay SAR 499</button>
+      <div class="security-badges"><span>🔒 256-bit SSL</span><span>✓ PCI DSS Compliant</span></div>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:50px 0">
+
+    <!-- ============ SECTION B: TRANSACTION DEPOSIT ============ -->
+    <h2 style="font-size:20px;margin-bottom:16px">Property Transaction Deposit</h2>
+    <div class="deposit-summary">
+      <img src="" id="depImg" alt="">
+      <div>
+        <div class="t" id="depTitle">—</div>
+        <div class="l" id="depLoc">—</div>
+        <div class="p" id="depPrice">—</div>
+      </div>
+    </div>
+    <div class="escrow-note">🏦 This amount will be held in escrow until contract completion — funds are only released once both parties confirm.</div>
+
+    <div class="pay-tabs" id="payTabsB">
+      <button class="pay-tab active" data-p="Moyasar" onclick="setPayTab('B','Moyasar',this)">💳 Saudi Cards (Moyasar)</button>
+      <button class="pay-tab" data-p="Stripe" onclick="setPayTab('B','Stripe',this)">🌐 International Cards (Stripe)</button>
+    </div>
+    <div class="paytab-panel active" id="panelB-Moyasar">
+      <div class="pay-provider-badge">🛡️ Secured by <b>Moyasar</b></div>
+      <div class="card-icons"><span>VISA</span><span>Mastercard</span><span>mada</span></div>
+      <div class="field"><label>Card Number</label><input type="text" placeholder="0000 0000 0000 0000" inputmode="numeric" autocomplete="off"></div>
+      <div class="field-row">
+        <div class="field"><label>Expiry</label><input type="text" placeholder="MM / YY" autocomplete="off"></div>
+        <div class="field"><label>CVV</label><input type="text" placeholder="•••" inputmode="numeric" autocomplete="off"></div>
+      </div>
+      <button class="btn btn-gold btn-block btn-lg" onclick="payDemo('B')">Pay Deposit</button>
+    </div>
+    <div class="paytab-panel" id="panelB-Stripe">
+      <div class="pay-provider-badge">🛡️ Secured by <b>Stripe</b></div>
+      <div class="card-icons"><span>VISA</span><span>Mastercard</span><span>Amex</span></div>
+      <div class="field"><label>Card Number</label><input type="text" placeholder="0000 0000 0000 0000" inputmode="numeric" autocomplete="off"></div>
+      <div class="field-row">
+        <div class="field"><label>Expiry</label><input type="text" placeholder="MM / YY" autocomplete="off"></div>
+        <div class="field"><label>CVV</label><input type="text" placeholder="•••" inputmode="numeric" autocomplete="off"></div>
+      </div>
+      <button class="btn btn-gold btn-block btn-lg" onclick="payDemo('B')">Pay Deposit</button>
+    </div>
+    <div class="agent-secure-note">🔒 Your deposit is protected — this is a demo checkout screen, no real payment is processed</div>
+  </div>
+
+  <div>
+    <div class="pay-summary-box" style="position:sticky;top:88px">
+      <div class="row"><span>Plan</span><span>Professional Broker</span></div>
+      <div class="row"><span>Billing</span><span>Monthly</span></div>
+      <div class="row total"><span>Total Due Today</span><span>SAR 499</span></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0">
+      <div class="row"><span id="depSumTitle">Deposit</span><span id="depSumAmount">SAR 50,000</span></div>
+      <div class="row total"><span>Escrow Deposit</span><span id="depSumAmount2">SAR 50,000</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SUCCESS MODAL ============ -->
+<div class="modal-overlay" id="paySuccessOverlay">
+  <div class="modal">
+    <div class="modal-body">
+      <div class="form-success">
+        <div class="ic">✓</div>
+        <h3 id="paySuccessTitle">Payment Successful</h3>
+        <p id="paySuccessMsg">Your subscription is now active.</p>
+        <button class="btn btn-navy btn-block" style="margin-top:20px" onclick="closeModal('paySuccessOverlay')">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace.</p>
+      </div>
+      <div class="foot-col"><h5>Platform</h5><a href="search-results.html">Buy</a><a href="search-results.html?purpose=Rent">Rent</a><a href="blog.html">Market Insights</a></div>
+      <div class="foot-col"><h5>For Brokers</h5><a href="agent-portal.html">Agent Portal</a><a href="agency-portal.html">Agency Portal</a></div>
+      <div class="foot-col"><h5>Portals</h5><a href="customer-portal.html">Buyer Portal</a><a href="admin-portal.html">Admin Portal</a></div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved.</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="signInOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Sign In</h3><div class="modal-close" onclick="closeModal('signInOverlay')">✕</div></div>
+    <div class="modal-body">
+      <form onsubmit="return doSignIn(event)">
+        <div class="field"><label>Email</label><input type="email" id="siEmail" required></div>
+        <div class="field"><label>Password</label><input type="password" id="siPass" required></div>
+        <button class="btn btn-navy btn-block btn-lg" type="submit">Sign In</button>
+      </form>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:12px"><div style="flex:1;height:1px;background:var(--border)"></div>or<div style="flex:1;height:1px;background:var(--border)"></div></div>
+      <button class="btn btn-outline btn-block" style="margin-bottom:10px" onclick="doSignIn(event)">Continue with Google</button>
+      <button class="btn btn-outline btn-block" onclick="doSignIn(event)">Continue with Apple</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+function setPayTab(section, provider, el){
+  document.querySelectorAll('#payTabs'+section+' .pay-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll(`[id^="panel${section}-"]`).forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel'+section+'-'+provider).classList.add('active');
+}
+
+function payDemo(section){
+  document.getElementById('paySuccessTitle').textContent = section==='A' ? 'Payment Successful' : 'Deposit Received';
+  document.getElementById('paySuccessMsg').textContent = section==='A'
+    ? 'Your Professional Broker subscription is now active. A receipt has been sent to your email.'
+    : 'Your SAR 50,000 deposit is held in escrow. The agent has been notified to proceed with the transaction.';
+  openModal('paySuccessOverlay');
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.remove('open'); }));
+
+/* deposit property context */
+const params = new URLSearchParams(location.search);
+const DP = propById(params.get('id')) || PROPS[6];
+document.getElementById('depImg').src = u(DP.img,200);
+document.getElementById('depTitle').textContent = DP.title;
+document.getElementById('depLoc').textContent = DP.loc;
+document.getElementById('depPrice').textContent = fmtSAR(DP.price);
+const depositAmt = Math.round(DP.price*0.05);
+document.getElementById('depSumTitle').textContent = DP.title.slice(0,22)+'… (5% deposit)';
+document.getElementById('depSumAmount').textContent = fmtSAR(depositAmt);
+document.getElementById('depSumAmount2').textContent = fmtSAR(depositAmt);
+document.querySelectorAll('#panelB-Moyasar .btn, #panelB-Stripe .btn').forEach(b=>{ if(b.textContent.includes('Pay Deposit')) b.textContent = 'Pay Deposit — '+fmtSAR(depositAmt); });
+</script>
+</body>
+</html>

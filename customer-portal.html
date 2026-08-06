@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.portal-layout{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 64px)}
+.portal-side{background:#fff;border-right:1px solid var(--border);padding:26px 18px;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto}
+.portal-user{display:flex;align-items:center;gap:12px;padding:0 8px 22px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.portal-user img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.portal-user b{font-size:14.5px;display:block}
+.portal-user .role-badge{display:inline-block;font-size:10.5px;font-weight:700;color:var(--navy);background:rgba(27,58,107,.08);padding:2px 9px;border-radius:var(--r-pill);margin-top:3px}
+.portal-nav{display:flex;flex-direction:column;gap:2px}
+.portal-nav a{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-radius:10px;font-size:14px;font-weight:600;color:#374151;transition:all .15s}
+.portal-nav a:hover{background:var(--surface)}
+.portal-nav a.active{background:rgba(27,58,107,.08);color:var(--navy)}
+.portal-nav a .count{background:var(--gold);color:var(--navy);font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:var(--r-pill)}
+.portal-nav .signout{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);color:var(--red)}
+
+.portal-main{padding:32px 40px 70px}
+.welcome-banner{background:linear-gradient(135deg,var(--navy),var(--navy-700));border-radius:18px;padding:28px 32px;color:#fff;margin-bottom:28px}
+.welcome-banner h1{color:#fff;font-size:24px;margin-bottom:16px}
+.wb-stats{display:flex;gap:32px;flex-wrap:wrap}
+.wb-stats div{font-size:13px;color:rgba(255,255,255,.75)}
+.wb-stats b{display:block;font-size:22px;color:#fff;font-family:var(--font-head)}
+
+.portal-section{margin-bottom:36px}
+.portal-section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.portal-section-head h2{font-size:18px}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.portal-section-head a{font-size:13px;color:var(--gold);font-weight:600}
+
+.saved-prop-card{position:relative}
+.pd-flag{position:absolute;top:12px;right:50px;z-index:3;font-size:10.5px;font-weight:800;padding:5px 10px;border-radius:var(--r-pill);color:#fff}
+.pd-flag.drop{background:var(--red)}
+.pd-flag.newphotos{background:var(--blue)}
+
+.viewing-row{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:12px}
+.viewing-date{width:80px;flex:0 0 80px;text-align:center;background:var(--surface);border-radius:10px;padding:10px 6px}
+.viewing-date .d{font-size:20px;font-weight:800;color:var(--navy)}
+.viewing-date .m{font-size:11px;color:var(--muted);text-transform:uppercase}
+.viewing-info{flex:1}
+.viewing-info .t{font-weight:700;font-size:14.5px}
+.viewing-info .l{font-size:12.5px;color:var(--muted);margin:2px 0}
+.viewing-info .reminder{font-size:11.5px;color:var(--green);margin-top:4px}
+.viewing-actions{display:flex;gap:8px}
+.viewing-actions button{font-size:12px;font-weight:700;padding:7px 12px;border-radius:var(--r-pill)}
+.viewing-row.done{opacity:.55}
+
+.msg-preview{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.msg-preview:last-child{border-bottom:none}
+.msg-preview img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.msg-preview .t{font-size:13.5px}
+.msg-preview .t b{color:var(--navy)}
+.msg-preview .time{font-size:11px;color:var(--muted)}
+
+.contract-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:22px}
+.contract-progress{display:flex;align-items:center;margin:18px 0}
+.cp-step{flex:1;text-align:center;position:relative}
+.cp-step .dot{width:26px;height:26px;border-radius:50%;background:var(--border);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin:0 auto 8px;position:relative;z-index:1}
+.cp-step.done .dot{background:var(--green)}
+.cp-step.active .dot{background:var(--gold);color:var(--navy)}
+.cp-step .lbl{font-size:11px;color:var(--muted);font-weight:600}
+.cp-step:not(:last-child)::after{content:"";position:absolute;top:13px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
+.cp-step.done:not(:last-child)::after{background:var(--green)}
+
+@media(max-width:1080px){
+  .portal-layout{grid-template-columns:1fr;min-width:0}
+  .portal-side{position:static;height:auto;min-width:0}
+  .portal-main{min-width:0;padding:24px 18px}
+  .portal-nav a{flex-wrap:wrap;white-space:normal}
+  .wb-stats{gap:18px}
+  .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="search-results.html">Buy</a>
+      <a href="search-results.html?purpose=Rent">Rent</a>
+      <a href="index.html#featured">New Developments</a>
+      <a href="agent-portal.html">Brokers</a>
+      <a href="blog.html">Market Insights</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel"><div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div><div class="notif-list" id="notifList"></div></div>
+      </div>
+      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=60&q=80" style="width:34px;height:34px;border-radius:50%;object-fit:cover">
+    </div>
+  </div>
+</nav>
+
+<div class="portal-layout">
+  <aside class="portal-side">
+    <div class="portal-user">
+      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="">
+      <div><b>Ahmed Al-Rashidi</b><span class="role-badge">Buyer</span></div>
+    </div>
+    <nav class="portal-nav">
+      <a href="#dashboard" class="active">🏠 Dashboard</a>
+      <a href="saved.html">❤️ Saved Properties <span class="count" id="navSavedCount">14</span></a>
+      <a href="saved.html">🔍 Saved Searches <span class="count" id="navSearchCount">3</span></a>
+      <a href="#viewings">📅 My Viewings</a>
+      <a href="#contracts">📝 My Contracts</a>
+      <a href="#messages">💬 Messages <span class="count">2</span></a>
+      <a href="notifications.html">🔔 Notifications <span class="count">5</span></a>
+      <a href="#profile">👤 My Profile</a>
+      <a href="index.html" class="signout">🚪 Sign Out</a>
+    </nav>
+  </aside>
+
+  <main class="portal-main">
+    <div class="welcome-banner">
+      <h1 id="greeting">Good morning, Ahmed</h1>
+      <div class="wb-stats">
+        <div><b id="statSaved">14</b>Saved</div>
+        <div><b>3</b>Searches</div>
+        <div><b>2</b>Viewings This Week</div>
+        <div><b>1</b>Active Contract</div>
+      </div>
+    </div>
+
+    <div class="portal-section" id="dashboard">
+      <div class="portal-section-head"><h2>🤖 AI Picks for You</h2></div>
+      <div class="prop-grid grid-3" id="aiPicks"></div>
+    </div>
+
+    <div class="portal-section">
+      <div class="portal-section-head"><h2>Saved Properties</h2><a href="saved.html">View All →</a></div>
+      <div class="prop-grid grid-4" id="savedPropsGrid"></div>
+    </div>
+
+    <div class="portal-section" id="viewings">
+      <div class="portal-section-head"><h2>Upcoming Viewings</h2></div>
+      <div id="viewingsList"></div>
+    </div>
+
+    <div class="portal-section" id="messages">
+      <div class="portal-section-head"><h2>Recent Messages</h2><a href="#">View All Messages →</a></div>
+      <div class="contract-card" id="msgList"></div>
+    </div>
+
+    <div class="portal-section" id="contracts">
+      <div class="portal-section-head"><h2>My Contracts</h2></div>
+      <div class="contract-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700;font-size:15px" id="contractProp">—</div>
+            <div style="font-size:12.5px;color:var(--muted);margin-top:2px">Status: <b style="color:var(--gold)">Awaiting Seller Signature</b></div>
+          </div>
+          <a class="btn btn-navy btn-sm" id="contractLink" href="#">View Contract</a>
+        </div>
+        <div class="contract-progress">
+          <div class="cp-step done"><div class="dot">✓</div><div class="lbl">Buyer Signed</div></div>
+          <div class="cp-step active"><div class="dot">2</div><div class="lbl">Seller Signing</div></div>
+          <div class="cp-step"><div class="dot">3</div><div class="lbl">MOJ Notarization</div></div>
+          <div class="cp-step"><div class="dot">4</div><div class="lbl">Complete</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="portal-section" id="profile">
+      <div class="portal-section-head"><h2>👤 My Profile</h2></div>
+      <div class="contract-card">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=160&q=80" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover">
+          <div>
+            <div style="font-weight:700;font-size:16px">Ahmed Al-Rashidi</div>
+            <div style="font-size:12.5px;color:var(--muted)">Buyer · Member since Jan 2025</div>
+          </div>
+        </div>
+        <div class="gov-badges" style="margin-bottom:22px">
+          <span class="gov-badge"><span class="ck">✓</span> Absher Identity Verified</span>
+          <span class="gov-badge"><span class="ck">✓</span> Email Verified</span>
+          <span class="gov-badge"><span class="ck">✓</span> Phone Verified</span>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Full Name</label><input type="text" id="profName" value="Ahmed Al-Rashidi"></div>
+          <div class="field"><label>Email</label><input type="email" id="profEmail" value="ahmed.rashidi@gmail.com"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Phone</label><input type="tel" id="profPhone" value="+966 50 123 4567"></div>
+          <div class="field"><label>Preferred Language</label>
+            <select id="profLang"><option>English</option><option>Arabic — العربية</option></select>
+          </div>
+        </div>
+        <button class="btn btn-navy" onclick="saveProfile()">Save Changes</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span><span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head"><div class="av">🤖<span class="on"></span></div><div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div><div class="x" onclick="toggleChat()">✕</div></div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick"><button onclick="cbotQuick('Villas in Riyadh')">🏡 Villas in Riyadh</button></div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+const hour = new Date().getHours();
+document.getElementById('greeting').textContent = (hour<12?'Good morning, ':hour<18?'Good afternoon, ':'Good evening, ')+'Ahmed';
+
+document.getElementById('aiPicks').innerHTML = PROPS.filter(p=>p.aiScore).sort((a,b)=>b.aiScore-a.aiScore).slice(0,3).map(p=>propCard(p)).join('');
+
+const savedIds = getSavedIds();
+const savedDemo = savedIds.length ? savedIds.map(id=>propById(id)).filter(Boolean) : PROPS.slice(0,4);
+document.getElementById('statSaved').textContent = savedIds.length || 14;
+document.getElementById('navSavedCount').textContent = savedIds.length || 14;
+document.getElementById('navSearchCount').textContent = getSavedSearches().length || 3;
+document.getElementById('savedPropsGrid').innerHTML = savedDemo.slice(0,4).map((p,i)=>{
+  const flag = i===0 ? '<span class="pd-flag drop">↓ SAR 30,000</span>' : i===1 ? '<span class="pd-flag newphotos">New Photos</span>' : '';
+  return `<div class="saved-prop-card">${flag}${propCard(p)}</div>`;
+}).join('');
+
+const VIEWINGS = [
+  { propId:7, when:'Tomorrow', time:'3:00 PM', day:5, mon:'AUG', agent:'Khalid Al-Harbi', done:false },
+  { propId:3, when:'Thursday', time:'11:00 AM', day:7, mon:'AUG', agent:'Sara Al-Otaibi', done:false }
+];
+document.getElementById('viewingsList').innerHTML = VIEWINGS.map(v=>{
+  const p = propById(v.propId);
+  return `<div class="viewing-row">
+    <div class="viewing-date"><div class="d">${v.day}</div><div class="m">${v.mon}</div></div>
+    <div class="viewing-info">
+      <div class="t">${v.when} ${v.time} — ${p.title}</div>
+      <div class="l">📍 ${p.loc} · with ${v.agent}</div>
+      <div class="reminder">✓ WhatsApp reminder will be sent 1 hour before</div>
+    </div>
+    <div class="viewing-actions">
+      <button class="btn btn-navy btn-sm" onclick="toast('Viewing confirmed','ok')">Confirm</button>
+      <button class="btn btn-outline btn-sm" onclick="toast('Reschedule request sent')">Reschedule</button>
+      <button class="btn btn-danger-outline btn-sm" onclick="this.closest('.viewing-row').classList.add('done')">Cancel</button>
+    </div>
+  </div>`;
+}).join('');
+
+const MSGS = [
+  { agent:"Khalid Al-Harbi", av:"1507003211169-0a1dd7228f2d", text:"The owner has accepted your offer on Al Hamra Sky Residence — let's schedule the contract signing.", time:"2h ago" },
+  { agent:"Sara Al-Otaibi", av:"1544005313-94ddf0286df2", text:"I have a similar property in Hittin that just listed, thought you'd want a first look.", time:"1d ago" }
+];
+document.getElementById('msgList').innerHTML = MSGS.map(m=>`
+  <div class="msg-preview">
+    <img src="${u(m.av,80)}" alt="">
+    <div style="flex:1"><div class="t"><b>${m.agent}:</b> ${m.text}</div><div class="time">${m.time}</div></div>
+  </div>`).join('');
+
+const contractProp = propById(3);
+document.getElementById('contractProp').textContent = contractProp.title + ', ' + contractProp.loc;
+document.getElementById('contractLink').href = 'property.html?id='+contractProp.id;
+
+function saveProfile(){
+  document.getElementById('greeting').textContent = document.getElementById('greeting').textContent.split(',')[0] + ', ' + document.getElementById('profName').value.split(' ')[0];
+  toast('Profile updated successfully');
+}
+</script>
+</body>
+</html>

@@ -35,33 +35,49 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
         <span class="nb-count hide" id="savedCount">0</span>
       </a>
-      <button class="btn btn-outline btn-sm">Sign In</button>
-      <button class="btn btn-navy btn-sm">List Property</button>
+      <button class="btn btn-outline btn-sm" onclick="openSignIn()">Sign In</button>
+      <button class="btn btn-navy btn-sm" onclick="location.href='add-listing.html'">List Property</button>
     </div>
   </div>
 </nav>
 
-<div class="page-hero">
-  <div class="wrap">
+<div class="portal-layout">
+  <aside class="portal-side">
+    <div class="portal-user">
+      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="">
+      <div><b>Ahmed Al-Rashidi</b><span class="role-badge">Buyer</span></div>
+    </div>
+    <nav class="portal-nav">
+      <a href="customer-portal.html">🏠 Dashboard</a>
+      <a href="saved.html" class="active">❤️ Saved Properties <span class="count" id="navSavedCount">0</span></a>
+      <a href="saved.html" class="active">🔍 Saved Searches <span class="count" id="navSearchCount">0</span></a>
+      <a href="customer-portal.html#viewings">📅 My Viewings</a>
+      <a href="customer-portal.html#contracts">📝 My Contracts</a>
+      <a href="customer-portal.html#messages">💬 Messages <span class="count">2</span></a>
+      <a href="notifications.html">🔔 Notifications <span class="count">5</span></a>
+      <a href="customer-portal.html#profile">👤 My Profile</a>
+      <a href="index.html" class="signout">🚪 Sign Out</a>
+    </nav>
+  </aside>
+
+  <main class="portal-main">
     <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><span class="cur">Saved</span></div>
-    <h1>Saved Properties &amp; Searches</h1>
-    <p>Everything you've saved, stored right in this browser — heart a listing or save a search to see it here.</p>
-  </div>
-</div>
+    <h1 style="font-size:24px;margin:14px 0 8px">Saved Properties &amp; Searches</h1>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:24px">Everything you've saved, stored right in this browser — heart a listing or save a search to see it here.</p>
 
-<div class="wrap" style="padding:30px 0 80px">
-  <div class="saved-tabs">
-    <button class="saved-tab active" data-t="props" onclick="savedTab('props',this)">Saved Properties (<span id="cntProps">0</span>)</button>
-    <button class="saved-tab" data-t="searches" onclick="savedTab('searches',this)">Saved Searches (<span id="cntSearches">0</span>)</button>
-  </div>
+    <div class="saved-tabs">
+      <button class="saved-tab active" data-t="props" onclick="savedTab('props',this)">Saved Properties (<span id="cntProps">0</span>)</button>
+      <button class="saved-tab" data-t="searches" onclick="savedTab('searches',this)">Saved Searches (<span id="cntSearches">0</span>)</button>
+    </div>
 
-  <div id="panel-props">
-    <div class="prop-grid" id="savedGrid"></div>
-  </div>
+    <div id="panel-props">
+      <div class="prop-grid" id="savedGrid"></div>
+    </div>
 
-  <div id="panel-searches" style="display:none">
-    <div id="searchList"></div>
-  </div>
+    <div id="panel-searches" style="display:none">
+      <div id="searchList"></div>
+    </div>
+  </main>
 </div>
 
 <!-- ============ FOOTER ============ -->
@@ -103,6 +119,22 @@
   <div class="cbot-input">
     <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
     <button class="cbot-send" onclick="cbotSend()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="signInOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Sign In</h3><div class="modal-close" onclick="closeModal('signInOverlay')">✕</div></div>
+    <div class="modal-body">
+      <form onsubmit="return doSignIn(event)">
+        <div class="field"><label>Email</label><input type="email" id="siEmail" required></div>
+        <div class="field"><label>Password</label><input type="password" id="siPass" required></div>
+        <button class="btn btn-navy btn-block btn-lg" type="submit">Sign In</button>
+      </form>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:12px"><div style="flex:1;height:1px;background:var(--border)"></div>or<div style="flex:1;height:1px;background:var(--border)"></div></div>
+      <button class="btn btn-outline btn-block" style="margin-bottom:10px" onclick="doSignIn(event)">Continue with Google</button>
+      <button class="btn btn-outline btn-block" onclick="doSignIn(event)">Continue with Apple</button>
+    </div>
   </div>
 </div>
 
@@ -155,6 +187,8 @@ function onRemoveSearch(id){ removeSavedSearch(id); renderSavedSearches(); toast
 
 renderSavedProps();
 renderSavedSearches();
+document.getElementById('navSavedCount').textContent = getSavedIds().length || 14;
+document.getElementById('navSearchCount').textContent = getSavedSearches().length || 3;
 </script>
 </body>
 </html>

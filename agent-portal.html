@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Dashboard — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.portal-layout{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 64px)}
+.portal-side{background:#fff;border-right:1px solid var(--border);padding:26px 18px;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto}
+.portal-user{display:flex;align-items:center;gap:12px;padding:0 8px 14px}
+.portal-user img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.portal-user b{font-size:14.5px;display:block}
+.portal-user span{font-size:12px;color:var(--muted)}
+.rega-badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--green);margin:16px 8px 16px}
+.portal-nav{display:flex;flex-direction:column;gap:2px}
+.portal-nav a{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-radius:10px;font-size:14px;font-weight:600;color:#374151}
+.portal-nav a:hover{background:var(--surface)}
+.portal-nav a.active{background:rgba(27,58,107,.08);color:var(--navy)}
+.portal-nav a .count{background:var(--gold);color:var(--navy);font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:var(--r-pill)}
+.portal-main{padding:32px 40px 70px}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:32px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px}
+.stat-card .l{font-size:12.5px;color:var(--muted);font-weight:600}
+.stat-card .v{font-size:26px;font-weight:800;color:var(--navy);font-family:var(--font-head);margin:6px 0 4px}
+.stat-card .sub{font-size:12px;color:var(--green);font-weight:600}
+.stat-card .sub.hot{color:var(--red)}
+
+.portal-section{margin-bottom:36px}
+.portal-section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.portal-section-head h2{font-size:18px}
+
+.lead-row{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+.lead-row img.av{width:42px;height:42px;border-radius:50%;object-fit:cover;flex:none}
+.lead-info{flex:1;min-width:0}
+.lead-info .t{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px}
+.lead-score{font-size:11px;font-weight:800;padding:3px 9px;border-radius:var(--r-pill)}
+.lead-score.hot{background:rgba(239,68,68,.1);color:var(--red)}
+.lead-score.warm{background:rgba(245,158,11,.12);color:var(--amber)}
+.lead-info .l{font-size:12.5px;color:var(--muted);margin-top:2px}
+.lead-prop-thumb{width:52px;height:52px;border-radius:8px;object-fit:cover;flex:none}
+.lead-actions{display:flex;gap:7px;align-items:center}
+.lead-actions button{font-size:12px;font-weight:700;padding:7px 12px;border-radius:var(--r-pill);white-space:nowrap}
+.lead-icon-btn{width:34px;height:34px;border-radius:8px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:14px}
+
+.score-breakdown{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:20px}
+.score-breakdown .h{font-weight:700;font-size:14px;color:var(--navy);margin-bottom:12px}
+.score-breakdown ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.score-breakdown li{font-size:13.5px;color:#374151;display:flex;gap:8px}
+
+.viewreq-row{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+.viewreq-info{flex:1}
+.viewreq-info .t{font-weight:700;font-size:14px}
+.viewreq-info .l{font-size:12px;color:var(--muted)}
+.viewreq-status{font-size:11.5px;color:var(--green);font-weight:700}
+
+.listings-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.listings-table th{background:var(--surface);font-size:11.5px;text-transform:uppercase;color:var(--muted);padding:12px 16px;text-align:left}
+.listings-table td{padding:12px 16px;border-top:1px solid var(--border);font-size:13.5px;vertical-align:middle}
+.listings-table img{width:44px;height:44px;border-radius:8px;object-fit:cover}
+.hot-badge{background:rgba(239,68,68,.1);color:var(--red);font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:var(--r-pill)}
+
+.crm-board{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;overflow-x:auto;margin-bottom:24px}
+.crm-col{background:var(--surface);border-radius:14px;padding:12px;min-width:0}
+.crm-col-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 4px}
+.crm-col-head h4{font-size:12.5px;color:var(--navy);font-weight:800}
+.crm-col-head .cnt{font-size:10.5px;font-weight:800;background:#fff;border:1px solid var(--border);padding:2px 8px;border-radius:var(--r-pill);color:var(--muted)}
+.crm-col-total{font-size:10.5px;color:var(--muted);padding:0 4px 10px;margin-top:-8px}
+.crm-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;box-shadow:var(--sh-xs)}
+.crm-card .name{font-weight:700;font-size:13px;margin-bottom:3px}
+.crm-card .prop{font-size:11.5px;color:var(--muted);margin-bottom:6px;line-height:1.4}
+.crm-card .value{font-weight:800;color:var(--navy);font-size:13px;margin-bottom:6px;font-family:var(--font-head)}
+.crm-card .days{font-size:10px;color:var(--muted);margin-bottom:9px}
+.crm-card .advance-btn{width:100%;font-size:11px;padding:7px;border-radius:8px;font-weight:700;background:var(--navy);color:#fff;border:none}
+.crm-card .advance-btn:hover{background:var(--navy-600)}
+.crm-card.won{border-color:var(--green)}
+.crm-card .won-badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:800;color:var(--green);background:rgba(16,185,129,.1);padding:4px 9px;border-radius:var(--r-pill)}
+.crm-contacts-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.crm-contacts-table th{background:var(--surface);font-size:11px;text-transform:uppercase;color:var(--muted);padding:11px 14px;text-align:left}
+.crm-contacts-table td{padding:11px 14px;border-top:1px solid var(--border);font-size:13px;vertical-align:middle}
+.stage-pill{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:var(--r-pill)}
+.stage-pill.new{background:rgba(59,130,246,.1);color:#1d4ed8}
+.stage-pill.contacted{background:rgba(245,158,11,.12);color:var(--amber)}
+.stage-pill.viewing{background:rgba(139,92,246,.1);color:#7c3aed}
+.stage-pill.offer{background:rgba(201,168,76,.16);color:#8a6d1f}
+.stage-pill.closed{background:rgba(16,185,129,.1);color:var(--green)}
+.ai-tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.ai-tool-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:22px;cursor:pointer;transition:all .2s}
+.ai-tool-card:hover{transform:translateY(-4px);box-shadow:var(--sh-md);border-color:var(--gold)}
+.ai-tool-card .ic{font-size:26px;margin-bottom:12px}
+.ai-tool-card .t{font-weight:700;font-size:14.5px;margin-bottom:6px}
+.ai-tool-card .d{font-size:12.5px;color:var(--muted)}
+@media(max-width:1080px){
+  .portal-layout{grid-template-columns:1fr;min-width:0}
+  .portal-side{position:static;height:auto;min-width:0}
+  .portal-main{min-width:0;padding:24px 18px}
+  .portal-nav a{flex-wrap:wrap;white-space:normal}
+  .stat-row,.ai-tools-grid{grid-template-columns:repeat(2,1fr)}
+  .lead-row{flex-wrap:wrap}
+  .lead-actions{width:100%;justify-content:flex-end}
+  .listings-table{display:block;overflow-x:auto}
+  .viewreq-row{flex-wrap:wrap}
+  .crm-board{grid-template-columns:repeat(5,200px);overflow-x:auto}
+  .crm-contacts-table{display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="agent-portal.html" class="active">Agent Portal</a>
+      <a href="agency-portal.html">Agency Portal</a>
+      <a href="payment.html">Subscription</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=60&q=80" style="width:34px;height:34px;border-radius:50%;object-fit:cover">
+    </div>
+  </div>
+</nav>
+
+<div class="portal-layout">
+  <aside class="portal-side">
+    <div class="portal-user">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="">
+      <div><b>Khalid Al-Harbi</b><span>Senior Broker</span></div>
+    </div>
+    <div class="rega-badge">✓ REGA Licensed — RE-108562</div>
+    <nav class="portal-nav">
+      <a href="#dashboard" class="active">📊 Dashboard</a>
+      <a href="#listings">📋 My Listings <span class="count">24</span></a>
+      <a href="#leads">👥 Leads &amp; CRM <span class="count">47</span></a>
+      <a href="#viewings">📅 Viewings</a>
+      <a href="#" onclick="toast('Demo mode');return false">💰 Commissions</a>
+      <a href="#" onclick="toast('Demo mode');return false">📝 Contracts</a>
+      <a href="#aitools">📱 AI Tools</a>
+      <a href="#" onclick="toast('Demo mode');return false">📈 Analytics</a>
+      <a href="#" onclick="toast('Demo mode');return false">⚙️ Settings</a>
+    </nav>
+  </aside>
+
+  <main class="portal-main" id="dashboard">
+    <div class="stat-row">
+      <div class="stat-card"><div class="l">Active Listings</div><div class="v">24</div><div class="sub">↑ 3 this month</div></div>
+      <div class="stat-card"><div class="l">New Leads This Week</div><div class="v">12</div><div class="sub hot">🔴 5 hot</div></div>
+      <div class="stat-card"><div class="l">Viewings Scheduled</div><div class="v">8</div><div class="sub" style="color:var(--muted)">Next: Tomorrow 3 PM</div></div>
+      <div class="stat-card"><div class="l">Commission This Month</div><div class="v">SAR 45,000</div><div class="sub">↑ 12% vs last month</div></div>
+    </div>
+
+    <div class="portal-section" id="leads">
+      <div class="portal-section-head"><h2>🤖 AI Lead Priority Queue</h2></div>
+      <div id="leadQueue"></div>
+    </div>
+
+    <div class="portal-section">
+      <div class="portal-section-head"><h2>🗂️ Deal Pipeline</h2><span style="font-size:12.5px;color:var(--muted)" id="pipelineTotal"></span></div>
+      <div class="crm-board" id="crmBoard"></div>
+      <div class="portal-section-head"><h2 style="font-size:15px">All Contacts</h2></div>
+      <div class="tbl-wrap" style="overflow-x:auto">
+        <table class="crm-contacts-table">
+          <thead><tr><th>Contact</th><th>Property Interest</th><th>Stage</th><th>Value</th><th>Last Contact</th><th>Quick Actions</th></tr></thead>
+          <tbody id="crmContactsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="portal-section">
+      <div class="score-breakdown">
+        <div class="h">Why is Ahmed Al-Rashidi scored 94? 🔥</div>
+        <ul>
+          <li>✓ Viewed listing 8 times</li>
+          <li>✓ Saved the property</li>
+          <li>✓ Compared with 2 similar properties</li>
+          <li>✓ KYC verified profile</li>
+          <li>✓ Responded within 1 hour</li>
+          <li>✓ Budget matches listing price</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="portal-section" id="viewings">
+      <div class="portal-section-head"><h2>📅 AI Scheduling Assistant</h2></div>
+      <div id="viewReqList"></div>
+    </div>
+
+    <div class="portal-section" id="listings">
+      <div class="portal-section-head"><h2>My Listings Performance</h2></div>
+      <table class="listings-table">
+        <thead><tr><th>Listing</th><th>Views</th><th>Inquiries</th><th>Days Listed</th><th>Status</th></tr></thead>
+        <tbody id="listingsBody"></tbody>
+      </table>
+    </div>
+
+    <div class="portal-section" id="aitools">
+      <div class="portal-section-head"><h2>🤖 AI Tools for Agents</h2></div>
+      <div class="ai-tools-grid">
+        <div class="ai-tool-card" onclick="openAiTool('desc')"><div class="ic">📝</div><div class="t">Generate Listing Description</div><div class="d">AI-written bilingual description for any listing</div></div>
+        <div class="ai-tool-card" onclick="openAiTool('social')"><div class="ic">📸</div><div class="t">Social Media Post</div><div class="d">Instagram/LinkedIn post generated for a listing</div></div>
+        <div class="ai-tool-card" onclick="openAiTool('report')"><div class="ic">📊</div><div class="t">Market Report</div><div class="d">Download market data for your area</div></div>
+        <div class="ai-tool-card" onclick="openAiTool('price')"><div class="ic">💰</div><div class="t">Price My Listing</div><div class="d">AI pricing tool — instant valuation</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ AI DRAFT MODAL ============ -->
+<div class="modal-overlay" id="aiDraftOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>AI Suggested Follow-Up Message</h3><div class="modal-close" onclick="closeModal('aiDraftOverlay')">✕</div></div>
+    <div class="modal-body">
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px" id="aiDraftContext">—</p>
+      <textarea id="aiDraftText" style="width:100%;height:160px;border:1.5px solid var(--border);border-radius:10px;padding:14px;font-family:'DM Sans';font-size:14px"></textarea>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn btn-outline btn-block" onclick="closeModal('aiDraftOverlay')">Edit</button>
+        <button class="btn btn-navy btn-block" onclick="toast('Message sent','ok');closeModal('aiDraftOverlay')">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ AI TOOL MODAL ============ -->
+<div class="modal-overlay" id="aiToolOverlay">
+  <div class="modal wide">
+    <div class="modal-head"><h3 id="aiToolTitle">AI Tool</h3><div class="modal-close" onclick="closeModal('aiToolOverlay')">✕</div></div>
+    <div class="modal-body" id="aiToolBody"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.remove('open'); }));
+
+const LEADS = [
+  { name:"Ahmed Al-Rashidi", av:"1500648767791-00dcc994a43e", score:94, propId:7, time:"2 hours ago" },
+  { name:"Fatima Al-Qahtani", av:"1544005313-94ddf0286df2", score:87, propId:3, time:"5 hours ago" },
+  { name:"Sara Al-Otaibi", av:"1507003211169-0a1dd7228f2d", score:76, propId:2, time:"1 day ago" },
+  { name:"Nasser Al-Dosari", av:"1500648767791-00dcc994a43e", score:58, propId:6, time:"2 days ago" },
+  { name:"Reema Al-Harbi", av:"1544005313-94ddf0286df2", score:41, propId:9, time:"3 days ago" }
+];
+function scoreClass(s){ return s>=80?'hot':s>=55?'warm':''; }
+document.getElementById('leadQueue').innerHTML = LEADS.sort((a,b)=>b.score-a.score).map(l=>{
+  const p = propById(l.propId);
+  return `<div class="lead-row">
+    <img class="av" src="${u(l.av,80)}" alt="">
+    <div class="lead-info">
+      <div class="t">${l.name} <span class="lead-score ${scoreClass(l.score)}">${l.score>=80?'🔥 Hot':l.score>=55?'Warm':'Cool'} · Score ${l.score}</span></div>
+      <div class="l">Inquired about ${p.title} · ${l.time}</div>
+    </div>
+    <img class="lead-prop-thumb" src="${u(p.img,150)}" alt="">
+    <div class="lead-actions">
+      <button class="btn btn-gold btn-sm" onclick="openAiDraft('${l.name}','${p.title}')">✍️ AI Draft</button>
+      <span class="lead-icon-btn" onclick="toast('Demo mode — calling '+'${l.name}')" title="Call">📞</span>
+      <span class="lead-icon-btn" onclick="toast('Demo mode — WhatsApp')" title="WhatsApp">💬</span>
+      <span class="lead-icon-btn" onclick="toast('Demo mode — profile view')" title="Profile">👤</span>
+    </div>
+  </div>`;
+}).join('');
+
+function openAiDraft(name, propTitle){
+  document.getElementById('aiDraftContext').textContent = `This message was drafted based on ${name.split(' ')[0]}'s search history and inquiry on "${propTitle}".`;
+  document.getElementById('aiDraftText').value = `Hi ${name.split(' ')[0]},\n\nThanks for your interest in ${propTitle}! Based on what you've viewed, I think this could be a great fit for your search. I'd love to arrange a viewing this week — would Tuesday or Wednesday afternoon work better for you?\n\nHappy to answer any questions in the meantime.\n\nBest,\nKhalid`;
+  openModal('aiDraftOverlay');
+}
+
+const STAGE_ORDER = ['new','contacted','viewing','offer','closed'];
+const STAGE_LABELS = { new:'New', contacted:'Contacted', viewing:'Viewing Scheduled', offer:'Offer Submitted', closed:'Closed Won' };
+const CRM_CONTACTS = [
+  { id:1, name:'Majed Al-Otaibi', propId:10, stage:'new', days:1, lastContact:'Today' },
+  { id:2, name:'Huda Al-Zahrani', propId:9, stage:'new', days:2, lastContact:'Yesterday' },
+  { id:3, name:'Turki Al-Shehri', propId:5, stage:'new', days:1, lastContact:'Today' },
+  { id:4, name:'Ahmed Al-Rashidi', propId:7, stage:'contacted', days:3, lastContact:'2 days ago' },
+  { id:5, name:'Nasser Al-Dosari', propId:6, stage:'contacted', days:4, lastContact:'3 days ago' },
+  { id:6, name:'Lina Al-Mansour', propId:8, stage:'contacted', days:2, lastContact:'1 day ago' },
+  { id:7, name:'Fatima Al-Qahtani', propId:3, stage:'viewing', days:5, lastContact:'4 days ago' },
+  { id:8, name:'Omar Al-Faraj', propId:4, stage:'viewing', days:3, lastContact:'2 days ago' },
+  { id:9, name:'Sara Al-Otaibi', propId:2, stage:'offer', days:6, lastContact:'5 days ago' },
+  { id:10, name:'Bandar Al-Qahtani', propId:1, stage:'offer', days:8, lastContact:'6 days ago' },
+  { id:11, name:'Reema Al-Harbi', propId:9, stage:'closed', days:0, lastContact:'Closed 3 days ago' },
+  { id:12, name:'Yousef Al-Amri', propId:10, stage:'closed', days:0, lastContact:'Closed 1 week ago' }
+];
+function renderCrmBoard(){
+  const activeValue = CRM_CONTACTS.filter(c=>c.stage!=='closed').reduce((s,c)=>s+propById(c.propId).price,0);
+  document.getElementById('pipelineTotal').textContent = fmtSAR(activeValue) + ' in active pipeline';
+  document.getElementById('crmBoard').innerHTML = STAGE_ORDER.map(stage=>{
+    const items = CRM_CONTACTS.filter(c=>c.stage===stage);
+    const stageValue = items.reduce((s,c)=>s+propById(c.propId).price,0);
+    const nextStage = STAGE_ORDER[STAGE_ORDER.indexOf(stage)+1];
+    return `<div class="crm-col">
+      <div class="crm-col-head"><h4>${STAGE_LABELS[stage]}</h4><span class="cnt">${items.length}</span></div>
+      <div class="crm-col-total">${fmtSAR(stageValue)}</div>
+      ${items.map(c=>{
+        const p = propById(c.propId);
+        return `<div class="crm-card ${stage==='closed'?'won':''}">
+          <div class="name">${c.name}</div>
+          <div class="prop">${p.title}</div>
+          <div class="value">${fmtSAR(p.price)}</div>
+          <div class="days">${stage==='closed'?c.lastContact:c.days+' day'+(c.days!==1?'s':'')+' in stage'}</div>
+          ${nextStage ? `<button class="advance-btn" onclick="advanceStage(${c.id})">Advance → ${STAGE_LABELS[nextStage]}</button>` : `<span class="won-badge">✓ Deal Won</span>`}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+function advanceStage(id){
+  const c = CRM_CONTACTS.find(x=>x.id===id);
+  const idx = STAGE_ORDER.indexOf(c.stage);
+  if(idx < STAGE_ORDER.length-1){
+    c.stage = STAGE_ORDER[idx+1];
+    c.days = 0;
+    c.lastContact = c.stage==='closed' ? 'Closed today' : 'Today';
+    renderCrmBoard();
+    renderContactsTable();
+    toast(c.name+' moved to '+STAGE_LABELS[c.stage], 'ok');
+  }
+}
+function renderContactsTable(){
+  document.getElementById('crmContactsBody').innerHTML = CRM_CONTACTS.map(c=>{
+    const p = propById(c.propId);
+    return `<tr>
+      <td style="font-weight:600">${c.name}</td>
+      <td>${p.title}</td>
+      <td><span class="stage-pill ${c.stage}">${STAGE_LABELS[c.stage]}</span></td>
+      <td>${fmtSAR(p.price)}</td>
+      <td>${c.lastContact}</td>
+      <td><div style="display:flex;gap:6px">
+        <span class="lead-icon-btn" onclick="toast('Demo mode — calling '+'${c.name}')" title="Call">📞</span>
+        <span class="lead-icon-btn" onclick="toast('Demo mode — WhatsApp')" title="WhatsApp">💬</span>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+renderCrmBoard();
+renderContactsTable();
+
+const VIEWREQS = [
+  { buyer:"Ahmed Al-Rashidi", propId:7, range:"Tue–Thu afternoon" },
+  { buyer:"Fatima Al-Qahtani", propId:3, range:"This weekend" },
+  { buyer:"Nasser Al-Dosari", propId:6, range:"Next Monday" }
+];
+document.getElementById('viewReqList').innerHTML = VIEWREQS.map((v,i)=>{
+  const p = propById(v.propId);
+  return `<div class="viewreq-row" id="vr-${i}">
+    <div class="viewreq-info">
+      <div class="t">${v.buyer} — ${p.title}</div>
+      <div class="l">Requested: ${v.range}</div>
+      <div class="viewreq-status" id="vr-status-${i}" style="display:none">🤖 AI sent confirmation to all parties ✓</div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="aiSuggestTime(${i})">🤖 AI Suggest Time</button>
+    <button class="btn btn-navy btn-sm" onclick="confirmViewing(${i})">Confirm</button>
+    <button class="btn btn-danger-outline btn-sm" onclick="document.getElementById('vr-${i}').style.opacity='.4'">Decline</button>
+  </div>`;
+}).join('');
+function aiSuggestTime(i){ toast('🤖 AI suggests: Wednesday 4:00 PM (all parties available)','ok'); }
+function confirmViewing(i){ document.getElementById('vr-status-'+i).style.display='block'; toast('Viewing confirmed','ok'); }
+
+const LISTING_PERF = [
+  { propId:1, views:412, inq:24, days:12, hot:true },
+  { propId:7, views:298, inq:19, days:22 },
+  { propId:3, views:187, inq:9, days:19 },
+  { propId:6, views:143, inq:6, days:45 }
+];
+document.getElementById('listingsBody').innerHTML = LISTING_PERF.map(l=>{
+  const p = propById(l.propId);
+  return `<tr>
+    <td style="display:flex;align-items:center;gap:10px"><img src="${u(p.img,100)}" alt="">${p.title}</td>
+    <td>${l.views}</td>
+    <td>${l.inq}${l.hot?' <span class="hot-badge">🔥 High Interest</span>':''}</td>
+    <td>${l.days}</td>
+    <td>Active</td>
+  </tr>`;
+}).join('');
+
+const AI_TOOL_CONTENT = {
+  desc: { title:"AI Generated Listing Description", body:`<div class="field"><label>Choose Listing</label><select id="descPropSel" onchange="genDesc()"></select></div><div id="descOut" style="margin-top:14px;padding:16px;background:var(--surface);border-radius:10px;font-size:14px;line-height:1.7"></div>` },
+  social: { title:"AI Social Media Post", body:`<div class="field"><label>Choose Listing</label><select id="socialPropSel" onchange="genSocial()"></select></div><div id="socialOut" style="margin-top:14px;padding:16px;background:var(--surface);border-radius:10px;font-size:14px;line-height:1.7;white-space:pre-line"></div>` },
+  report: { title:"Market Report", body:`<p style="font-size:14px;color:#374151;margin-bottom:16px">Generate a PDF market report covering price trends, inventory levels, and days-on-market for your primary districts (Riyadh, Hittin, Al Malqa).</p><button class="btn btn-navy" onclick="toast('Demo mode — report would download here')">📥 Download Market Report (PDF)</button>` },
+  price: { title:"Price My Listing", body:`<div class="field"><label>Choose Listing</label><select id="pricePropSel" onchange="genPrice()"></select></div><div id="priceOut" style="margin-top:14px"></div>` }
+};
+function openAiTool(key){
+  const t = AI_TOOL_CONTENT[key];
+  document.getElementById('aiToolTitle').textContent = t.title;
+  document.getElementById('aiToolBody').innerHTML = t.body;
+  const sel = document.getElementById(key+'PropSel');
+  if(sel){ sel.innerHTML = PROPS.map(p=>`<option value="${p.id}">${p.title}</option>`).join(''); }
+  if(key==='desc') genDesc(); if(key==='social') genSocial(); if(key==='price') genPrice();
+  openModal('aiToolOverlay');
+}
+function genDesc(){
+  const p = propById(document.getElementById('descPropSel').value);
+  document.getElementById('descOut').innerHTML = `<b>EN:</b> ${p.desc}<br><br><b>AR:</b> عقار مميز يقع في ${p.loc}، يتميز بتشطيبات راقية ومساحات واسعة تصل إلى ${p.sqm} متر مربع، ضمن أفضل الأحياء طلباً في المدينة.`;
+}
+function genSocial(){
+  const p = propById(document.getElementById('socialPropSel').value);
+  document.getElementById('socialOut').textContent = `🏡 NEW LISTING — ${p.title}\n📍 ${p.loc}\n💰 ${fmtSAR(p.price)}\n\n${p.beds>0?p.beds+' Beds · ':''}${p.baths>0?p.baths+' Baths · ':''}${p.sqm} sqm\n\nDM for a private viewing 📲\n#SaudiRealEstate #${p.city.replace(/\s/g,'')} #SmartRE`;
+}
+function genPrice(){
+  const p = propById(document.getElementById('pricePropSel').value);
+  document.getElementById('priceOut').innerHTML = `<div class="price-widget" style="padding:0;box-shadow:none;border:none">
+    <div class="pw-price">${fmtSAR(p.price)}</div>
+    <div class="pw-est">AI-estimated fair market value</div>
+    <div class="pw-mid" style="margin-top:14px"><div class="pw-range"><div class="pw-track"><div class="fill"></div><div class="knob"></div></div>
+    <div class="vals"><span>${fmtSAR(Math.round(p.price*0.92))}</span><span>${fmtSAR(Math.round(p.price*1.08))}</span></div></div></div>
+  </div>`;
+}
+</script>
+</body>
+</html>

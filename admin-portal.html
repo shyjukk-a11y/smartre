@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+body{background:var(--surface)}
+.admin-nav{background:var(--navy)}
+.admin-nav .logo .en{color:#fff}
+.admin-nav .nav-links a{color:rgba(255,255,255,.75)}
+.admin-nav .nav-links a:hover{color:#fff}
+.admin-badge{background:rgba(201,168,76,.18);color:var(--gold-soft);font-size:11px;font-weight:800;padding:4px 11px;border-radius:var(--r-pill);border:1px solid rgba(201,168,76,.35)}
+
+.portal-layout{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 64px)}
+.portal-side{background:var(--navy-800);padding:26px 18px;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto}
+.portal-nav{display:flex;flex-direction:column;gap:2px}
+.portal-nav a{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-radius:10px;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.75)}
+.portal-nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+.portal-nav a.active{background:rgba(201,168,76,.16);color:var(--gold-soft)}
+.portal-nav a .count{background:rgba(255,255,255,.12);color:#fff;font-size:10px;font-weight:800;padding:1px 7px;border-radius:var(--r-pill)}
+.portal-main{padding:32px 40px 80px}
+
+.live-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:32px}
+.live-stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px}
+.live-stat .l{font-size:11.5px;color:var(--muted);font-weight:600}
+.live-stat .v{font-size:20px;font-weight:800;color:var(--navy);font-family:var(--font-head);margin-top:5px}
+
+.portal-section{margin-bottom:36px}
+.portal-section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.portal-section-head h2{font-size:17px;display:flex;align-items:center;gap:9px}
+.pending-badge{background:rgba(245,158,11,.14);color:var(--amber);font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:var(--r-pill)}
+
+.adm-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.adm-table th{background:var(--surface);font-size:11px;text-transform:uppercase;color:var(--muted);padding:11px 14px;text-align:left}
+.adm-table td{padding:11px 14px;border-top:1px solid var(--border);font-size:13px;vertical-align:middle}
+.adm-table img{width:38px;height:38px;border-radius:8px;object-fit:cover}
+.adm-row.removed{opacity:.35;pointer-events:none}
+.adm-actions{display:flex;gap:6px}
+.adm-actions button{font-size:11.5px;font-weight:700;padding:5px 10px;border-radius:6px}
+.act-approve{background:rgba(16,185,129,.1);color:var(--green)}
+.act-reject{background:rgba(239,68,68,.1);color:var(--red)}
+.act-neutral{background:var(--surface);color:var(--navy)}
+.status-pill{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:var(--r-pill)}
+.status-pill.active{background:rgba(16,185,129,.1);color:var(--green)}
+.status-pill.suspended{background:rgba(239,68,68,.1);color:var(--red)}
+.status-pill.pending{background:rgba(245,158,11,.12);color:var(--amber)}
+.status-pill.approved{background:rgba(16,185,129,.1);color:var(--green)}
+.status-pill.rejected{background:rgba(239,68,68,.1);color:var(--red)}
+
+.filter-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.filter-row input,.filter-row select{height:38px;border:1.5px solid var(--border);border-radius:8px;padding:0 12px;font-family:"DM Sans";font-size:13px}
+.filter-row input{flex:1;min-width:200px}
+
+.rev-chart{display:flex;align-items:flex-end;gap:16px;height:150px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.rev-chart-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.rev-bar{width:100%;max-width:50px;background:linear-gradient(180deg,var(--navy-600),var(--navy));border-radius:6px 6px 0 0}
+.rev-chart-col .m{margin-top:8px;font-size:11px;color:var(--muted)}
+.mrr-row{display:flex;gap:24px;margin-bottom:16px}
+.mrr-box{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 20px;flex:1}
+.mrr-box .l{font-size:12px;color:var(--muted)}
+.mrr-box .v{font-size:22px;font-weight:800;color:var(--navy);font-family:var(--font-head)}
+
+.ai-mon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.ai-mon-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px}
+.ai-mon-card .l{font-size:12px;color:var(--muted)}
+.ai-mon-card .v{font-size:22px;font-weight:800;color:var(--navy);font-family:var(--font-head);margin:5px 0}
+.ai-mon-card .sub{font-size:11.5px;color:var(--green);font-weight:600}
+.ai-alert{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.28);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.ai-alert .txt{font-size:13.5px;color:#92400e}
+
+.notif-composer{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px}
+.composer-row{display:flex;gap:14px;margin-bottom:14px}
+
+.flag-row{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:8px}
+.flag-row .t{font-weight:600;font-size:13.5px}
+.flag-row .d{font-size:12px;color:var(--muted)}
+.api-health-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px}
+.api-status{font-size:11.5px;font-weight:800}
+.api-status.ok{color:var(--green)}
+.api-status.warn{color:var(--amber)}
+
+.audit-row{display:flex;gap:14px;font-size:12.5px;color:#374151;padding:9px 0;border-bottom:1px solid var(--border)}
+.audit-row .time{color:var(--muted);width:130px;flex:0 0 130px}
+@media(max-width:1080px){
+  .portal-layout{grid-template-columns:1fr;min-width:0}
+  .portal-side{position:static;height:auto;min-width:0}
+  .portal-main{min-width:0;padding:24px 18px}
+  .portal-nav a{flex-wrap:wrap;white-space:normal}
+  .live-stats{grid-template-columns:repeat(2,1fr)}
+  .ai-mon-grid{grid-template-columns:repeat(2,1fr)}
+  .mrr-row{flex-direction:column}
+  .adm-table{display:block;overflow-x:auto}
+  .filter-row{flex-direction:column}
+  .composer-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav admin-nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE Admin</span></a>
+    <div class="nav-links">
+      <span class="admin-badge">🛡️ Super Admin</span>
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.3);color:#fff" onclick="location.href='index.html'">Exit Admin</button>
+    </div>
+  </div>
+</nav>
+
+<div class="portal-layout">
+  <aside class="portal-side">
+    <nav class="portal-nav">
+      <a href="#dashboard" class="active">📊 Dashboard</a>
+      <a href="#moderation">🏠 Listings <span class="count">2,847</span></a>
+      <a href="#users">👥 Users <span class="count">12,450</span></a>
+      <a href="#verification">🏢 Agencies &amp; Brokers <span class="count">486</span></a>
+      <a href="#revenue">💰 Subscriptions &amp; Revenue</a>
+      <a href="#content">📝 Content &amp; SEO</a>
+      <a href="#aimonitor">🤖 AI Monitoring</a>
+      <a href="#notifcenter">🔔 Notifications</a>
+      <a href="#settings">⚙️ System Settings</a>
+      <a href="#audit">📋 Audit Log</a>
+    </nav>
+  </aside>
+
+  <main class="portal-main" id="dashboard">
+    <h1 style="font-size:22px;margin-bottom:18px">Platform Overview</h1>
+    <div class="live-stats">
+      <div class="live-stat"><div class="l">Total Users</div><div class="v">12,450</div></div>
+      <div class="live-stat"><div class="l">Active Listings</div><div class="v">2,847</div></div>
+      <div class="live-stat"><div class="l">Today's Inquiries</div><div class="v">347</div></div>
+      <div class="live-stat"><div class="l">Revenue This Month</div><div class="v">SAR 284,000</div></div>
+      <div class="live-stat"><div class="l">New Registrations Today</div><div class="v">24</div></div>
+    </div>
+
+    <div class="portal-section" id="moderation">
+      <div class="portal-section-head"><h2>Listing Moderation Queue <span class="pending-badge" id="modCountBadge">Pending Review (14)</span></h2>
+        <button class="btn btn-navy btn-sm" onclick="bulkApprove()">✓ Bulk Approve Visible</button>
+      </div>
+      <table class="adm-table">
+        <thead><tr><th>Property</th><th>Seller</th><th>Submitted</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="modBody"></tbody>
+      </table>
+    </div>
+
+    <div class="portal-section" id="users">
+      <div class="portal-section-head"><h2>User Management</h2></div>
+      <div class="filter-row">
+        <input type="text" id="userSearch" placeholder="Search by name, email or phone" oninput="renderUsers()">
+        <select id="userTypeFilter" onchange="renderUsers()">
+          <option value="">All</option><option>Buyers</option><option>Sellers</option><option>Brokers</option><option>Agencies</option><option>Flagged</option>
+        </select>
+      </div>
+      <table class="adm-table">
+        <thead><tr><th>User</th><th>Type</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="userBody"></tbody>
+      </table>
+      <h3 style="font-size:14.5px;margin:20px 0 10px">KYC Pending Verification (3)</h3>
+      <table class="adm-table">
+        <thead><tr><th>User</th><th>Submitted</th><th>Document</th><th>Actions</th></tr></thead>
+        <tbody id="kycBody"></tbody>
+      </table>
+    </div>
+
+    <div class="portal-section" id="verification">
+      <div class="portal-section-head"><h2>Broker &amp; Agency Verification</h2></div>
+      <table class="adm-table">
+        <thead><tr><th>Agency</th><th>License #</th><th>Docs</th><th>Actions</th></tr></thead>
+        <tbody id="verifyBody"></tbody>
+      </table>
+    </div>
+
+    <div class="portal-section" id="revenue">
+      <div class="portal-section-head"><h2>Revenue &amp; Subscriptions</h2></div>
+      <div class="rev-chart" id="revChart"></div>
+      <div class="mrr-row">
+        <div class="mrr-box"><div class="l">Total MRR</div><div class="v">SAR 124,500</div></div>
+        <div class="mrr-box"><div class="l">Churn This Month</div><div class="v">2 agencies</div></div>
+      </div>
+      <table class="adm-table">
+        <thead><tr><th>Agency</th><th>Plan</th><th>Amount</th><th>Renewal</th><th>Status</th></tr></thead>
+        <tbody id="subsBody"></tbody>
+      </table>
+    </div>
+
+    <div class="portal-section" id="aimonitor">
+      <div class="portal-section-head"><h2>🤖 AI System Health</h2></div>
+      <div class="ai-mon-grid">
+        <div class="ai-mon-card"><div class="l">Pricing Engine Accuracy</div><div class="v">87%</div><div class="sub">↑ 2% vs last week</div></div>
+        <div class="ai-mon-card"><div class="l">Chatbot Resolution Rate</div><div class="v">73%</div><div class="sub" style="color:var(--muted)">Questions answered without human</div></div>
+        <div class="ai-mon-card"><div class="l">Lead Score Accuracy</div><div class="v">81%</div><div class="sub" style="color:var(--muted)">Hot leads that converted</div></div>
+        <div class="ai-mon-card"><div class="l">Content Generation</div><div class="v">24</div><div class="sub" style="color:var(--muted)">Articles this week</div></div>
+      </div>
+      <div class="ai-alert">
+        <span class="txt">⚠️ Chatbot unable to answer 127 questions this week — review needed</span>
+        <button class="btn btn-outline btn-sm" onclick="toast('Demo mode — unanswered questions log')">View Unanswered Questions</button>
+      </div>
+    </div>
+
+    <div class="portal-section" id="content">
+      <div class="portal-section-head"><h2>Content &amp; SEO — AI Content Engine</h2></div>
+      <table class="adm-table">
+        <thead><tr><th>Title</th><th>District</th><th>Est. Traffic</th><th>Actions</th></tr></thead>
+        <tbody id="contentBody"></tbody>
+      </table>
+    </div>
+
+    <div class="portal-section" id="notifcenter">
+      <div class="portal-section-head"><h2>Notification Center</h2></div>
+      <div class="notif-composer">
+        <div class="composer-row">
+          <div class="field" style="flex:1"><label>Target Segment</label><select id="ncTarget"><option>All Buyers</option><option>Buyers in Riyadh</option><option>Brokers</option><option>All Users</option></select></div>
+          <div class="field" style="flex:1"><label>Channel</label><select id="ncChannel"><option>Push</option><option>Email</option><option>WhatsApp (price drops only)</option></select></div>
+        </div>
+        <div class="field"><label>Message</label><textarea id="ncMsg" placeholder="Write your message…"></textarea></div>
+        <button class="btn btn-navy" onclick="sendBroadcast()">Send Notification</button>
+      </div>
+      <h3 style="font-size:14.5px;margin:20px 0 10px">Recent Notification Performance</h3>
+      <table class="adm-table">
+        <thead><tr><th>Message</th><th>Sent</th><th>Opened</th><th>Clicked</th></tr></thead>
+        <tbody id="ncPerfBody"></tbody>
+      </table>
+    </div>
+
+    <div class="portal-section" id="settings">
+      <div class="portal-section-head"><h2>System Settings</h2></div>
+      <h3 style="font-size:14.5px;margin-bottom:10px">Feature Flags</h3>
+      <div id="flagsList" style="margin-bottom:24px"></div>
+      <h3 style="font-size:14.5px;margin-bottom:10px">API Health Monitor</h3>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:6px 18px;margin-bottom:24px">
+        <div class="api-health-row"><span>Google Maps</span><span class="api-status ok">● Operational</span></div>
+        <div class="api-health-row"><span>MOJ Deed API</span><span class="api-status warn">⚠ Degraded</span></div>
+        <div class="api-health-row"><span>Moyasar Payments</span><span class="api-status ok">● Operational</span></div>
+        <div class="api-health-row" style="border-bottom:none"><span>WhatsApp Business API</span><span class="api-status ok">● Operational</span></div>
+      </div>
+      <div class="insight-card" style="background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.25)">✓ <b>PDPL Compliance:</b> All systems compliant with Saudi Personal Data Protection Law. Last audit: July 2026.</div>
+    </div>
+
+    <div class="portal-section" id="audit">
+      <div class="portal-section-head"><h2>Audit Log</h2></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:6px 18px" id="auditLog"></div>
+    </div>
+  </main>
+</div>
+
+<script src="app.js"></script>
+<script>
+/* ---------- Listing moderation ---------- */
+let pendingCount = 14;
+const MOD_QUEUE = [
+  { propId:1, seller:"Ahmed Al-Rashidi", submitted:"2 hours ago", type:"Villa" },
+  { propId:3, seller:"Khalid Al-Harbi", submitted:"5 hours ago", type:"Apartment" },
+  { propId:6, seller:"Sara Al-Otaibi", submitted:"1 day ago", type:"Townhouse" },
+  { propId:10, seller:"Fatima Al-Qahtani", submitted:"1 day ago", type:"Land" }
+];
+document.getElementById('modBody').innerHTML = MOD_QUEUE.map((m,i)=>{
+  const p = propById(m.propId);
+  return `<tr class="adm-row" id="mod-${i}">
+    <td style="display:flex;align-items:center;gap:10px"><img src="${u(p.img,100)}">${p.title}</td>
+    <td>${m.seller}</td><td>${m.submitted}</td><td>${m.type}</td>
+    <td><span class="status-pill pending" id="mod-status-${i}">Pending</span></td>
+    <td class="adm-actions">
+      <button class="act-approve" onclick="modAction(${i},'approved')">✓ Approve</button>
+      <button class="act-reject" onclick="modAction(${i},'rejected')">✗ Reject</button>
+      <button class="act-neutral" onclick="toast('Demo mode — edit listing')">✏️ Edit</button>
+      <button class="act-neutral" onclick="window.open('property.html?id=${p.id}','_blank')">👁️ Preview</button>
+    </td>
+  </tr>`;
+}).join('');
+function modAction(i, status){
+  const el = document.getElementById('mod-status-'+i);
+  if(el.textContent!=='Pending') return;
+  el.textContent = status==='approved' ? 'Approved' : 'Rejected';
+  el.className = 'status-pill '+status;
+  pendingCount = Math.max(0, pendingCount-1);
+  document.getElementById('modCountBadge').textContent = 'Pending Review ('+pendingCount+')';
+  toast('Listing '+status, status==='approved'?'ok':undefined);
+}
+function bulkApprove(){
+  MOD_QUEUE.forEach((m,i)=>{ const el=document.getElementById('mod-status-'+i); if(el.textContent==='Pending') modAction(i,'approved'); });
+}
+
+/* ---------- users ---------- */
+const USERS = [
+  { name:"Ahmed Al-Rashidi", type:"Broker", joined:"Jan 2025", status:"active" },
+  { name:"Fatima Al-Qahtani", type:"Buyer", joined:"Mar 2026", status:"active" },
+  { name:"Nasser Al-Dosari", type:"Seller", joined:"Feb 2026", status:"active" },
+  { name:"Reema Al-Harbi", type:"Buyer", joined:"Jul 2026", status:"pending" },
+  { name:"Al Malqa Real Estate", type:"Agency", joined:"Nov 2024", status:"active" },
+  { name:"Unknown User 4471", type:"Buyer", joined:"Aug 2026", status:"suspended" }
+];
+function renderUsers(){
+  const q = document.getElementById('userSearch').value.toLowerCase();
+  const t = document.getElementById('userTypeFilter').value;
+  let list = USERS.filter(u=>u.name.toLowerCase().includes(q));
+  if(t && t!=='Flagged') list = list.filter(u=>u.type===t.slice(0,-1));
+  if(t==='Flagged') list = list.filter(u=>u.status==='suspended');
+  document.getElementById('userBody').innerHTML = list.map(u=>`
+    <tr class="adm-row"><td>${u.name}</td><td>${u.type}</td><td>${u.joined}</td>
+    <td><span class="status-pill ${u.status}">${u.status}</span></td>
+    <td class="adm-actions"><button class="act-neutral" onclick="toast('Demo mode — view user')">View</button>
+    <button class="act-neutral" onclick="toast('Demo mode — edit user')">Edit</button>
+    <button class="act-reject" onclick="this.closest('tr').classList.add('removed')">Suspend</button></td></tr>`).join('');
+}
+renderUsers();
+
+const KYC = ["Reema Al-Harbi","Omar Al-Suwailem","Hessa Al-Mutairi"];
+document.getElementById('kycBody').innerHTML = KYC.map((n,i)=>`
+  <tr class="adm-row" id="kyc-${i}"><td>${n}</td><td>${i+1} day${i?'s':''} ago</td><td>National ID</td>
+  <td class="adm-actions"><button class="act-approve" onclick="document.getElementById('kyc-${i}').classList.add('removed')">✓ Approve</button>
+  <button class="act-reject" onclick="document.getElementById('kyc-${i}').classList.add('removed')">✗ Reject</button></td></tr>`).join('');
+
+/* ---------- broker/agency verification ---------- */
+const VERIFY_Q = [
+  { agency:"Riyadh Realty Partners", license:"RE-108562" },
+  { agency:"Jeddah Coastal Properties", license:"RE-119901" }
+];
+document.getElementById('verifyBody').innerHTML = VERIFY_Q.map((v,i)=>`
+  <tr class="adm-row" id="verify-${i}"><td>${v.agency}</td>
+  <td><input type="text" value="${v.license}" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;width:110px" id="rega-${i}"></td>
+  <td>Commercial Reg. + REGA Cert.</td>
+  <td class="adm-actions">
+    <button class="act-neutral" onclick="toast('🤖 Verified with REGA — license active','ok')">Verify with REGA</button>
+    <button class="act-approve" onclick="document.getElementById('verify-${i}').classList.add('removed')">Approve</button>
+    <button class="act-reject" onclick="toast('Requested more info')">Request Info</button>
+  </td></tr>`).join('');
+
+/* ---------- revenue ---------- */
+const months = ['Mar','Apr','May','Jun','Jul','Aug'];
+const revVals = [198000,215000,241000,259000,271000,284000];
+document.getElementById('revChart').innerHTML = months.map((m,i)=>{
+  const h = Math.round(revVals[i]/Math.max(...revVals)*110)+20;
+  return `<div class="rev-chart-col"><div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px">${(revVals[i]/1000).toFixed(0)}K</div><div class="rev-bar" style="height:${h}px"></div><span class="m">${m}</span></div>`;
+}).join('');
+const SUBS = [
+  { agency:"Al Malqa Real Estate", plan:"Professional", amount:499, renewal:"Sep 12, 2026", status:"active" },
+  { agency:"Riyadh Realty Partners", plan:"Professional", amount:499, renewal:"Sep 18, 2026", status:"active" },
+  { agency:"Jeddah Coastal Properties", plan:"Starter", amount:249, renewal:"Aug 30, 2026", status:"active" },
+  { agency:"Hittin Properties Group", plan:"Professional", amount:499, renewal:"—", status:"suspended" }
+];
+document.getElementById('subsBody').innerHTML = SUBS.map(s=>`
+  <tr><td>${s.agency}</td><td>${s.plan}</td><td>${fmtSAR(s.amount)}</td><td>${s.renewal}</td><td><span class="status-pill ${s.status}">${s.status}</span></td></tr>`).join('');
+
+/* ---------- content queue ---------- */
+const CONTENT_Q = [
+  { title:"Living in Al Nakheel: Complete Guide", district:"Al Nakheel", traffic:"1,200/mo" },
+  { title:"Diriyah Gate: Investment Outlook 2027", district:"Diriyah", traffic:"850/mo" },
+  { title:"Al Khobar Waterfront Living Guide", district:"Al Khobar", traffic:"640/mo" },
+  { title:"KAFD Office Market Report Q3", district:"Al Aqiq", traffic:"510/mo" }
+];
+document.getElementById('contentBody').innerHTML = CONTENT_Q.map((c,i)=>`
+  <tr class="adm-row" id="content-${i}"><td>${c.title}</td><td>${c.district}</td><td>${c.traffic}</td>
+  <td class="adm-actions"><button class="act-approve" onclick="document.getElementById('content-${i}').classList.add('removed')">✓ Approve</button>
+  <button class="act-neutral" onclick="toast('Demo mode — edit article')">Edit</button>
+  <button class="act-reject" onclick="document.getElementById('content-${i}').classList.add('removed')">✗ Reject</button></td></tr>`).join('');
+
+/* ---------- notification center ---------- */
+function sendBroadcast(){
+  const msg = document.getElementById('ncMsg').value.trim();
+  if(!msg){ toast('Write a message first'); return; }
+  toast('Notification sent to '+document.getElementById('ncTarget').value,'ok');
+  document.getElementById('ncMsg').value='';
+}
+const NC_PERF = [
+  { msg:"New Diriyah Gate villas now listed", sent:8420, opened:3120, clicked:640 },
+  { msg:"Price drops this week in Riyadh", sent:5210, opened:2680, clicked:890 }
+];
+document.getElementById('ncPerfBody').innerHTML = NC_PERF.map(n=>`
+  <tr><td>${n.msg}</td><td>${n.sent.toLocaleString()}</td><td>${n.opened.toLocaleString()}</td><td>${n.clicked.toLocaleString()}</td></tr>`).join('');
+
+/* ---------- feature flags ---------- */
+const FLAGS = [
+  { name:"AI Conversational Search", desc:"Natural language property search", on:true },
+  { name:"Virtual Staging", desc:"AI-generated furnished room previews", on:true },
+  { name:"WhatsApp Price Alerts", desc:"Send price drop alerts via WhatsApp", on:true },
+  { name:"360° Virtual Tours", desc:"Interactive panorama viewer on listings", on:true },
+  { name:"Investment View Beta", desc:"ROI/yield analytics on property pages", on:false }
+];
+document.getElementById('flagsList').innerHTML = FLAGS.map((f,i)=>`
+  <div class="flag-row"><div><div class="t">${f.name}</div><div class="d">${f.desc}</div></div>
+  <span class="switch ${f.on?'on':''}" onclick="this.classList.toggle('on');toast('${f.name} '+(this.classList.contains('on')?'enabled':'disabled'))"></span></div>`).join('');
+
+/* ---------- audit log ---------- */
+const AUDIT = [
+  { time:"10:24 AM", who:"Admin (You)", what:"Approved listing: Hittin Modern Villa" },
+  { time:"09:58 AM", who:"System", what:"Nightly AI pricing recalibration completed" },
+  { time:"09:12 AM", who:"Admin (You)", what:"Verified agency: Al Malqa Real Estate" },
+  { time:"Yesterday", who:"Admin (You)", what:"Suspended user: Unknown User 4471 (flagged activity)" },
+  { time:"Yesterday", who:"System", what:"Sent notification broadcast to 8,420 users" }
+];
+document.getElementById('auditLog').innerHTML = AUDIT.map(a=>`<div class="audit-row"><span class="time">${a.time}</span><span><b>${a.who}</b> — ${a.what}</span></div>`).join('');
+</script>
+</body>
+</html>

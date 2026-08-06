@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List a Property — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.wiz-shell{max-width:880px;margin:0 auto;padding:36px 20px 100px}
+.wiz-head{margin-bottom:32px}
+.wiz-head h1{font-size:26px;margin-bottom:6px}
+.wiz-head p{color:var(--muted);font-size:14px}
+
+.wiz-steps{display:flex;align-items:flex-start;margin-bottom:40px}
+.wiz-step{flex:1;text-align:center;position:relative;cursor:pointer}
+.wiz-step .dot{width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;margin:0 auto 8px;position:relative;z-index:1;transition:all .2s}
+.wiz-step.done .dot{background:var(--green);border-color:var(--green);color:#fff}
+.wiz-step.active .dot{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 0 0 4px rgba(27,58,107,.15)}
+.wiz-step .lbl{font-size:11.5px;color:var(--muted);font-weight:600}
+.wiz-step.active .lbl{color:var(--navy);font-weight:800}
+.wiz-step:not(:last-child)::after{content:"";position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
+.wiz-step.done:not(:last-child)::after{background:var(--green)}
+
+.wiz-panel{display:none;background:#fff;border:1px solid var(--border);border-radius:18px;padding:32px}
+.wiz-panel.active{display:block}
+.wiz-panel h2{font-size:18px;margin-bottom:4px}
+.wiz-panel .hint{color:var(--muted);font-size:13px;margin-bottom:24px}
+
+.pill-toggle{display:flex;gap:10px;margin-bottom:20px}
+.pill-toggle button{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-weight:700;font-size:14px;color:var(--muted);cursor:pointer;transition:all .15s}
+.pill-toggle button.on{border-color:var(--navy);background:rgba(27,58,107,.06);color:var(--navy)}
+
+.dropzone{border:2px dashed var(--border);border-radius:14px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .15s;background:var(--surface)}
+.dropzone:hover,.dropzone.drag{border-color:var(--navy);background:rgba(27,58,107,.04)}
+.dropzone .ic{font-size:32px;margin-bottom:10px}
+.dropzone .t{font-weight:700;font-size:14.5px;color:var(--navy)}
+.dropzone .s{font-size:12.5px;color:var(--muted);margin-top:4px}
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.photo-thumb{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb .cover-tag{position:absolute;bottom:6px;left:6px;background:var(--navy);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:var(--r-pill)}
+.photo-thumb .rm{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:rgba(17,24,39,.65);color:#fff;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.photo-count-warn{margin-top:14px;font-size:12.5px;color:var(--amber);font-weight:600}
+.photo-count-ok{margin-top:14px;font-size:12.5px;color:var(--green);font-weight:600}
+
+.ai-gen-btn{display:flex;align-items:center;gap:10px;justify-content:center;width:100%;padding:16px;border-radius:12px;border:1.5px dashed var(--gold);background:rgba(201,168,76,.06);color:#8a6d1f;font-weight:800;font-size:14.5px;cursor:pointer;margin-bottom:20px}
+.ai-gen-btn:hover{background:rgba(201,168,76,.12)}
+.ai-out{display:none}
+.ai-out.show{display:block}
+.ai-lang-tabs{display:flex;gap:8px;margin-bottom:10px}
+.ai-lang-tabs button{padding:6px 14px;border-radius:var(--r-pill);border:1.5px solid var(--border);background:#fff;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.ai-lang-tabs button.on{border-color:var(--navy);color:var(--navy);background:rgba(27,58,107,.06)}
+.ai-desc-box{width:100%;min-height:130px;border:1.5px solid var(--border);border-radius:10px;padding:14px;font-size:14px;line-height:1.7;font-family:"DM Sans";resize:vertical}
+.ai-desc-box[dir="rtl"]{text-align:right}
+
+.review-card{display:flex;gap:20px;background:var(--surface);border-radius:14px;padding:18px;margin-bottom:22px}
+.review-card img{width:120px;height:100px;border-radius:10px;object-fit:cover;flex:0 0 120px}
+.review-card h3{font-size:17px;margin-bottom:4px}
+.review-card .loc{font-size:13px;color:var(--muted);margin-bottom:8px}
+.review-card .price{font-size:19px;font-weight:800;color:var(--navy)}
+.review-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.review-grid .ri{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.review-grid .ri .l{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700}
+.review-grid .ri .v{font-size:14.5px;font-weight:700;color:var(--text);margin-top:3px}
+
+.wiz-nav{display:flex;justify-content:space-between;margin-top:24px}
+
+.gate-wrap{max-width:420px;margin:80px auto;background:#fff;border:1px solid var(--border);border-radius:18px;padding:36px;text-align:center}
+.gate-wrap .ic{font-size:38px;margin-bottom:14px}
+.gate-wrap h2{font-size:20px;margin-bottom:8px}
+.gate-wrap p{color:var(--muted);font-size:13.5px;margin-bottom:24px;line-height:1.6}
+.gate-demo-note{font-size:12px;color:var(--muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+
+.success-wrap{max-width:480px;margin:70px auto;text-align:center}
+.success-wrap .ic{width:76px;height:76px;border-radius:50%;background:rgba(16,185,129,.12);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 22px}
+.success-wrap h2{font-size:23px;margin-bottom:10px}
+.success-wrap p{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:26px}
+.success-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.moderation-note{display:flex;align-items:center;gap:10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:14px 16px;margin-bottom:26px;text-align:left;font-size:13px;color:#8a5a0f}
+
+@media(max-width:1080px){
+  .review-grid{grid-template-columns:repeat(2,1fr)}
+  .photo-grid{grid-template-columns:repeat(3,1fr)}
+  .wiz-step .lbl{display:none}
+  .review-card{flex-direction:column}
+  .review-card img{width:100%;height:160px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="search-results.html">Buy</a>
+      <a href="search-results.html?purpose=Rent">Rent</a>
+      <a href="index.html#featured">New Developments</a>
+      <a href="agent-portal.html">Brokers</a>
+      <a href="blog.html">Market Insights</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel"><div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div><div class="notif-list" id="notifList"></div></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ AGENT SIGN-IN GATE ============ -->
+<div id="gateView">
+  <div class="gate-wrap">
+    <div class="ic">🔐</div>
+    <h2>Agent Sign In Required</h2>
+    <p>Listing a property on SMART RE requires a verified agent account. Sign in to continue — your REGA license will be attached to the listing automatically.</p>
+    <form onsubmit="return agentSignInSubmit(event)">
+      <div class="field" style="text-align:left"><label>Email</label><input type="email" id="agEmail" value="khalid.alharbi@smartre.sa" required></div>
+      <div class="field" style="text-align:left"><label>Password</label><input type="password" id="agPass" value="••••••••" required></div>
+      <button class="btn btn-navy btn-block btn-lg" type="submit">Sign In &amp; Continue</button>
+    </form>
+    <div class="gate-demo-note">Demo mode — any credentials work. Signs you in as <b>Khalid Al-Harbi</b>, Senior Broker (REGA RE-108562).</div>
+  </div>
+</div>
+
+<!-- ============ WIZARD ============ -->
+<div id="wizView" class="wiz-shell hide">
+  <div class="wiz-head">
+    <h1>List a New Property</h1>
+    <p>Fill in the details below — our AI will help write the listing description and suggest a price.</p>
+  </div>
+
+  <div class="wiz-steps" id="wizSteps">
+    <div class="wiz-step active" data-step="1"><div class="dot">1</div><div class="lbl">Details</div></div>
+    <div class="wiz-step" data-step="2"><div class="dot">2</div><div class="lbl">Location</div></div>
+    <div class="wiz-step" data-step="3"><div class="dot">3</div><div class="lbl">Photos</div></div>
+    <div class="wiz-step" data-step="4"><div class="dot">4</div><div class="lbl">AI Description</div></div>
+    <div class="wiz-step" data-step="5"><div class="dot">5</div><div class="lbl">Review</div></div>
+  </div>
+
+  <!-- STEP 1: DETAILS -->
+  <div class="wiz-panel active" data-panel="1">
+    <h2>Property Details</h2>
+    <div class="hint">What are you listing, and for how much?</div>
+    <div class="pill-toggle" id="purposeToggle">
+      <button type="button" class="on" data-purpose="Sale">For Sale</button>
+      <button type="button" data-purpose="Rent">For Rent</button>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Property Type</label>
+        <select id="fType">
+          <option>Villa</option><option>Apartment</option><option>Townhouse</option><option>Office</option><option>Land</option>
+        </select>
+      </div>
+      <div class="field"><label>Price (SAR)</label><input type="number" id="fPrice" placeholder="e.g. 2,450,000" min="0"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Bedrooms</label><input type="number" id="fBeds" placeholder="0" min="0" value="4"></div>
+      <div class="field"><label>Bathrooms</label><input type="number" id="fBaths" placeholder="0" min="0" value="4"></div>
+    </div>
+    <div class="field"><label>Size (sqm)</label><input type="number" id="fSqm" placeholder="e.g. 380" min="0"></div>
+    <div class="wiz-nav"><span></span><button class="btn btn-navy" data-next="1">Next: Location →</button></div>
+  </div>
+
+  <!-- STEP 2: LOCATION -->
+  <div class="wiz-panel" data-panel="2">
+    <h2>Location</h2>
+    <div class="hint">Where is the property? This powers map search and district guides.</div>
+    <div class="field-row">
+      <div class="field"><label>City</label>
+        <select id="fCity">
+          <option>Riyadh</option><option>Jeddah</option><option>Al Khobar</option><option>Dammam</option>
+        </select>
+      </div>
+      <div class="field"><label>District</label>
+        <input list="districtList" id="fDistrict" placeholder="e.g. Al Malqa">
+        <datalist id="districtList">
+          <option value="Hittin"><option value="Al Malqa"><option value="Al Nakheel"><option value="Al Yasmin">
+          <option value="Al Aqiq"><option value="Diriyah"><option value="Al Hamra"><option value="Corniche">
+        </datalist>
+      </div>
+    </div>
+    <div class="field"><label>Street / Landmark (optional)</label><input type="text" id="fAddress" placeholder="e.g. Near King Fahd Park"></div>
+    <div class="wiz-nav"><button class="btn btn-outline" data-back="1">← Back</button><button class="btn btn-navy" data-next="2">Next: Photos →</button></div>
+  </div>
+
+  <!-- STEP 3: PHOTOS -->
+  <div class="wiz-panel" data-panel="3">
+    <h2>Photos</h2>
+    <div class="hint">Listings with 5+ photos get 3× more inquiries. Photos stay on your device for this demo — nothing is uploaded.</div>
+    <div class="dropzone" id="dropzone">
+      <div class="ic">📷</div>
+      <div class="t">Click to upload, or drag photos here</div>
+      <div class="s">JPG or PNG, up to 10 photos</div>
+    </div>
+    <input type="file" id="filePicker" accept="image/*" multiple class="hide">
+    <div class="photo-grid" id="photoGrid"></div>
+    <div id="photoCountMsg" class="photo-count-warn">Add at least 3 photos to continue.</div>
+    <div class="wiz-nav"><button class="btn btn-outline" data-back="2">← Back</button><button class="btn btn-navy" data-next="3">Next: AI Description →</button></div>
+  </div>
+
+  <!-- STEP 4: AI DESCRIPTION -->
+  <div class="wiz-panel" data-panel="4">
+    <h2>AI-Generated Description &amp; Pricing</h2>
+    <div class="hint">Let SMART RE's AI write your listing copy and suggest a price, based on the details you entered.</div>
+    <button type="button" class="ai-gen-btn" id="genAiBtn">✨ Generate with AI</button>
+    <div class="ai-out" id="aiOut">
+      <div class="ai-lang-tabs" id="descLangTabs">
+        <button type="button" class="on" data-lang="en">English</button>
+        <button type="button" data-lang="ar">العربية</button>
+      </div>
+      <textarea class="ai-desc-box" id="descEn"></textarea>
+      <textarea class="ai-desc-box hide" id="descAr" dir="rtl"></textarea>
+
+      <div class="price-widget" style="padding:0;border:none;box-shadow:none;margin-top:26px">
+        <div class="pw-est" style="margin-bottom:8px">AI Suggested Price Range</div>
+        <div class="pw-mid" style="margin-bottom:0">
+          <div class="pw-range">
+            <div class="pw-track"><div class="fill"></div><div class="knob"></div></div>
+            <div class="vals"><span id="priceLow">—</span><span id="priceHigh">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wiz-nav"><button class="btn btn-outline" data-back="3">← Back</button><button class="btn btn-navy" data-next="4">Next: Review →</button></div>
+  </div>
+
+  <!-- STEP 5: REVIEW -->
+  <div class="wiz-panel" data-panel="5">
+    <h2>Review &amp; Publish</h2>
+    <div class="hint">Confirm everything looks right before submitting.</div>
+    <div class="review-card">
+      <img id="rvImg" src="" alt="">
+      <div>
+        <h3 id="rvTitle">—</h3>
+        <div class="loc" id="rvLoc">—</div>
+        <div class="price" id="rvPrice">—</div>
+      </div>
+    </div>
+    <div class="review-grid">
+      <div class="ri"><div class="l">Type</div><div class="v" id="rvType">—</div></div>
+      <div class="ri"><div class="l">Beds / Baths</div><div class="v" id="rvBeds">—</div></div>
+      <div class="ri"><div class="l">Size</div><div class="v" id="rvSqm">—</div></div>
+      <div class="ri"><div class="l">Photos</div><div class="v" id="rvPhotos">—</div></div>
+      <div class="ri"><div class="l">Listed By</div><div class="v">Khalid Al-Harbi</div></div>
+      <div class="ri"><div class="l">REGA License</div><div class="v">RE-108562</div></div>
+    </div>
+    <div class="gov-badges">
+      <span class="gov-badge"><span class="ck">✓</span> Agent Verified</span>
+      <span class="gov-badge"><span class="ck">✓</span> REGA Licensed</span>
+    </div>
+    <div class="wiz-nav"><button class="btn btn-outline" data-back="4">← Back</button><button class="btn btn-gold btn-lg" id="publishBtn">Submit for Review</button></div>
+  </div>
+</div>
+
+<!-- ============ SUCCESS STATE ============ -->
+<div id="successView" class="wiz-shell hide">
+  <div class="success-wrap">
+    <div class="ic">✓</div>
+    <h2>Submitted for Review</h2>
+    <p>Your listing has been sent to the SMART RE moderation team. Most listings are approved within 2 hours and notified to your agent dashboard.</p>
+    <div class="moderation-note">🛡️ Every new listing is checked against MOJ deed records and Balady zoning data before it goes live.</div>
+    <div class="success-actions">
+      <button class="btn btn-outline btn-lg" id="resetBtn">List Another Property</button>
+      <a class="btn btn-navy btn-lg" href="agent-portal.html#listings">Go to My Listings</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+      </div>
+      <div class="foot-col"><h5>Platform</h5><a href="search-results.html">Buy</a><a href="search-results.html?purpose=Rent">Rent</a><a href="index.html#featured">New Developments</a><a href="blog.html">Market Insights</a><a href="mortgage-calculator.html">Mortgage Calculator</a></div>
+      <div class="foot-col"><h5>For Brokers</h5><a href="agent-portal.html">Agent Portal</a><a href="agency-portal.html">Agency Portal</a><a href="admin-portal.html">Admin Portal</a><a href="payment.html">Broker Subscription</a></div>
+      <div class="foot-col"><h5>Company</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
+    </div>
+    <div class="foot-trust">
+      <span class="lbl">Integrated With</span>
+      <span class="trust-badge"><span class="ic">🛡️</span> MOJ Deed Verification</span>
+      <span class="trust-badge"><span class="ic">🪪</span> Absher Identity</span>
+      <span class="trust-badge"><span class="ic">🏛️</span> Balady Compliance</span>
+      <span class="trust-badge"><span class="ic">💳</span> Moyasar · Stripe Payments</span>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved.</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="signInOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Sign In</h3><div class="modal-close" onclick="closeModal('signInOverlay')">✕</div></div>
+    <div class="modal-body">
+      <form onsubmit="return doSignIn(event)">
+        <div class="field"><label>Email</label><input type="email" id="siEmail" required></div>
+        <div class="field"><label>Password</label><input type="password" id="siPass" required></div>
+        <button class="btn btn-navy btn-block btn-lg" type="submit">Sign In</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+/* ---------- gate ---------- */
+function agentSignInSubmit(e){
+  e.preventDefault();
+  doAgentSignIn();
+  toast('Signed in as Khalid Al-Harbi','ok');
+  showWizard();
+  return false;
+}
+function showWizard(){
+  document.getElementById('gateView').classList.add('hide');
+  document.getElementById('wizView').classList.remove('hide');
+}
+if(isAgentSignedIn()) showWizard();
+
+/* ---------- step navigation ---------- */
+var currentStep = 1;
+var maxStepReached = { v:1 };
+function goStep(n){
+  if(n > maxStepReached.v) return;
+  document.querySelectorAll('.wiz-panel').forEach(p=>p.classList.toggle('active', +p.dataset.panel===n));
+  document.querySelectorAll('.wiz-step').forEach(s=>{
+    const sn = +s.dataset.step;
+    s.classList.toggle('active', sn===n);
+    s.classList.toggle('done', sn<n);
+  });
+  currentStep = n;
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(n===5) fillReview();
+}
+function nextStep(from){
+  if(from===3 && state.photos.length < 3){ toast('Add at least 3 photos to continue'); return; }
+  const n = from+1;
+  if(n > maxStepReached.v) maxStepReached.v = n;
+  goStep(n);
+}
+
+/* ---------- state ---------- */
+var state = { purpose:'Sale', photos:[] };
+
+function setPurpose(p, el){
+  state.purpose = p;
+  document.querySelectorAll('.pill-toggle button').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+/* ---------- photos ---------- */
+const dz = document.getElementById('dropzone');
+const filePicker = document.getElementById('filePicker');
+filePicker.addEventListener('change', e=>handleFiles(e.target.files));
+dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', ()=>dz.classList.remove('drag'));
+dz.addEventListener('drop', e=>{
+  e.preventDefault(); dz.classList.remove('drag');
+  handleFiles(e.dataTransfer.files);
+});
+function handleFiles(fileList){
+  [...fileList].forEach(f=>{
+    if(!f.type.startsWith('image/')) return;
+    if(state.photos.length >= 10) return;
+    state.photos.push({ url: URL.createObjectURL(f), name: f.name });
+  });
+  renderPhotos();
+}
+function removePhoto(i){ state.photos.splice(i,1); renderPhotos(); }
+document.getElementById('photoGrid').addEventListener('click', e=>{
+  const btn = e.target.closest('[data-remove-idx]');
+  if(btn) removePhoto(Number(btn.dataset.removeIdx));
+});
+dz.addEventListener('click', ()=>filePicker.click());
+function renderPhotos(){
+  document.getElementById('photoGrid').innerHTML = state.photos.map((p,i)=>`
+    <div class="photo-thumb">
+      <img src="${p.url}" alt="">
+      ${i===0?'<span class="cover-tag">Cover</span>':''}
+      <button class="rm" data-remove-idx="${i}" aria-label="Remove photo">✕</button>
+    </div>`).join('');
+  const msg = document.getElementById('photoCountMsg');
+  if(state.photos.length >= 3){
+    msg.textContent = `${state.photos.length} photo${state.photos.length>1?'s':''} added — looks good.`;
+    msg.className = 'photo-count-ok';
+  } else {
+    msg.textContent = `Add at least 3 photos to continue (${state.photos.length}/3).`;
+    msg.className = 'photo-count-warn';
+  }
+}
+
+/* ---------- AI generation ---------- */
+var DISTRICT_PHRASES = {
+  'Hittin':'one of Riyadh\'s most sought-after modern districts', 'Al Malqa':'a fast-growing, family-favoured pocket of northern Riyadh',
+  'Al Nakheel':'a quiet, established neighborhood close to top schools', 'Al Yasmin':'a well-connected residential community in north Riyadh',
+  'Al Aqiq':'an up-and-coming district near King Salman Park', 'Diriyah':'walking distance to the Diriyah Gate development',
+  'Al Hamra':'a prime waterfront stretch of Jeddah', 'Corniche':'moments from the Al Khobar Corniche'
+};
+var ARABIC_NAMES = {
+  'Riyadh':'الرياض', 'Jeddah':'جدة', 'Al Khobar':'الخبر', 'Dammam':'الدمام',
+  'Hittin':'حطين', 'Al Malqa':'الملقا', 'Al Nakheel':'النخيل', 'Al Yasmin':'الياسمين',
+  'Al Aqiq':'العقيق', 'Diriyah':'الدرعية', 'Al Hamra':'الحمراء', 'Corniche':'الكورنيش'
+};
+function fVal(id){ return document.getElementById(id).value; }
+function toArabicName(name){ return ARABIC_NAMES[name] || name; }
+function generateAI(){
+  const type=fVal('fType'), price=Number(fVal('fPrice'))||0, beds=Number(fVal('fBeds'))||0, baths=Number(fVal('fBaths'))||0,
+        sqm=Number(fVal('fSqm'))||0, city=fVal('fCity'), district=fVal('fDistrict')||city;
+  const context = DISTRICT_PHRASES[district] || `a well-located area of ${city}`;
+  const bedPhrase = beds>0 ? `${beds}-bedroom ` : '';
+  const cityAr = toArabicName(city), districtAr = toArabicName(district);
+  const en = type==='Land'
+    ? `A ${sqm?sqm+' sqm ':''}plot in ${district}, ${city} — ${context}. Zoned for residential development with clean title and ready utility access, this is a rare opportunity to build in ${district}.`
+    : `A beautifully presented ${bedPhrase}${type.toLowerCase()} in ${district}, ${city} — ${context}. Spanning ${sqm||'a generous'} sqm${baths?' with '+baths+' bathrooms':''}, it combines quality finishes with a location that puts schools, retail, and major routes within easy reach. ${state.purpose==='Rent'?'Available for immediate move-in.':'Priced to reflect current market conditions in '+district+'.'}`;
+  const ar = type==='Land'
+    ? `أرض سكنية بمساحة ${sqm||'—'} متر مربع في حي ${districtAr}، ${cityAr}، ضمن منطقة مميزة ذات صك نظيف وخدمات جاهزة — فرصة استثمارية للبناء في موقع متميز.`
+    : `${type==='Villa'?'فيلا':type==='Apartment'?'شقة':'عقار'} ${beds?'بـ '+beds+' غرف نوم ':''}تقع في حي ${districtAr}، ${cityAr}، ضمن ${context.includes('Jeddah')||district==='Al Hamra'?'واجهة بحرية مميزة':'منطقة سكنية راقية'}. تبلغ مساحتها ${sqm||'—'} متر مربع${baths?' وتحتوي على '+baths+' حمامات':''}، بتشطيبات عالية الجودة وقرب من أهم الخدمات والمدارس.`;
+  document.getElementById('descEn').value = en;
+  document.getElementById('descAr').value = ar;
+  document.getElementById('priceLow').textContent = fmtSAR(Math.round(price*0.92));
+  document.getElementById('priceHigh').textContent = fmtSAR(Math.round(price*1.08));
+  document.getElementById('aiOut').classList.add('show');
+  toast('AI description generated','ok');
+}
+function setDescLang(lang, el){
+  document.querySelectorAll('.ai-lang-tabs button').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('descEn').classList.toggle('hide', lang!=='en');
+  document.getElementById('descAr').classList.toggle('hide', lang!=='ar');
+}
+
+/* ---------- review + publish ---------- */
+function fillReview(){
+  const type=fVal('fType'), price=Number(fVal('fPrice'))||0, beds=Number(fVal('fBeds'))||0, baths=Number(fVal('fBaths'))||0,
+        sqm=Number(fVal('fSqm'))||0, city=fVal('fCity'), district=fVal('fDistrict')||city;
+  document.getElementById('rvImg').src = state.photos[0] ? state.photos[0].url : u('1613490493576-7fde63acd811',400);
+  document.getElementById('rvTitle').textContent = `${type} in ${district}`;
+  document.getElementById('rvLoc').textContent = `📍 ${district}, ${city}`;
+  document.getElementById('rvPrice').textContent = fmtSAR(price) + (state.purpose==='Rent' ? ' / year' : '');
+  document.getElementById('rvType').textContent = `${type} · For ${state.purpose}`;
+  document.getElementById('rvBeds').textContent = beds || baths ? `${beds} / ${baths}` : '—';
+  document.getElementById('rvSqm').textContent = sqm ? sqm+' sqm' : '—';
+  document.getElementById('rvPhotos').textContent = state.photos.length + ' uploaded';
+}
+function publishListing(){
+  document.getElementById('wizView').classList.add('hide');
+  document.getElementById('successView').classList.remove('hide');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function resetWizard(){
+  state.photos = [];
+  document.getElementById('photoGrid').innerHTML = '';
+  document.getElementById('aiOut').classList.remove('show');
+  ['fPrice','fSqm','fDistrict','fAddress'].forEach(id=>document.getElementById(id).value='');
+  maxStepReached.v = 1;
+  goStep(1);
+  document.getElementById('successView').classList.add('hide');
+  document.getElementById('wizView').classList.remove('hide');
+}
+
+/* ---------- event wiring (delegated — avoids inline onclick reading page state) ---------- */
+document.getElementById('wizSteps').addEventListener('click', e=>{
+  const step = e.target.closest('.wiz-step');
+  if(step) goStep(Number(step.dataset.step));
+});
+document.getElementById('purposeToggle').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-purpose]');
+  if(!btn) return;
+  setPurpose(btn.dataset.purpose, btn);
+});
+document.getElementById('wizView').addEventListener('click', e=>{
+  const nextBtn = e.target.closest('button[data-next]');
+  if(nextBtn){ nextStep(Number(nextBtn.dataset.next)); return; }
+  const backBtn = e.target.closest('button[data-back]');
+  if(backBtn){ goStep(Number(backBtn.dataset.back)); return; }
+});
+document.getElementById('genAiBtn').addEventListener('click', generateAI);
+document.getElementById('descLangTabs').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-lang]');
+  if(btn) setDescLang(btn.dataset.lang, btn);
+});
+document.getElementById('publishBtn').addEventListener('click', publishListing);
+document.getElementById('resetBtn').addEventListener('click', resetWizard);
+</script>
+</body>
+</html>

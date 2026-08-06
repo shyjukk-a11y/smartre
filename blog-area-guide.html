@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Area Guide — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.ag-hero{position:relative;height:340px;display:flex;align-items:flex-end;overflow:hidden}
+.ag-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ag-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,26,54,.25) 0%,rgba(11,26,54,.82) 100%)}
+.ag-hero-content{position:relative;z-index:2;padding:28px 0 26px;width:100%}
+.ag-hero .breadcrumb a,.ag-hero .breadcrumb .sep{color:rgba(255,255,255,.7)}
+.ag-hero .breadcrumb .cur{color:#fff}
+.ag-hero h1{color:#fff;font-size:32px;margin-top:10px}
+.ag-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);color:var(--gold-soft);font-size:12px;font-weight:700;padding:6px 13px;border-radius:var(--r-pill);border:1px solid rgba(255,255,255,.25);margin-top:12px}
+
+.ag-layout{display:grid;grid-template-columns:1fr 320px;gap:44px;padding:36px 0 70px}
+.ag-meta{display:flex;gap:14px;align-items:center;font-size:13px;color:var(--muted);margin-bottom:26px;flex-wrap:wrap}
+.ag-meta .dot{width:4px;height:4px;border-radius:50%;background:var(--muted)}
+.ag-toc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:30px}
+.ag-toc .h{font-weight:700;color:var(--navy);font-size:14px;margin-bottom:12px}
+.ag-toc ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px}
+.ag-toc a{font-size:13.5px;color:#374151;font-weight:500}
+.ag-toc a:hover{color:var(--gold)}
+.ag-article h2{font-size:22px;margin:32px 0 12px}
+.ag-article p{font-size:15.5px;color:#374151;line-height:1.8;margin-bottom:16px}
+
+.ag-chart{display:flex;align-items:flex-end;gap:14px;height:160px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin:20px 0}
+.ag-chart-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.ag-chart-bar{width:100%;max-width:44px;background:linear-gradient(180deg,var(--gold-soft),var(--gold));border-radius:6px 6px 0 0}
+.ag-chart-col .yr{margin-top:8px;font-size:11px;color:var(--muted)}
+.ag-chart-col .v{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:4px}
+
+.ag-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.ag-photos img{width:100%;height:150px;object-fit:cover;border-radius:10px}
+
+.ag-side-box{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.ag-side-box .h{font-weight:700;color:var(--navy);font-size:14px;margin-bottom:14px}
+.ag-price-row{display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px dashed var(--border)}
+.ag-price-row b{color:var(--navy)}
+.ag-side-links a{display:block;font-size:13.5px;color:#374151;padding:6px 0}
+.ag-side-links a:hover{color:var(--gold)}
+.ag-newsletter{background:linear-gradient(135deg,var(--navy),var(--navy-700));border-radius:14px;padding:22px;color:#fff}
+.ag-newsletter .h{font-weight:700;font-size:14.5px;margin-bottom:8px}
+.ag-newsletter p{font-size:12.5px;color:rgba(255,255,255,.75);margin-bottom:14px}
+.ag-newsletter input{width:100%;height:40px;border-radius:8px;border:none;padding:0 12px;font-size:13px;margin-bottom:10px}
+
+.related-guides{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:20px}
+@media(max-width:1080px){ .ag-layout{grid-template-columns:1fr} .ag-photos,.related-guides{grid-template-columns:repeat(2,1fr)} }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="search-results.html">Buy</a>
+      <a href="search-results.html?purpose=Rent">Rent</a>
+      <a href="index.html#featured">New Developments</a>
+      <a href="agent-portal.html">Brokers</a>
+      <a href="blog.html" class="active">Market Insights</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel"><div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div><div class="notif-list" id="notifList"></div></div>
+      </div>
+      <a class="nav-icon-btn" href="saved.html" aria-label="Saved properties">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="nb-count hide" id="savedCount">0</span>
+      </a>
+      <button class="btn btn-outline btn-sm" onclick="openSignIn()">Sign In</button>
+      <button class="btn btn-navy btn-sm" onclick="location.href='add-listing.html'">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<header class="ag-hero">
+  <img id="agHeroImg" src="" alt="">
+  <div class="wrap ag-hero-content">
+    <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span><a href="blog.html">Area Guides</a><span class="sep">/</span><span id="bcCity">Riyadh</span><span class="sep">/</span><span class="cur" id="bcDistrict">District</span></div>
+    <h1 id="heroTitle">District Guide</h1>
+    <span class="ag-badge">🤖 AI Generated Content</span>
+  </div>
+</header>
+
+<div class="wrap ag-layout">
+  <div class="ag-main">
+    <h1 style="font-size:28px" id="artH1">—</h1>
+    <div class="ag-meta">
+      <span id="artUpdated">Updated 2026</span><span class="dot"></span>
+      <span id="artReadTime">8 min read</span><span class="dot"></span>
+      <span id="artRegion">—</span><span class="dot"></span>
+      <span>By SMART RE AI Content Team</span>
+    </div>
+
+    <div class="ag-toc">
+      <div class="h">On This Page</div>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#schools">Schools</a></li>
+        <li><a href="#transport">Transport</a></li>
+        <li><a href="#amenities">Amenities</a></li>
+        <li><a href="#prices">Property Prices</a></li>
+        <li><a href="#investment">Investment</a></li>
+      </ul>
+    </div>
+
+    <div class="ag-article" id="artBody"></div>
+
+    <h2>Price Trends — Last 5 Years (SAR / sqm)</h2>
+    <div class="ag-chart" id="priceChart"></div>
+
+    <h2>Neighborhood in Pictures</h2>
+    <div class="ag-photos" id="photoGrid"></div>
+
+    <h2 id="investment">Neighborhood Scores</h2>
+    <div class="hood-card" style="padding:24px" id="scoreCard"></div>
+
+    <h2>Properties Available Here</h2>
+    <div class="prop-grid" id="areaProps"></div>
+  </div>
+
+  <div class="ag-side">
+    <div class="ag-side-box">
+      <div class="h">Current Prices</div>
+      <div id="priceBox"></div>
+      <div class="ag-price-row" style="border-bottom:none;padding-top:12px"><span>Avg. days on market</span><b id="domVal">32 days</b></div>
+    </div>
+    <div class="ag-side-box">
+      <div class="h">Nearby Districts</div>
+      <div class="ag-side-links" id="nearbyLinks"></div>
+    </div>
+    <div class="ag-side-box">
+      <div class="h">Popular Searches</div>
+      <div class="ag-side-links" id="popularLinks"></div>
+    </div>
+    <div class="ag-newsletter">
+      <div class="h" id="newsletterH">Get market updates for this area</div>
+      <p>Monthly price trends and new listings, straight to your inbox.</p>
+      <input type="email" placeholder="you@example.com" id="nlEmail">
+      <button class="btn btn-gold btn-block btn-sm" onclick="subscribeNl()">Subscribe</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" style="padding-bottom:70px">
+  <h3 style="font-size:20px;margin-bottom:6px">More Area Guides</h3>
+  <div class="related-guides" id="relatedGuides"></div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+      </div>
+      <div class="foot-col"><h5>Platform</h5><a href="search-results.html">Buy</a><a href="search-results.html?purpose=Rent">Rent</a><a href="index.html#featured">New Developments</a><a href="blog.html">Market Insights</a><a href="mortgage-calculator.html">Mortgage Calculator</a></div>
+      <div class="foot-col"><h5>For Brokers</h5><a href="agent-portal.html">Agent Portal</a><a href="agency-portal.html">Agency Portal</a><a href="payment.html">Broker Subscription</a></div>
+      <div class="foot-col"><h5>Company</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
+      <div class="foot-col"><h5>Portals</h5><a href="customer-portal.html">Buyer Portal</a><a href="agent-portal.html">Agent Portal</a><a href="agency-portal.html">Agency Portal</a><a href="admin-portal.html">Admin Portal</a></div>
+    </div>
+    <div class="foot-trust">
+      <span class="lbl">Integrated With</span>
+      <span class="trust-badge"><span class="ic">🛡️</span> MOJ Deed Verification</span>
+      <span class="trust-badge"><span class="ic">🪪</span> Absher Identity</span>
+      <span class="trust-badge"><span class="ic">🏛️</span> Balady Compliance</span>
+      <span class="trust-badge"><span class="ic">💳</span> Moyasar · Stripe Payments</span>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved.</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span><span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head"><div class="av">🤖<span class="on"></span></div><div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div><div class="x" onclick="toggleChat()">✕</div></div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick"><button onclick="cbotQuick('Villas in Riyadh')">🏡 Villas in Riyadh</button></div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="signInOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Sign In</h3><div class="modal-close" onclick="closeModal('signInOverlay')">✕</div></div>
+    <div class="modal-body">
+      <form onsubmit="return doSignIn(event)">
+        <div class="field"><label>Email</label><input type="email" id="siEmail" required></div>
+        <div class="field"><label>Password</label><input type="password" id="siPass" required></div>
+        <button class="btn btn-navy btn-block btn-lg" type="submit">Sign In</button>
+      </form>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:12px"><div style="flex:1;height:1px;background:var(--border)"></div>or<div style="flex:1;height:1px;background:var(--border)"></div></div>
+      <button class="btn btn-outline btn-block" style="margin-bottom:10px" onclick="doSignIn(event)">Continue with Google</button>
+      <button class="btn btn-outline btn-block" onclick="doSignIn(event)">Continue with Apple</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+const DISTRICTS = {
+  malqa: {
+    name:'Al Malqa', city:'Riyadh', img:'1600585154340-be6161a56a0c',
+    school:92, amenities:88, infra:90, conn:84, overall:87,
+    villaLow:6500, villaHigh:9000, aptLow:3200, aptHigh:4800, dom:32,
+    photos:['1613490493576-7fde63acd811','1600596542815-ffad4c1539a9','1613977257363-707ba9348227'],
+    body:`<p id="overview">Al Malqa has become one of North Riyadh's most requested family districts over the past three years — and the numbers back up the reputation. Our AI district score puts it at <b>87/100</b> overall, driven largely by school proximity and infrastructure.</p>
+      <h2 id="schools">Schools</h2>
+      <p>Most villas sit 500–900m from a cluster of well-regarded private schools, including King Abdullah School and Riyadh International. The area's grid layout keeps through-traffic low near school zones, and drop-off congestion is noticeably lighter than older North Riyadh districts.</p>
+      <h2 id="transport">Transport</h2>
+      <p>King Fahd Road access puts most of Al Malqa within a 20–25 minute drive of KAFD during peak hours. The planned Riyadh Metro Blue Line extension is expected to add a station within walking distance of the district's southern edge by 2027.</p>
+      <h2 id="amenities">Amenities</h2>
+      <p>Retail has grown quickly alongside residential supply — a new lifestyle mall anchors the district's commercial spine, and Al Malqa now supports a full range of grocery, healthcare and fitness options without needing to leave the neighborhood.</p>
+      <h2 id="prices">Property Prices</h2>
+      <p>Villas currently trade between SAR 6,500–9,000/sqm, with apartments in the newer buildings ranging SAR 3,200–4,800/sqm. Average time on market sits at 32 days — faster than the Riyadh-wide average of 41 days.</p>`
+  },
+  hittin: {
+    name:'Hittin', city:'Riyadh', img:'1613490493576-7fde63acd811',
+    school:88, amenities:85, infra:89, conn:80, overall:85,
+    villaLow:6000, villaHigh:8400, aptLow:2900, aptHigh:4300, dom:27,
+    photos:['1613977257363-707ba9348227','1600607687939-ce8a6c25118c','1580587771525-78b9dba3b914'],
+    body:`<p id="overview">Hittin blends established residential streets with newer courtyard-style villas, giving it one of the more architecturally varied profiles in North Riyadh. Our AI district score sits at <b>85/100</b>.</p>
+      <h2 id="schools">Schools</h2>
+      <p>A strong cluster of international and national curriculum schools serves the district, with most residential streets within a 10-minute drive of at least three options.</p>
+      <h2 id="transport">Transport</h2>
+      <p>Hittin benefits from direct access to King Salman Road, keeping commute times to both KAFD and central Riyadh competitive with neighboring Al Malqa.</p>
+      <h2 id="amenities">Amenities</h2>
+      <p>A dense retail corridor along the district's main avenue covers daily needs, with a wider mix of dining options than most North Riyadh districts of comparable size.</p>
+      <h2 id="prices">Property Prices</h2>
+      <p>Villas trade between SAR 6,000–8,400/sqm; apartments SAR 2,900–4,300/sqm. Average days on market: 27 — among the fastest-moving districts we track.</p>`
+  },
+  rawdah: {
+    name:'Al Rawdah', city:'Jeddah', img:'1663900108404-a05e8bf82cda',
+    school:79, amenities:91, infra:74, conn:86, overall:82,
+    villaLow:5200, villaHigh:7600, aptLow:3600, aptHigh:5100, dom:29,
+    photos:['1600585154340-be6161a56a0c','1600047509807-ba8f99d2cdde','1497366811353-6870744d04b2'],
+    body:`<p id="overview">Al Rawdah is Jeddah's standout for lifestyle amenities, scoring <b>91/100</b> on our amenities index — the highest of any district we track on the Red Sea coast.</p>
+      <h2 id="schools">Schools</h2>
+      <p>School options are solid though slightly more spread out than North Riyadh districts, with most families relying on a short drive rather than a walk.</p>
+      <h2 id="transport">Transport</h2>
+      <p>Corniche access is a defining feature — many streets are within a 10-minute drive of Jeddah's waterfront promenade and its dining and retail strip.</p>
+      <h2 id="amenities">Amenities</h2>
+      <p>Al Rawdah has the densest concentration of cafes, restaurants and boutique retail of any residential Jeddah district, contributing directly to its top-ranked amenities score.</p>
+      <h2 id="prices">Property Prices</h2>
+      <p>Villas trade between SAR 5,200–7,600/sqm; sea-view apartments command a premium at SAR 3,600–5,100/sqm. Average days on market: 29.</p>`
+  }
+};
+
+const params = new URLSearchParams(location.search);
+const key = DISTRICTS[params.get('district')] ? params.get('district') : 'malqa';
+const D = DISTRICTS[key];
+
+document.title = D.name + ' District Guide — SMART RE';
+document.getElementById('agHeroImg').src = u(D.img, 1800);
+document.getElementById('bcCity').textContent = D.city;
+document.getElementById('bcDistrict').textContent = D.name;
+document.getElementById('heroTitle').textContent = D.name + ' District Guide — ' + D.city;
+document.getElementById('artH1').textContent = `Living in ${D.name}: Everything You Need to Know in 2026`;
+document.getElementById('artRegion').textContent = D.name + ', ' + D.city;
+document.getElementById('artBody').innerHTML = D.body;
+
+const years=[2022,2023,2024,2025,2026];
+const base = D.villaLow;
+document.getElementById('priceChart').innerHTML = years.map((y,i)=>{
+  const val = Math.round(base*0.8 + (base*0.2)*(i/4)*3);
+  const h = 30 + i*28;
+  return `<div class="ag-chart-col"><div class="v">${val.toLocaleString()}</div><div class="ag-chart-bar" style="height:${h}px"></div><span class="yr">${y}</span></div>`;
+}).join('');
+
+document.getElementById('photoGrid').innerHTML = D.photos.map(p=>`<img src="${u(p,500)}" alt="${D.name}">`).join('');
+
+document.getElementById('scoreCard').innerHTML = `
+  <div class="hood-top">
+    <div><h3 class="hood-name">${D.name}</h3><div class="hood-city">📍 ${D.city}</div></div>
+    <div class="hood-score"><b>${D.overall}</b><small>/ 100 Overall</small></div>
+  </div>
+  <div class="score-item"><div class="row"><span>School Proximity</span><span class="v">${D.school}/100</span></div><div class="score-track"><div class="score-fill f-blue" style="width:${D.school}%"></div></div></div>
+  <div class="score-item"><div class="row"><span>Amenities</span><span class="v">${D.amenities}/100</span></div><div class="score-track"><div class="score-fill f-green" style="width:${D.amenities}%"></div></div></div>
+  <div class="score-item"><div class="row"><span>Infrastructure</span><span class="v">${D.infra}/100</span></div><div class="score-track"><div class="score-fill f-navy" style="width:${D.infra}%"></div></div></div>
+  <div class="score-item"><div class="row"><span>Connectivity</span><span class="v">${D.conn}/100</span></div><div class="score-track"><div class="score-fill f-amber" style="width:${D.conn}%"></div></div></div>
+  <a class="btn btn-outline" href="search-results.html">View Properties Here →</a>`;
+
+document.getElementById('areaProps').innerHTML = PROPS.filter(p=>p.loc.includes(D.name)).slice(0,3).map(p=>propCard(p)).join('')
+  || PROPS.filter(p=>p.city===D.city).slice(0,3).map(p=>propCard(p)).join('');
+
+document.getElementById('priceBox').innerHTML = `
+  <div class="ag-price-row"><span>Villa</span><b>SAR ${D.villaLow.toLocaleString()}–${D.villaHigh.toLocaleString()} / sqm</b></div>
+  <div class="ag-price-row"><span>Apartment</span><b>SAR ${D.aptLow.toLocaleString()}–${D.aptHigh.toLocaleString()} / sqm</b></div>`;
+document.getElementById('domVal').textContent = D.dom + ' days';
+document.getElementById('newsletterH').textContent = 'Get market updates for ' + D.name;
+
+const others = Object.keys(DISTRICTS).filter(k=>k!==key);
+document.getElementById('nearbyLinks').innerHTML = others.map(k=>`<a href="blog-area-guide.html?district=${k}">${DISTRICTS[k].name}, ${DISTRICTS[k].city}</a>`).join('');
+document.getElementById('popularLinks').innerHTML = `
+  <a href="search-results.html">Villas in ${D.name}</a>
+  <a href="search-results.html">Apartments in ${D.city}</a>
+  <a href="invest.html">Investment properties</a>
+  <a href="mortgage-calculator.html">Mortgage calculator</a>`;
+
+document.getElementById('relatedGuides').innerHTML = Object.keys(DISTRICTS).map(k=>{
+  const dd = DISTRICTS[k];
+  return `<a class="blog-card" href="blog-area-guide.html?district=${k}">
+    <img src="${u(dd.img,400)}" alt="${dd.name}">
+    <div class="b"><span class="blog-cat">Area Guide</span><h3 style="font-size:15px">${dd.name}, ${dd.city}</h3></div>
+  </a>`;
+}).join('');
+
+function subscribeNl(){
+  const email = document.getElementById('nlEmail').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('Enter a valid email'); return; }
+  toast('Subscribed to '+D.name+' market updates','ok');
+  document.getElementById('nlEmail').value='';
+}
+
+const scoreObs = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{ if(en.isIntersecting){ document.querySelectorAll('.score-fill').forEach(b=>{ b.style.transition='width 1.2s cubic-bezier(.22,1,.36,1)'; }); scoreObs.disconnect(); } });
+},{threshold:.3});
+scoreObs.observe(document.getElementById('scoreCard'));
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alerts &amp; Notifications — SMART RE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.nt-section{margin-bottom:44px}
+.nt-section h2{font-size:19px;margin-bottom:6px}
+.nt-section .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+.nt-search-card{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:14px;flex-wrap:wrap;gap:14px}
+.nt-search-card .q{font-weight:700;font-size:15px}
+.nt-search-card .meta{font-size:12.5px;color:var(--muted);margin-top:4px}
+.nt-match-badge{display:inline-block;background:rgba(201,168,76,.16);color:#8a6d1f;font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:var(--r-pill);margin-left:8px}
+.nt-search-actions{display:flex;align-items:center;gap:16px}
+.wa-input-row{display:flex;gap:10px;max-width:420px;margin-bottom:24px}
+.wa-input-row input{flex:1;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 14px;font-size:14px}
+.drop-row{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin-bottom:12px}
+.drop-row img{width:70px;height:70px;border-radius:10px;object-cover:cover;object-fit:cover;flex:0 0 70px}
+.drop-row .info{flex:1}
+.drop-row .t{font-weight:700;font-size:14.5px}
+.drop-row .prices{display:flex;align-items:baseline;gap:8px;margin-top:4px}
+.drop-row .now{font-weight:800;color:var(--navy);font-size:15px}
+.drop-row .was{text-decoration:line-through;color:var(--muted);font-size:12.5px}
+.drop-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(239,68,68,.1);color:var(--red);font-size:11.5px;font-weight:800;padding:4px 10px;border-radius:var(--r-pill);margin-top:6px}
+.pref-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.pref-table th{background:var(--surface);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:14px 18px;text-align:center}
+.pref-table th:first-child{text-align:left}
+.pref-table td{padding:14px 18px;border-top:1px solid var(--border);text-align:center;font-size:13.5px}
+.pref-table td:first-child{text-align:left;font-weight:600;color:var(--text)}
+.pref-table-wrap{overflow-x:auto}
+@media(max-width:1080px){
+  .nt-search-card,.drop-row{flex-direction:column;align-items:flex-start}
+  .nt-search-actions{width:100%;justify-content:space-between}
+  .drop-row img{width:100%;height:140px}
+  .wa-input-row{flex-direction:column}
+  .pref-table{min-width:520px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></a>
+    <div class="nav-links">
+      <a href="search-results.html">Buy</a>
+      <a href="search-results.html?purpose=Rent">Rent</a>
+      <a href="index.html#featured">New Developments</a>
+      <a href="agent-portal.html">Brokers</a>
+      <a href="blog.html">Market Insights</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle" id="langToggle"><span>AR</span><span class="active">EN</span></div>
+      <div class="notif-wrap">
+        <button class="nav-icon-btn" id="notifBell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="nb-count hide" id="notifCount">0</span>
+        </button>
+        <div class="notif-panel" id="notifPanel"><div class="notif-head"><b>Notifications</b><span class="clear" onclick="clearAllNotifs()">Mark all read</span></div><div class="notif-list" id="notifList"></div></div>
+      </div>
+      <a class="nav-icon-btn" href="saved.html" aria-label="Saved properties">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="nb-count hide" id="savedCount">0</span>
+      </a>
+      <button class="btn btn-outline btn-sm" onclick="openSignIn()">Sign In</button>
+      <button class="btn btn-navy btn-sm" onclick="location.href='add-listing.html'">List Property</button>
+    </div>
+  </div>
+</nav>
+
+<div class="portal-layout">
+  <aside class="portal-side">
+    <div class="portal-user">
+      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="">
+      <div><b>Ahmed Al-Rashidi</b><span class="role-badge">Buyer</span></div>
+    </div>
+    <nav class="portal-nav">
+      <a href="customer-portal.html">🏠 Dashboard</a>
+      <a href="saved.html">❤️ Saved Properties <span class="count" id="navSavedCount">0</span></a>
+      <a href="saved.html">🔍 Saved Searches <span class="count" id="navSearchCount">0</span></a>
+      <a href="customer-portal.html#viewings">📅 My Viewings</a>
+      <a href="customer-portal.html#contracts">📝 My Contracts</a>
+      <a href="customer-portal.html#messages">💬 Messages <span class="count">2</span></a>
+      <a href="notifications.html" class="active">🔔 Notifications <span class="count">5</span></a>
+      <a href="customer-portal.html#profile">👤 My Profile</a>
+      <a href="index.html" class="signout">🚪 Sign Out</a>
+    </nav>
+  </aside>
+
+  <main class="portal-main">
+    <div style="max-width:920px">
+      <div class="breadcrumb"><a href="customer-portal.html">My Account</a><span class="sep">/</span><span class="cur">Alerts &amp; Notifications</span></div>
+      <h1 style="font-size:24px;margin:14px 0 8px">My Alerts &amp; Notifications</h1>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:28px">Manage how and when you hear from us.</p>
+
+      <div class="nt-section">
+        <h2>Your Saved Searches</h2>
+        <div class="sub">New matches since you last checked.</div>
+        <div id="savedSearchList"></div>
+      </div>
+
+      <div class="nt-section">
+        <h2>Price Drop Alerts</h2>
+        <div class="sub">You will receive a WhatsApp notification when shortlisted properties reduce in price.</div>
+        <div class="wa-input-row">
+          <input type="tel" id="waNumber" placeholder="+966 __ ___ ____">
+          <button class="btn btn-navy" onclick="saveWaNumber()">Save</button>
+        </div>
+        <div id="priceDropList"></div>
+      </div>
+
+      <div class="nt-section">
+        <h2>Notification Preferences</h2>
+        <div class="sub">Choose how you'd like to be notified for each category.</div>
+        <div class="pref-table-wrap">
+          <table class="pref-table">
+            <thead><tr><th>Category</th><th>Push</th><th>Email</th><th>WhatsApp</th></tr></thead>
+            <tbody id="prefBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="en">SMART RE</span><span class="ar">سمارت ري</span></div>
+        <p>Saudi Arabia's AI-powered property marketplace. Aligned with Vision 2030 — smarter search, fairer pricing, faster closing.</p>
+      </div>
+      <div class="foot-col"><h5>Platform</h5><a href="search-results.html">Buy</a><a href="search-results.html?purpose=Rent">Rent</a><a href="index.html#featured">New Developments</a><a href="blog.html">Market Insights</a><a href="mortgage-calculator.html">Mortgage Calculator</a></div>
+      <div class="foot-col"><h5>For Brokers</h5><a href="agent-portal.html">Agent Portal</a><a href="agency-portal.html">Agency Portal</a><a href="payment.html">Broker Subscription</a></div>
+      <div class="foot-col"><h5>Company</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div>
+      <div class="foot-col"><h5>Portals</h5><a href="customer-portal.html">Buyer Portal</a><a href="agent-portal.html">Agent Portal</a><a href="agency-portal.html">Agency Portal</a><a href="admin-portal.html">Admin Portal</a></div>
+    </div>
+    <div class="foot-trust">
+      <span class="lbl">Integrated With</span>
+      <span class="trust-badge"><span class="ic">🛡️</span> MOJ Deed Verification</span>
+      <span class="trust-badge"><span class="ic">🪪</span> Absher Identity</span>
+      <span class="trust-badge"><span class="ic">🏛️</span> Balady Compliance</span>
+      <span class="trust-badge"><span class="ic">💳</span> Moyasar · Stripe Payments</span>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 SMART RE. All rights reserved.</p>
+      <div class="links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING CHATBOT ============ -->
+<button class="cbot-fab" id="cbotFab" onclick="toggleChat()" aria-label="Chat with SMART RE Assistant">
+  <span class="pulse"></span><span class="cbot-badge">1</span>
+  <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+  <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="SMART RE Assistant">
+  <div class="cbot-head"><div class="av">🤖<span class="on"></span></div><div class="t"><b>SMART RE Assistant</b><span>AI · Typically replies instantly</span></div><div class="x" onclick="toggleChat()">✕</div></div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-quick"><button onclick="cbotQuick('Villas in Riyadh')">🏡 Villas in Riyadh</button></div>
+  <div class="cbot-input">
+    <input id="cbotInput" type="text" placeholder="Ask anything… in Arabic or English" onkeydown="if(event.key==='Enter')cbotSend()">
+    <button class="cbot-send" onclick="cbotSend()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="signInOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Sign In</h3><div class="modal-close" onclick="closeModal('signInOverlay')">✕</div></div>
+    <div class="modal-body">
+      <form onsubmit="return doSignIn(event)">
+        <div class="field"><label>Email</label><input type="email" id="siEmail" required></div>
+        <div class="field"><label>Password</label><input type="password" id="siPass" required></div>
+        <button class="btn btn-navy btn-block btn-lg" type="submit">Sign In</button>
+      </form>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:12px"><div style="flex:1;height:1px;background:var(--border)"></div>or<div style="flex:1;height:1px;background:var(--border)"></div></div>
+      <button class="btn btn-outline btn-block" style="margin-bottom:10px" onclick="doSignIn(event)">Continue with Google</button>
+      <button class="btn btn-outline btn-block" onclick="doSignIn(event)">Continue with Apple</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+/* ---------- saved searches with fake "new matches" counts ---------- */
+function renderSavedSearches(){
+  let list = getSavedSearches();
+  if(list.length===0){
+    list = [{ id:-1, query:'3-bed villa Riyadh under SAR 2.5M', meta:'Buy', alerts:true, created:new Date().toISOString(), fake:true }];
+  }
+  document.getElementById('savedSearchList').innerHTML = list.map((s,i)=>`
+    <div class="nt-search-card">
+      <div>
+        <div class="q">${s.query}<span class="nt-match-badge">${[14,6,3][i%3]} new matches this week</span></div>
+        <div class="meta">${s.meta||''} · saved ${new Date(s.created).toLocaleDateString()}</div>
+      </div>
+      <div class="nt-search-actions">
+        <a href="search-results.html" class="btn btn-outline btn-sm">View Results</a>
+        <label class="alert-toggle">Alerts <span class="switch ${s.alerts?'on':''}" onclick="${s.fake?'':'onToggleAlert('+s.id+',this)'}"></span></label>
+        ${s.fake?'':'<button class="btn btn-danger-outline btn-sm" onclick="onRemoveSearch('+s.id+')">Remove</button>'}
+      </div>
+    </div>`).join('');
+}
+function onToggleAlert(id, el){ toggleSearchAlerts(id); el.classList.toggle('on'); }
+function onRemoveSearch(id){ removeSavedSearch(id); renderSavedSearches(); toast('Saved search removed'); }
+
+/* ---------- price drop alerts (simulated against saved/shortlisted properties) ---------- */
+const PRICE_DROPS = [
+  { id:8, was:2550000 },
+  { id:4, was:4350000 },
+  { id:2, was:2720000 }
+];
+function renderPriceDrops(){
+  document.getElementById('priceDropList').innerHTML = PRICE_DROPS.map(d=>{
+    const p = propById(d.id);
+    const drop = d.was - p.price;
+    return `<div class="drop-row">
+      <img src="${u(p.img,150)}" alt="">
+      <div class="info">
+        <div class="t">${p.title}</div>
+        <div class="prices"><span class="now">${fmtSAR(p.price)}</span><span class="was">${fmtSAR(d.was)}</span></div>
+        <span class="drop-badge">↓ ${fmtSAR(drop)} price drop</span>
+      </div>
+      <a class="btn btn-navy btn-sm" href="property.html?id=${p.id}">View Property</a>
+      <button class="btn btn-outline btn-sm" onclick="this.closest('.drop-row').remove()">Remove</button>
+    </div>`;
+  }).join('');
+}
+function saveWaNumber(){
+  const v = document.getElementById('waNumber').value.trim();
+  if(v.length<8){ toast('Enter a valid WhatsApp number'); return; }
+  lsSet('sre_wa_number', v);
+  toast('WhatsApp number saved — price drop alerts enabled','ok');
+}
+const savedWa = lsGet('sre_wa_number', '');
+if(savedWa) document.getElementById('waNumber').value = savedWa;
+
+/* ---------- notification preferences ---------- */
+const PREF_CATS = [
+  { key:'newListings', label:'New listings matching my search', push:true, email:true, wa:false },
+  { key:'priceDrops', label:'Price drops on shortlisted properties', push:true, email:true, wa:true },
+  { key:'viewingReminders', label:'Viewing reminders', push:true, email:true, wa:false },
+  { key:'brokerMessages', label:'New messages from brokers', push:true, email:true, wa:false },
+  { key:'marketUpdates', label:'Market updates', push:false, email:true, wa:false }
+];
+const LS_PREFS = 'sre_notif_prefs';
+function getPrefs(){
+  const saved = lsGet(LS_PREFS, null);
+  if(saved) return saved;
+  const def = {};
+  PREF_CATS.forEach(c=>def[c.key]={push:c.push,email:c.email,wa:c.wa});
+  return def;
+}
+function renderPrefs(){
+  const prefs = getPrefs();
+  document.getElementById('prefBody').innerHTML = PREF_CATS.map(c=>{
+    const p = prefs[c.key];
+    return `<tr>
+      <td>${c.label}</td>
+      <td><span class="switch ${p.push?'on':''}" onclick="togglePref('${c.key}','push',this)"></span></td>
+      <td><span class="switch ${p.email?'on':''}" onclick="togglePref('${c.key}','email',this)"></span></td>
+      <td><span class="switch ${p.wa?'on':''}" onclick="togglePref('${c.key}','wa',this)"></span></td>
+    </tr>`;
+  }).join('');
+}
+function togglePref(key, channel, el){
+  const prefs = getPrefs();
+  prefs[key][channel] = !prefs[key][channel];
+  lsSet(LS_PREFS, prefs);
+  el.classList.toggle('on');
+}
+
+renderSavedSearches();
+renderPriceDrops();
+renderPrefs();
+document.getElementById('navSavedCount').textContent = getSavedIds().length || 14;
+document.getElementById('navSearchCount').textContent = getSavedSearches().length || 3;
+</script>
+</body>
+</html>

@@ -407,6 +407,27 @@ section{scroll-margin-top:88px}
 .c-gold{background:linear-gradient(135deg,#E4D19A,#C9A84C)}
 
 /* ============================================================
+   6.5 BROWSE BY CITY
+   ============================================================ */
+.cities{padding:80px 0}
+.city-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.city-tile{position:relative;display:block;height:280px;border-radius:18px;overflow:hidden;background-size:cover;background-position:center;text-decoration:none;transition:transform .25s var(--ease),box-shadow .25s var(--ease);box-shadow:var(--sh-sm)}
+.city-tile:hover{transform:translateY(-5px);box-shadow:var(--sh-lg)}
+.city-tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,20,38,0) 45%,rgba(11,20,38,.88) 100%)}
+.city-tile-overlay{position:absolute;left:0;right:0;bottom:0;padding:22px;z-index:2}
+.city-tile-overlay h3{color:#fff;font-size:22px;margin-bottom:4px;font-family:var(--font-head)}
+.city-tile-overlay span{font-size:13px;color:rgba(255,255,255,.85);font-weight:600}
+.city-tile-all{background:linear-gradient(135deg,var(--navy),var(--navy-700));display:flex;align-items:center;justify-content:center}
+.city-tile-all-inner{text-align:center}
+.city-tile-all-inner .ic{font-size:32px;display:block;margin-bottom:10px}
+.city-tile-all-inner h3{color:#fff;font-size:18px;margin-bottom:4px;font-family:var(--font-head)}
+.city-tile-all-inner span{font-size:12.5px;color:rgba(255,255,255,.75)}
+@media(max-width:1080px){
+  .city-grid{grid-template-columns:repeat(2,1fr)}
+  .city-tile{height:220px}
+}
+
+/* ============================================================
    7. NEIGHBORHOOD INTELLIGENCE
    ============================================================ */
 .hoods{padding:96px 0;background:var(--surface)}
@@ -744,6 +765,34 @@ section{scroll-margin-top:88px}
 .trust-row{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:#374151;padding:8px 0}
 .trust-row .ic{width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:rgba(201,168,76,.14);display:flex;align-items:center;justify-content:center;font-size:14px}
 
+/* Government verification pills */
+.gov-badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:32px}
+.gov-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(16,185,129,.08);color:#0d7a5f;border:1px solid rgba(16,185,129,.28);padding:7px 14px;border-radius:var(--r-pill);font-size:13px;font-weight:700}
+.gov-badge .ck{width:16px;height:16px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex:0 0 16px}
+
+/* WhatsApp button */
+.btn-whatsapp{background:#25D366;color:#fff;box-shadow:0 8px 20px rgba(37,211,102,.25)}
+.btn-whatsapp:hover{background:#20bd5a;transform:translateY(-2px)}
+
+/* Agent card message form */
+.agent-msg-form{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.agent-msg-form .field{margin-bottom:10px}
+.agent-msg-form .field input,.agent-msg-form .field textarea{height:40px;font-size:13.5px}
+.agent-msg-form .field textarea{height:64px;padding:10px 12px}
+.agent-secure-note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.5}
+
+/* Read more toggle */
+.read-more-btn{color:var(--gold);font-weight:700;font-size:13.5px;cursor:pointer;display:inline-block;margin-top:-6px;margin-bottom:20px}
+.pd-desc.clamped{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Investment snapshot (compact, embedded on property detail) */
+.invest-snap{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px}
+.invest-snap .cell{text-align:center}
+.invest-snap .cell .v{font-size:19px;font-weight:800;color:var(--navy);font-family:var(--font-head)}
+.invest-snap .cell .l{font-size:11.5px;color:var(--muted);margin-top:3px}
+.invest-snap-foot{grid-column:1/-1;text-align:center;font-size:13px;color:#374151;padding-top:12px;border-top:1px dashed var(--border);margin-top:4px}
+.invest-snap-foot b{color:var(--gold)}
+
 /* Mortgage widget (embedded + standalone) */
 .mcalc{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:var(--sh-sm)}
 .mcalc .h{display:flex;align-items:center;gap:8px;font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--navy);margin-bottom:18px}
@@ -873,6 +922,8 @@ section{scroll-margin-top:88px}
 .empty-state .ic{font-size:44px;margin-bottom:16px}
 .empty-state h3{color:var(--navy);font-size:19px;margin-bottom:8px}
 
+.hide{display:none}
+
 /* ============================================================
    360 VIRTUAL TOUR VIEWER
    ============================================================ */
@@ -911,4 +962,29 @@ section{scroll-margin-top:88px}
   .map-layout{grid-template-columns:1fr;height:auto}
   .map-side{border-right:none;border-bottom:1px solid var(--border)}
   #leafletMap{height:480px}
+}
+
+/* ============================================================
+   ACCOUNT SHELL (shared sidebar for buyer-account pages —
+   customer-portal, saved, notifications — keeps the left menu
+   persistent as the buyer moves between account pages)
+   ============================================================ */
+.portal-layout{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 64px)}
+.portal-side{background:#fff;border-right:1px solid var(--border);padding:26px 18px;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto}
+.portal-user{display:flex;align-items:center;gap:12px;padding:0 8px 22px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.portal-user img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.portal-user b{font-size:14.5px;display:block}
+.portal-user .role-badge{display:inline-block;font-size:10.5px;font-weight:700;color:var(--navy);background:rgba(27,58,107,.08);padding:2px 9px;border-radius:var(--r-pill);margin-top:3px}
+.portal-nav{display:flex;flex-direction:column;gap:2px}
+.portal-nav a{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-radius:10px;font-size:14px;font-weight:600;color:#374151;transition:all .15s}
+.portal-nav a:hover{background:var(--surface)}
+.portal-nav a.active{background:rgba(27,58,107,.08);color:var(--navy)}
+.portal-nav a .count{background:var(--gold);color:var(--navy);font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:var(--r-pill)}
+.portal-nav .signout{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);color:var(--red)}
+.portal-main{padding:32px 40px 70px;min-width:0}
+@media(max-width:1080px){
+  .portal-layout{grid-template-columns:1fr;min-width:0}
+  .portal-side{position:static;height:auto;min-width:0}
+  .portal-main{min-width:0;padding:24px 18px}
+  .portal-nav a{flex-wrap:wrap;white-space:normal}
 }

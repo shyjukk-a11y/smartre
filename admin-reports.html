@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics & Reports — SMART RE Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{
+  --navy:#1B3A6B; --navy-800:#132B52; --navy-700:#1F4176; --gold:#C9A84C; --gold-soft:#E4D19A;
+  --bg:#F8FAFC; --border:#E5E7EB; --muted:#6B7280; --text:#111827;
+  --blue:#3B82F6; --green:#10B981; --amber:#F59E0B; --red:#EF4444; --purple:#8B5CF6; --gray:#94A3B8;
+  --r:12px; --sh:0 1px 2px rgba(17,24,39,.04),0 1px 3px rgba(17,24,39,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+h1,h2,h3,h4{font-family:"Playfair Display",serif;color:var(--navy);line-height:1.2}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+
+/* ---------- layout ---------- */
+.shell{min-height:100vh}
+.sidebar{background:var(--navy-800);position:fixed;top:0;left:0;bottom:0;width:240px;padding:24px 16px;overflow-y:auto;z-index:20}
+.sb-logo{padding:0 8px 20px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:18px}
+.sb-logo .en{display:block;font-family:"Playfair Display",serif;font-weight:800;font-size:20px;color:#fff;letter-spacing:.3px}
+.sb-logo .ar{display:block;font-size:13px;color:var(--gold-soft);margin-top:2px}
+.sb-title{padding:0 8px 22px;font-size:12.5px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em}
+.sb-nav{display:flex;flex-direction:column;gap:3px}
+.sb-nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;padding:11px 12px;border-radius:9px;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.72);transition:all .15s}
+.sb-nav button:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-nav button.active{background:rgba(201,168,76,.16);color:var(--gold-soft)}
+.sb-nav .ic{font-size:16px;width:20px;text-align:center}
+
+.shell-inner{margin-left:240px;min-width:0}
+
+.topbar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;z-index:10}
+.topbar h1{font-size:21px}
+.tb-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.range-group{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:3px}
+.range-group button{background:none;border:none;padding:7px 13px;border-radius:7px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.range-group button.active{background:var(--navy);color:#fff}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:700;border:1.5px solid transparent;white-space:nowrap}
+.btn-gold{background:var(--gold);color:var(--navy-800)}
+.btn-gold:hover{background:#d9bb63}
+.btn-outline{background:#fff;border-color:var(--border);color:var(--navy)}
+.btn-outline:hover{border-color:var(--navy)}
+.live-dot{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.live-dot span.d{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+
+.content{padding:26px 28px 70px}
+.section{display:none}
+.section.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.sec-lbl{font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.sec-h{font-size:22px;margin-bottom:22px}
+
+/* ---------- cards / grid ---------- */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);padding:20px;min-width:0}
+.grid{display:grid;gap:18px}
+.grid > *{min-width:0}
+.chart-wrap{min-width:0}
+.chart-wrap canvas{max-width:100%}
+.g-6{grid-template-columns:repeat(6,1fr)}
+.g-4{grid-template-columns:repeat(4,1fr)}
+.g-3{grid-template-columns:repeat(3,1fr)}
+.g-2{grid-template-columns:repeat(2,1fr)}
+.g-2-1{grid-template-columns:2fr 1fr}
+.mb{margin-bottom:20px}
+
+.kpi{position:relative;overflow:hidden;transition:box-shadow .2s}
+.kpi.pulse{box-shadow:0 0 0 3px rgba(201,168,76,.35)}
+.kpi .ic{font-size:20px;margin-bottom:10px}
+.kpi .lbl{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:6px}
+.kpi .val{font-size:24px;font-weight:800;color:var(--navy);font-family:"Playfair Display",serif}
+.kpi .chg{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:700;margin-top:8px}
+.kpi .chg.up{color:var(--green)}
+.kpi .chg.down{color:var(--red)}
+
+.chart-card h3{font-size:15px;margin-bottom:2px}
+.chart-card .sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.chart-wrap{position:relative}
+
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;padding:10px 12px;border-bottom:1.5px solid var(--border);white-space:nowrap;cursor:default}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--navy)}
+th.sortable .arrow{margin-left:3px;opacity:.4}
+th.sortable.sort-asc .arrow,th.sortable.sort-desc .arrow{opacity:1;color:var(--gold)}
+td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr.clickable{cursor:pointer}
+tr.clickable:hover{background:var(--bg)}
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--bg);font-size:11px;font-weight:800;color:var(--navy)}
+.thumb{width:34px;height:34px;border-radius:50%;object-fit:cover;background:var(--border)}
+.trend-up{color:var(--green);font-weight:700}
+.trend-down{color:var(--red);font-weight:700}
+.trend-flat{color:var(--muted);font-weight:700}
+.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:800}
+.pill.green{background:rgba(16,185,129,.12);color:#0d7a5f}
+.pill.amber{background:rgba(245,158,11,.14);color:#92610a}
+.pill.red{background:rgba(239,68,68,.12);color:#b91c1c}
+.stars{color:var(--gold);letter-spacing:1px}
+.sparkline-row td{background:var(--bg);padding:14px 18px}
+
+.eyebrow-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(239,68,68,.08);color:#b91c1c;font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:20px;margin-bottom:10px}
+.emerging-card{background:linear-gradient(160deg,#fff,rgba(201,168,76,.06));border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative}
+.emerging-badge{position:absolute;top:14px;right:14px;background:var(--navy);color:var(--gold-soft);font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:20px}
+.emerging-card h4{font-size:15.5px;margin:0 0 4px}
+.emerging-card .city{font-size:12px;color:var(--muted);margin-bottom:10px}
+.emerging-card .why{font-size:12.5px;color:var(--text);margin-bottom:12px;line-height:1.5}
+.emerging-stats{display:flex;gap:16px;font-size:12px}
+.emerging-stats b{display:block;color:var(--navy);font-size:15px;font-family:"Playfair Display",serif}
+
+.hbar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.hbar-label{width:150px;flex:0 0 150px;font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{flex:1;background:var(--bg);border-radius:6px;height:20px;position:relative;overflow:hidden}
+.hbar-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;transition:width 1s cubic-bezier(.22,1,.36,1)}
+.hbar-fill span{font-size:11px;font-weight:800;color:#fff}
+.hbar-trend{width:60px;flex:0 0 60px;font-size:11px;font-weight:700;text-align:right}
+
+.funnel{display:flex;flex-direction:column;gap:10px}
+.funnel-row{display:flex;align-items:center;gap:14px}
+.funnel-lbl{width:170px;flex:0 0 170px;font-size:12.5px;font-weight:600}
+.funnel-bar-wrap{flex:1;background:var(--bg);border-radius:8px;height:34px;position:relative}
+.funnel-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--navy),var(--navy-700));display:flex;align-items:center;padding:0 14px;color:#fff;font-weight:800;font-size:13px;transition:width 1s cubic-bezier(.22,1,.36,1);cursor:pointer;white-space:nowrap}
+.funnel-conv{width:70px;flex:0 0 70px;font-size:12px;font-weight:700;color:var(--gold);text-align:right}
+
+.stat4{text-align:center}
+.stat4 .v{font-size:22px;font-weight:800;color:var(--navy);font-family:"Playfair Display",serif}
+.stat4 .l{font-size:12px;color:var(--muted);margin-top:4px}
+
+.report-card{display:flex;flex-direction:column;gap:10px}
+.report-card .ic{font-size:26px}
+.report-card h4{font-size:15px}
+.report-card p{font-size:12.5px;color:var(--muted);line-height:1.5}
+.report-card .meta{font-size:11px;color:var(--muted);margin-top:2px}
+.report-actions{display:flex;gap:8px;margin-top:6px}
+.report-actions .btn{flex:1;justify-content:center;padding:8px 10px;font-size:12px}
+
+.switch{position:relative;width:38px;height:22px;border-radius:20px;background:var(--border);cursor:pointer;transition:background .2s;display:inline-block}
+.switch.on{background:var(--green)}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch.on::after{transform:translateX(16px)}
+
+.legend-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:var(--muted)}
+.legend-row .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+
+.quad-label{position:absolute;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+
+@media(max-width:1080px){
+  .shell-inner{margin-left:0}
+  .sidebar{position:static;width:100%;height:auto;padding:16px}
+  .g-6{grid-template-columns:repeat(3,1fr)}
+  .g-4{grid-template-columns:repeat(2,1fr)}
+  .g-3{grid-template-columns:1fr}
+  .g-2,.g-2-1{grid-template-columns:1fr}
+  .content{padding:18px}
+  .topbar{padding:14px 18px}
+}
+@media(max-width:600px){
+  .g-6{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <span class="en">SMART RE</span>
+      <span class="ar">سمارت ري</span>
+    </div>
+    <div class="sb-title">📊 Analytics &amp; Reports</div>
+    <nav class="sb-nav" id="sbNav">
+      <button class="active" data-section="overview"><span class="ic">🏠</span> Overview</button>
+      <button data-section="search"><span class="ic">🔍</span> Search Analytics</button>
+      <button data-section="property"><span class="ic">🏢</span> Property Analytics</button>
+      <button data-section="area"><span class="ic">🗺️</span> Area Intelligence</button>
+      <button data-section="user"><span class="ic">👥</span> User Behaviour</button>
+      <button data-section="revenue"><span class="ic">💰</span> Revenue</button>
+      <button data-section="export"><span class="ic">📤</span> Export Reports</button>
+    </nav>
+  </aside>
+
+  <div class="shell-inner">
+    <div class="topbar">
+      <h1 id="pageTitle">Overview</h1>
+      <div class="tb-right">
+        <div class="range-group" id="rangeGroup">
+          <button class="active" data-range="7">Last 7 Days</button>
+          <button data-range="30" class="active-default">30 Days</button>
+          <button data-range="90">90 Days</button>
+        </div>
+        <button class="btn btn-gold" id="exportPdfBtn">📄 Export PDF</button>
+        <button class="btn btn-outline" id="exportCsvBtn">⬇ Export CSV</button>
+        <span class="live-dot"><span class="d"></span> <span id="liveUpdated">Live data as of 2 minutes ago</span></span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ============ SECTION 1: OVERVIEW ============ -->
+      <section class="section active" id="sec-overview">
+        <div class="grid g-6 mb" id="kpiRow"></div>
+
+        <div class="grid g-2-1 mb">
+          <div class="card chart-card">
+            <h3>Daily Visitors &amp; Searches</h3>
+            <div class="sub" id="trafficSub">Last 30 Days</div>
+            <div class="chart-wrap" style="height:300px"><canvas id="trafficChart"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h3>Sessions by Device</h3>
+            <div class="sub">Share of total sessions</div>
+            <div class="chart-wrap" style="height:260px"><canvas id="deviceChart"></canvas></div>
+            <div class="legend-row">
+              <span><span class="dot" style="background:var(--navy)"></span>Mobile 61%</span>
+              <span><span class="dot" style="background:var(--gold)"></span>Desktop 31%</span>
+              <span><span class="dot" style="background:var(--gray)"></span>Tablet 8%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid g-3 mb">
+          <div class="card chart-card">
+            <h3>Buy vs Rent vs New Developments</h3>
+            <div class="sub">Monthly search intent, last 6 months</div>
+            <div class="chart-wrap" style="height:220px"><canvas id="intentChart"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h3>New User Registrations</h3>
+            <div class="sub" id="regSub">Last 30 Days</div>
+            <div class="chart-wrap" style="height:220px"><canvas id="registrationChart"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h3>Search to Deal Funnel</h3>
+            <div class="sub">Conversion at each stage</div>
+            <div class="funnel" id="overviewFunnel" style="margin-top:8px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 2: SEARCH ANALYTICS ============ -->
+      <section class="section" id="sec-search">
+        <div class="card mb">
+          <h3 style="font-size:16px;margin-bottom:4px">Most Searched Keywords This Month</h3>
+          <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:14px">Top 15 search terms across web and app</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Rank</th><th>Search Term</th><th>Searches</th><th>Trend</th><th>Avg Results</th></tr></thead>
+              <tbody id="keywordsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid g-3 mb">
+          <div class="card chart-card">
+            <h3>Search by Property Type</h3>
+            <div class="chart-wrap" style="height:220px"><canvas id="typeChart"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h3>Search by Purpose</h3>
+            <div class="chart-wrap" style="height:220px"><canvas id="purposeChart"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h3>Search Volume by Price Range</h3>
+            <div class="sub">SAR</div>
+            <div class="chart-wrap" style="height:220px"><canvas id="priceRangeChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="grid g-4 mb" id="aiStatsRow"></div>
+
+        <div class="grid g-2-1 mb">
+          <div class="card chart-card">
+            <h3>Deals Closed by Lead Source</h3>
+            <div class="sub">Where the winning inquiry originated</div>
+            <div class="chart-wrap" style="height:240px"><canvas id="leadSourceChart"></canvas></div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;justify-content:center">
+            <div class="eyebrow-badge" style="background:rgba(16,185,129,.1);color:#0d7a5f">✨ AI Advantage</div>
+            <div style="font-size:26px;font-weight:800;color:var(--navy);font-family:'Playfair Display',serif;margin-bottom:6px">2.1× faster</div>
+            <div style="font-size:12.5px;color:var(--muted);line-height:1.6">AI-sourced leads close in an average of <b style="color:var(--text)">14 days</b>, vs <b style="color:var(--text)">29 days</b> for standard filtered search — despite generating only 34% of deals.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:16px;margin-bottom:4px">Top AI Search Queries</h3>
+          <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:14px">Natural-language queries submitted to SMART RE Assistant</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Query</th><th>Frequency</th><th>Outcome</th></tr></thead>
+              <tbody id="aiQueriesBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 3: PROPERTY ANALYTICS ============ -->
+      <section class="section" id="sec-property">
+        <div class="card mb">
+          <h3 style="font-size:16px;margin-bottom:4px">Top 10 Properties by Views This Month</h3>
+          <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:14px">Click a row to see its view trend</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th></th><th>Rank</th><th></th><th>Property</th><th>Location</th><th>Type</th><th>Views</th><th>Saves</th><th>Inquiries</th><th>Days Listed</th><th>Agent</th></tr></thead>
+              <tbody id="topPropsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid g-2 mb">
+          <div class="card chart-card">
+            <h3>Listing Performance Matrix</h3>
+            <div class="sub">Views (x) vs Inquiries (y) — bubble = property</div>
+            <div class="chart-wrap" style="height:320px;position:relative">
+              <span class="quad-label" style="top:8px;right:8px">Stars</span>
+              <span class="quad-label" style="top:8px;left:8px">Needs Attention</span>
+              <span class="quad-label" style="bottom:8px;right:8px">High Traffic, Low Conversion</span>
+              <span class="quad-label" style="bottom:8px;left:8px">Hidden Gems</span>
+              <canvas id="heatmapChart"></canvas>
+            </div>
+            <div class="legend-row">
+              <span><span class="dot" style="background:var(--navy)"></span>Villa</span>
+              <span><span class="dot" style="background:var(--blue)"></span>Apartment</span>
+              <span><span class="dot" style="background:var(--gold)"></span>Commercial</span>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <h3>Average Days on Market by Type</h3>
+            <div class="sub">Red line = 45-day industry benchmark</div>
+            <div class="chart-wrap" style="height:320px"><canvas id="daysOnMarketChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="grid g-4 mb" id="listingHealthRow"></div>
+
+        <div class="card chart-card">
+          <h3>New Listings vs Properties Sold</h3>
+          <div class="sub">Last 6 months</div>
+          <div class="chart-wrap" style="height:260px"><canvas id="newVsSoldChart"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 4: AREA INTELLIGENCE ============ -->
+      <section class="section" id="sec-area">
+        <div class="card mb">
+          <h3 style="font-size:17px;margin-bottom:4px">🔥 Hottest Areas by Search Demand</h3>
+          <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:18px">Demand score 0–100, ranked</div>
+          <div id="hotAreasList"></div>
+        </div>
+
+        <div class="card chart-card mb">
+          <h3>Average Asking Price Trend — Top 5 Areas</h3>
+          <div class="sub">SAR / sqm, last 12 months</div>
+          <div class="chart-wrap" style="height:300px"><canvas id="priceTrendChart"></canvas></div>
+        </div>
+
+        <div class="card chart-card mb">
+          <h3>Rent vs Buy Search Intent by Area</h3>
+          <div class="sub">Top 8 areas by total search volume</div>
+          <div class="chart-wrap" style="height:280px"><canvas id="rentBuyChart"></canvas></div>
+        </div>
+
+        <div class="card mb">
+          <h3 style="font-size:16px;margin-bottom:4px">District Intelligence Summary</h3>
+          <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:14px">Click a column header to sort</div>
+          <div class="tbl-wrap">
+            <table id="areaTable">
+              <thead><tr>
+                <th class="sortable" data-key="area">Area <span class="arrow">↕</span></th>
+                <th class="sortable" data-key="city">City <span class="arrow">↕</span></th>
+                <th class="sortable" data-key="priceSqm">Avg Price/sqm <span class="arrow">↕</span></th>
+                <th class="sortable" data-key="rent">Avg Rent/mo <span class="arrow">↕</span></th>
+                <th class="sortable" data-key="demand">Demand <span class="arrow">↕</span></th>
+                <th class="sortable" data-key="yoy">YoY Change <span class="arrow">↕</span></th>
+                <th class="sortable" data-key="school">School Score <span class="arrow">↕</span></th>
+                <th class="sortable" data-key="invest">Investment <span class="arrow">↕</span></th>
+              </tr></thead>
+              <tbody id="areaTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mb">
+          <h3 style="font-size:16px;margin-bottom:4px">Agent &amp; Agency Geographic Coverage</h3>
+          <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:14px">Who dominates each district by active listings</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>District</th><th>Leading Agency</th><th>Leading Agent</th><th>Listings in Area</th><th>Market Share</th></tr></thead>
+              <tbody id="coverageBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <h3 style="font-size:16px;margin-bottom:14px">Emerging Areas Spotlight</h3>
+        <div class="grid g-3" id="emergingRow"></div>
+      </section>
+
+      <!-- ============ SECTION 5: USER BEHAVIOUR ============ -->
+      <section class="section" id="sec-user">
+        <div class="grid g-2 mb">
+          <div class="card chart-card">
+            <h3>Users by Type</h3>
+            <div class="chart-wrap" style="height:240px"><canvas id="userTypeChart"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h3>Sessions by City</h3>
+            <div class="chart-wrap" style="height:240px"><canvas id="cityChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="card chart-card mb">
+          <h3>When Are Users Most Active?</h3>
+          <div class="sub">Sessions by hour of day (Saudi local time)</div>
+          <div class="chart-wrap" style="height:240px"><canvas id="hourlyActivityChart"></canvas></div>
+        </div>
+
+        <div class="card mb">
+          <h3 style="font-size:16px;margin-bottom:16px">Average User Journey</h3>
+          <div class="funnel" id="userFunnel"></div>
+        </div>
+
+        <div class="card mb">
+          <h3 style="font-size:16px;margin-bottom:4px">Most Common Saved Search Criteria</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Location</th><th>Property Type</th><th>Price Range</th><th>Bedrooms</th><th>Users</th></tr></thead>
+              <tbody id="savedSearchBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid g-2-1 mb">
+          <div class="card chart-card">
+            <h3>New vs Returning Users</h3>
+            <div class="sub">Last 30 days</div>
+            <div class="chart-wrap" style="height:240px"><canvas id="newReturningChart"></canvas></div>
+          </div>
+          <div class="card">
+            <h3 style="font-size:15px;margin-bottom:16px">Retention</h3>
+            <div class="grid g-2" style="gap:16px">
+              <div class="stat4"><div class="v">42%</div><div class="l">7-day retention</div></div>
+              <div class="stat4"><div class="v">28%</div><div class="l">30-day retention</div></div>
+              <div class="stat4"><div class="v">4.2</div><div class="l">Sessions / user / mo</div></div>
+              <div class="stat4"><div class="v">4m 32s</div><div class="l">Avg session</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 6: REVENUE ============ -->
+      <section class="section" id="sec-revenue">
+        <div class="grid g-4 mb" id="revenueKpiRow"></div>
+
+        <div class="card mb">
+          <h3 style="font-size:16px;margin-bottom:4px">🏆 Top Performing Agents</h3>
+          <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:14px">Ranked by deals closed this month</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Rank</th><th></th><th>Agent</th><th>Agency</th><th>Deals Closed</th><th>Conversion Rate</th><th>Sales Value</th><th>Avg Response Time</th><th>Client Rating</th></tr></thead>
+              <tbody id="topAgentsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid g-2-1 mb">
+          <div class="card">
+            <h3 style="font-size:16px;margin-bottom:4px">🏆 Top Performing Agencies</h3>
+            <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:14px">Ranked by total sales value this month</div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th>Rank</th><th>Agency</th><th>Agents</th><th>Deals Closed</th><th>Sales Value</th><th>Avg Rating</th></tr></thead>
+                <tbody id="topAgenciesBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <h3>Sales Value by Agency</h3>
+            <div class="sub">SAR, this month</div>
+            <div class="chart-wrap" style="height:260px"><canvas id="agencySalesChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="grid g-2 mb">
+          <div class="card chart-card">
+            <h3>Revenue by Source</h3>
+            <div class="chart-wrap" style="height:260px"><canvas id="revenueSourceChart"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h3>Active Brokers by Plan</h3>
+            <div class="chart-wrap" style="height:260px"><canvas id="plansChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="card chart-card mb">
+          <h3>Monthly Recurring Revenue</h3>
+          <div class="sub">Last 12 months, SAR</div>
+          <div class="chart-wrap" style="height:280px"><canvas id="mrrTrendChart"></canvas></div>
+        </div>
+
+        <div class="grid g-2-1 mb">
+          <div class="card chart-card">
+            <h3>New Subscriptions vs Churn</h3>
+            <div class="sub">Last 6 months</div>
+            <div class="chart-wrap" style="height:260px"><canvas id="newChurnChart"></canvas></div>
+          </div>
+          <div class="card">
+            <h3 style="font-size:15px;margin-bottom:14px">Churn Analysis</h3>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div><div class="kpi .val" style="font-size:20px;font-weight:800;color:var(--navy);font-family:'Playfair Display',serif">8 brokers</div><div style="font-size:12px;color:var(--muted)">Churned this month</div></div>
+              <div><div style="font-size:20px;font-weight:800;color:var(--red);font-family:'Playfair Display',serif">1.6%</div><div style="font-size:12px;color:var(--muted)">Churn rate</div></div>
+              <div><div style="font-size:20px;font-weight:800;color:var(--navy);font-family:'Playfair Display',serif">8.4 mo</div><div style="font-size:12px;color:var(--muted)">Avg subscription length</div></div>
+              <div style="font-size:12px;color:var(--muted);padding-top:8px;border-top:1px solid var(--border)">
+                Top reasons: <b style="color:var(--text)">Price</b> (42%) · <b style="color:var(--text)">Found another platform</b> (31%) · <b style="color:var(--text)">Business closed</b> (27%)
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION 7: EXPORT REPORTS ============ -->
+      <section class="section" id="sec-export">
+        <div class="grid g-3 mb" id="reportCardsRow"></div>
+
+        <div class="card">
+          <h3 style="font-size:16px;margin-bottom:4px">Scheduled Reports</h3>
+          <div class="sub" style="font-size:12px;color:var(--muted);margin-bottom:14px">Automated reports sent on a recurring schedule</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Report Name</th><th>Frequency</th><th>Recipients</th><th>Last Sent</th><th>Next Send</th><th>Status</th></tr></thead>
+              <tbody id="scheduledBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA GENERATION
+   ============================================================ */
+const CHART_COLORS = { navy:'#1B3A6B', gold:'#C9A84C', blue:'#3B82F6', green:'#10B981', amber:'#F59E0B', red:'#EF4444', purple:'#8B5CF6', gray:'#94A3B8' };
+Chart.defaults.font.family = "DM Sans, system-ui, sans-serif";
+Chart.defaults.color = '#6B7280';
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.boxWidth = 8;
+
+let currentRange = 30;
+function scaleFor(range){ return range===7 ? 0.28 : range===90 ? 2.9 : 1; }
+function rnd(min,max){ return Math.round(min + Math.random()*(max-min)); }
+function jitter(base, pct){ return Math.round(base * (1 + (Math.random()*2-1)*pct)); }
+function fmtSAR(n){ return 'SAR ' + Math.round(n).toLocaleString('en-US'); }
+function dateLabel(daysAgo){ const d = new Date(); d.setDate(d.getDate()-daysAgo); return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}); }
+function monthLabels(n){
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const out = []; const now = new Date();
+  for(let i=n-1;i>=0;i--){ const d = new Date(now.getFullYear(), now.getMonth()-i, 1); out.push(months[d.getMonth()]); }
+  return out;
+}
+
+/* ============================================================
+   SECTION NAVIGATION
+   ============================================================ */
+const TITLES = { overview:'Overview', search:'Search Analytics', property:'Property Analytics', area:'Area Intelligence', user:'User Behaviour', revenue:'Revenue', export:'Export Reports' };
+const initialized = {};
+function showSection(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active', s.id==='sec-'+name));
+  document.querySelectorAll('.sb-nav button').forEach(b=>b.classList.toggle('active', b.dataset.section===name));
+  document.getElementById('pageTitle').textContent = TITLES[name];
+  if(!initialized[name]){ initSection(name); initialized[name] = true; }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('sbNav').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-section]');
+  if(btn) showSection(btn.dataset.section);
+});
+
+function initSection(name){
+  if(name==='overview') initOverview();
+  if(name==='search') initSearch();
+  if(name==='property') initProperty();
+  if(name==='area') initArea();
+  if(name==='user') initUser();
+  if(name==='revenue') initRevenue();
+  if(name==='export') initExport();
+}
+
+/* ============================================================
+   DATE RANGE
+   ============================================================ */
+document.getElementById('rangeGroup').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-range]');
+  if(!btn) return;
+  document.querySelectorAll('#rangeGroup button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentRange = Number(btn.dataset.range);
+  refreshActiveSection();
+});
+function refreshActiveSection(){
+  const active = document.querySelector('.section.active').id.replace('sec-','');
+  buildKpis(active==='overview');
+  if(active==='overview') refreshOverview();
+  if(active==='search') refreshSearch();
+  if(active==='property') refreshProperty();
+  if(active==='revenue') refreshRevenue();
+}
+
+/* ============================================================
+   CHART REGISTRY (so we can destroy/rebuild on range change)
+   ============================================================ */
+const charts = {};
+function mkChart(id, config){
+  if(charts[id]) charts[id].destroy();
+  charts[id] = new Chart(document.getElementById(id), config);
+  return charts[id];
+}
+
+/* ============================================================
+   SECTION 1: OVERVIEW
+   ============================================================ */
+const KPI_BASE = [
+  { ic:'🔍', lbl:'Total Searches', base:48294, chg:23, up:true },
+  { ic:'👁️', lbl:'Property Views', base:186420, chg:31, up:true },
+  { ic:'🏠', lbl:'Active Listings', base:2847, chg:8, up:true },
+  { ic:'👤', lbl:'Unique Visitors', base:12450, chg:19, up:true },
+  { ic:'✉️', lbl:'Inquiries Sent', base:3284, chg:14, up:true },
+  { ic:'⏱️', lbl:'Avg Session', base:null, display:'4m 32s', chg:7, up:true }
+];
+function buildKpis(){
+  const s = scaleFor(currentRange);
+  document.getElementById('kpiRow').innerHTML = KPI_BASE.map(k=>{
+    const val = k.base===null ? k.display : Math.round(k.base*s).toLocaleString('en-US');
+    const chg = jitter(k.chg,0.15);
+    return `<div class="card kpi" data-kpi="1">
+      <div class="ic">${k.ic}</div>
+      <div class="lbl">${k.lbl}</div>
+      <div class="val">${val}</div>
+      <div class="chg ${k.up?'up':'down'}">${k.up?'▲':'▼'} ${chg}% vs prev. period</div>
+    </div>`;
+  }).join('');
+}
+function pulseKpis(){
+  document.querySelectorAll('.kpi').forEach(k=>{ k.classList.add('pulse'); setTimeout(()=>k.classList.remove('pulse'),900); });
+}
+
+function trafficData(range){
+  const days = range;
+  const labels = [], visitors = [], searches = [];
+  const s = scaleFor(range);
+  for(let i=days-1;i>=0;i--){
+    labels.push(dateLabel(i));
+    const dow = new Date(Date.now()-i*86400000).getDay();
+    const weekendDip = (dow===5||dow===6) ? 0.72 : 1;
+    visitors.push(Math.round(jitter(1450,0.18)*weekendDip*Math.min(s,1.3)));
+    searches.push(Math.round(jitter(1900,0.2)*weekendDip*Math.min(s,1.3)));
+  }
+  return {labels,visitors,searches};
+}
+function buildTrafficChart(){
+  const {labels,visitors,searches} = trafficData(currentRange);
+  document.getElementById('trafficSub').textContent = `Last ${currentRange} Days`;
+  mkChart('trafficChart',{ type:'line', data:{ labels, datasets:[
+    { label:'Visitors', data:visitors, borderColor:CHART_COLORS.navy, backgroundColor:'rgba(27,58,107,.08)', fill:true, tension:.35, pointRadius:0, borderWidth:2.5 },
+    { label:'Searches', data:searches, borderColor:CHART_COLORS.gold, backgroundColor:'rgba(201,168,76,.1)', fill:true, tension:.35, pointRadius:0, borderWidth:2.5 }
+  ]}, options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700},
+    interaction:{mode:'index',intersect:false},
+    plugins:{ legend:{position:'top',align:'end'}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`}} },
+    scales:{ y:{ beginAtZero:true, grid:{color:'#F1F5F9'} }, x:{ grid:{display:false}, ticks:{maxTicksLimit:8} } } } });
+}
+function buildDeviceChart(){
+  mkChart('deviceChart',{ type:'doughnut', data:{ labels:['Mobile','Desktop','Tablet'], datasets:[{ data:[61,31,8], backgroundColor:[CHART_COLORS.navy,CHART_COLORS.gold,CHART_COLORS.gray], borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{animateRotate:true,duration:800}, cutout:'68%',
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}} } },
+    plugins:[{ id:'centerText', afterDraw(chart){ const {ctx,chartArea:{width,height,left,top}} = chart;
+      ctx.save(); ctx.font='800 20px Playfair Display, serif'; ctx.fillStyle='#1B3A6B'; ctx.textAlign='center';
+      ctx.fillText('12,450', left+width/2, top+height/2-2);
+      ctx.font='600 11px DM Sans'; ctx.fillStyle='#6B7280'; ctx.fillText('Total Sessions', left+width/2, top+height/2+16);
+      ctx.restore(); } }] });
+}
+function buildIntentChart(){
+  const months = monthLabels(6);
+  mkChart('intentChart',{ type:'bar', data:{ labels:months, datasets:[
+    { label:'Buy', data:months.map(()=>jitter(3200,0.15)), backgroundColor:CHART_COLORS.navy, borderRadius:4 },
+    { label:'Rent', data:months.map(()=>jitter(2100,0.18)), backgroundColor:CHART_COLORS.gold, borderRadius:4 },
+    { label:'New Dev', data:months.map(()=>jitter(680,0.22)), backgroundColor:CHART_COLORS.blue, borderRadius:4 }
+  ]}, options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700},
+    plugins:{ legend:{position:'top',align:'end',labels:{boxWidth:8,font:{size:11}}} },
+    scales:{ y:{beginAtZero:true,grid:{color:'#F1F5F9'}}, x:{grid:{display:false}} } } });
+}
+function buildRegistrationChart(){
+  const range = Math.min(currentRange,30);
+  document.getElementById('regSub').textContent = `Last ${currentRange} Days`;
+  const labels = [], data = [];
+  for(let i=range-1;i>=0;i--){ labels.push(dateLabel(i)); data.push(rnd(45,80)); }
+  mkChart('registrationChart',{ type:'line', data:{ labels, datasets:[{ data, borderColor:CHART_COLORS.navy, backgroundColor:'rgba(27,58,107,.35)', fill:true, tension:.3, pointRadius:0, borderWidth:2 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700}, plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y} new users`}}},
+      scales:{ y:{beginAtZero:true,grid:{color:'#F1F5F9'}}, x:{grid:{display:false},ticks:{maxTicksLimit:6}} } } });
+}
+const FUNNEL_STAGES = [
+  {lbl:'Searches', val:48294}, {lbl:'Property Views', val:18420}, {lbl:'Saved / Shortlisted', val:4830},
+  {lbl:'Inquiries Sent', val:3284}, {lbl:'Viewings Booked', val:892}, {lbl:'Deals Closed', val:124}
+];
+function buildFunnel(containerId, stages){
+  const max = stages[0].val;
+  document.getElementById(containerId).innerHTML = stages.map((s,i)=>{
+    const pct = Math.max(8, Math.round((s.val/max)*100));
+    const conv = i===0 ? '100%' : ((s.val/stages[0].val)*100).toFixed(1)+'%';
+    return `<div class="funnel-row">
+      <div class="funnel-lbl">${s.lbl}</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${pct}%" title="${s.val.toLocaleString()} — ${conv} of top of funnel">${s.val.toLocaleString()}</div></div>
+      <div class="funnel-conv">${conv}</div>
+    </div>`;
+  }).join('');
+}
+function initOverview(){ buildKpis(); buildTrafficChart(); buildDeviceChart(); buildIntentChart(); buildRegistrationChart(); buildFunnel('overviewFunnel', FUNNEL_STAGES); }
+function refreshOverview(){ buildTrafficChart(); buildRegistrationChart(); pulseKpis(); }
+
+setInterval(()=>{
+  if(document.getElementById('sec-overview').classList.contains('active')){ buildKpis(); pulseKpis(); }
+  document.getElementById('liveUpdated').textContent = 'Live data as of just now';
+  setTimeout(()=>{ document.getElementById('liveUpdated').textContent = 'Live data as of 1 minute ago'; }, 30000);
+}, 60000);
+
+/* ============================================================
+   SECTION 2: SEARCH ANALYTICS
+   ============================================================ */
+const KEYWORDS = [
+  {term:'villa riyadh pool', n:4820, trend:'up', results:342},
+  {term:'apartment jeddah sea view', n:3940, trend:'up', results:198},
+  {term:'3 bedroom villa north riyadh', n:3210, trend:'flat', results:276},
+  {term:'شقة للإيجار الرياض', n:2890, trend:'up', results:412},
+  {term:'family villa near school', n:2640, trend:'up', results:230},
+  {term:'apartment for rent riyadh', n:2410, trend:'flat', results:501},
+  {term:'penthouse jeddah corniche', n:2180, trend:'down', results:64},
+  {term:'commercial office kafd', n:1950, trend:'up', results:87},
+  {term:'land for sale al malqa', n:1820, trend:'up', results:53},
+  {term:'townhouse diriyah gate', n:1690, trend:'up', results:41},
+  {term:'فيلا للبيع الرياض', n:1540, trend:'flat', results:389},
+  {term:'studio apartment jeddah', n:1320, trend:'down', results:156},
+  {term:'investment property riyadh', n:1180, trend:'up', results:298},
+  {term:'duplex al khobar corniche', n:980, trend:'down', results:29},
+  {term:'off plan riyadh 2026', n:870, trend:'up', results:74}
+];
+function trendArrow(t){ return t==='up' ? '<span class="trend-up">▲ trending</span>' : t==='down' ? '<span class="trend-down">▼ declining</span>' : '<span class="trend-flat">— stable</span>'; }
+function buildKeywordsTable(){
+  document.getElementById('keywordsBody').innerHTML = KEYWORDS.map((k,i)=>`<tr>
+    <td>${i<3?['🥇','🥈','🥉'][i]:`<span class="rank-badge">${i+1}</span>`}</td>
+    <td style="font-weight:600">${k.term}</td>
+    <td>${jitter(k.n, scaleFor(currentRange)===1?0.05:0.15).toLocaleString()}</td>
+    <td>${trendArrow(k.trend)}</td>
+    <td>${k.results}</td>
+  </tr>`).join('');
+}
+function buildTypeChart(){
+  mkChart('typeChart',{ type:'pie', data:{ labels:['Villa','Apartment','Townhouse','Commercial','Land'], datasets:[{ data:[38,29,14,11,8], backgroundColor:[CHART_COLORS.navy,CHART_COLORS.gold,CHART_COLORS.blue,CHART_COLORS.purple,CHART_COLORS.green], borderWidth:2, borderColor:'#fff' }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{animateRotate:true,duration:800}, plugins:{ legend:{position:'bottom',labels:{boxWidth:8,font:{size:11}}}, tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}} } } });
+}
+function buildPurposeChart(){
+  mkChart('purposeChart',{ type:'doughnut', data:{ labels:['Buy','Rent','New Development'], datasets:[{ data:[54,38,8], backgroundColor:[CHART_COLORS.navy,CHART_COLORS.gold,CHART_COLORS.blue], borderWidth:2, borderColor:'#fff' }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', animation:{animateRotate:true,duration:800}, plugins:{ legend:{position:'bottom',labels:{boxWidth:8,font:{size:11}}}, tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}} } } });
+}
+function buildPriceRangeChart(){
+  const labels = ['Under 500K','500K–1M','1M–2M','2M–5M','5M+'];
+  const data = [18,27,32,16,7];
+  const maxIdx = data.indexOf(Math.max(...data));
+  mkChart('priceRangeChart',{ type:'bar', data:{ labels, datasets:[{ data, backgroundColor:data.map((_,i)=>i===maxIdx?CHART_COLORS.gold:CHART_COLORS.navy), borderRadius:5 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700}, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y}% of searches`}} },
+      scales:{ y:{beginAtZero:true,ticks:{callback:v=>v+'%'},grid:{color:'#F1F5F9'}}, x:{grid:{display:false}} } } });
+}
+function buildAiStats(){
+  const s = scaleFor(currentRange);
+  const stats = [
+    {v:Math.round(8420*s).toLocaleString(), l:'AI Searches This Month'},
+    {v:'3.2 msgs', l:'Avg Conversation Length'},
+    {v:'68%', l:'Search → View Rate'},
+    {v:'"Family home near school"', l:'Most Common Query Type'}
+  ];
+  document.getElementById('aiStatsRow').innerHTML = stats.map(s=>`<div class="card stat4"><div class="v">${s.v}</div><div class="l">${s.l}</div></div>`).join('');
+}
+const AI_QUERIES = [
+  {q:'villa near a school in North Riyadh under SAR 2M', n:342, out:'Viewed property'},
+  {q:'family home near schools', n:298, out:'Saved'},
+  {q:'apartment with sea view Jeddah', n:276, out:'Inquired'},
+  {q:'investment property high yield', n:254, out:'Viewed property'},
+  {q:'villa with pool in Riyadh', n:231, out:'Viewed property'},
+  {q:'3 bedroom apartment under 800K Jeddah', n:198, out:'Saved'},
+  {q:'office space KAFD', n:176, out:'Inquired'},
+  {q:'land for building a villa Riyadh', n:154, out:'Viewed property'},
+  {q:'pet friendly apartment Riyadh', n:132, out:'Viewed property'},
+  {q:'new development Diriyah', n:121, out:'Saved'}
+];
+function outcomePill(o){ const cls = o==='Inquired'?'green':o==='Saved'?'amber':'green'; return `<span class="pill ${cls}">${o}</span>`; }
+function buildAiQueriesTable(){
+  document.getElementById('aiQueriesBody').innerHTML = AI_QUERIES.map(q=>`<tr><td>"${q.q}"</td><td>${q.n}</td><td>${outcomePill(q.out)}</td></tr>`).join('');
+}
+function buildLeadSourceChart(){
+  mkChart('leadSourceChart',{ type:'doughnut', data:{ labels:['AI Conversational Search','Standard Filters / Browse','Direct Inquiry (Call/WhatsApp)','Referral'], datasets:[{ data:[34,41,18,7], backgroundColor:[CHART_COLORS.gold,CHART_COLORS.navy,CHART_COLORS.blue,CHART_COLORS.gray], borderWidth:2, borderColor:'#fff' }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', animation:{animateRotate:true,duration:800}, plugins:{ legend:{position:'bottom',labels:{boxWidth:8,font:{size:10.5}}}, tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}} } } });
+}
+function initSearch(){ buildKeywordsTable(); buildTypeChart(); buildPurposeChart(); buildPriceRangeChart(); buildAiStats(); buildLeadSourceChart(); buildAiQueriesTable(); }
+function refreshSearch(){ buildKeywordsTable(); buildAiStats(); }
+
+/* ============================================================
+   SECTION 3: PROPERTY ANALYTICS
+   ============================================================ */
+const TOP_PROPS = [
+  {name:'Luxury Villa Al Malqa', loc:'Al Malqa, Riyadh', type:'Villa', views:2840, saves:412, inq:89, days:12, agent:'Ahmed Al-Rashidi', av:'1500648767791-00dcc994a43e', rate:'green'},
+  {name:'Sea View Tower Jeddah', loc:'Al Hamra, Jeddah', type:'Apartment', views:2415, saves:356, inq:74, days:18, agent:'Khalid Al-Harbi', av:'1507003211169-0a1dd7228f2d', rate:'green'},
+  {name:'Hittin Modern Villa', loc:'Hittin, Riyadh', type:'Villa', views:2190, saves:298, inq:52, days:24, agent:'Sara Al-Otaibi', av:'1544005313-94ddf0286df2', rate:'amber'},
+  {name:'KAFD Executive Office', loc:'Al Aqiq, Riyadh', type:'Commercial', views:1980, saves:145, inq:61, days:15, agent:'Sara Al-Otaibi', av:'1544005313-94ddf0286df2', rate:'green'},
+  {name:'Al Rawdah Family Home', loc:'Al Rawdah, Jeddah', type:'Villa', views:1870, saves:234, inq:38, days:31, agent:'Khalid Al-Harbi', av:'1507003211169-0a1dd7228f2d', rate:'amber'},
+  {name:'Corniche Waterfront Villa', loc:'Al Khobar', type:'Villa', views:1745, saves:267, inq:71, days:9, agent:'Ahmed Al-Rashidi', av:'1500648767791-00dcc994a43e', rate:'green'},
+  {name:'Diriyah Gate Townhouse', loc:'Diriyah, Riyadh', type:'Townhouse', views:1620, saves:189, inq:29, days:42, agent:'Khalid Al-Harbi', av:'1507003211169-0a1dd7228f2d', rate:'amber'},
+  {name:'Al Nakheel Garden Villa', loc:'Al Nakheel, Riyadh', type:'Villa', views:1510, saves:156, inq:18, days:58, agent:'Sara Al-Otaibi', av:'1544005313-94ddf0286df2', rate:'red'},
+  {name:'Al Murjan Beachside Apt', loc:'Al Murjan, Jeddah', type:'Apartment', views:1380, saves:98, inq:12, days:67, agent:'Ahmed Al-Rashidi', av:'1500648767791-00dcc994a43e', rate:'red'},
+  {name:'Al Yasmin Residential Land', loc:'Al Yasmin, Riyadh', type:'Land', views:1240, saves:87, inq:9, days:74, agent:'Sara Al-Otaibi', av:'1544005313-94ddf0286df2', rate:'red'}
+];
+function sparkPath(w,h){ let d = `M0,${h*(0.4+Math.random()*0.4)}`; for(let i=1;i<=10;i++){ d += ` L${(w/10)*i},${h*(0.15+Math.random()*0.7)}`; } return d; }
+function buildTopPropsTable(){
+  document.getElementById('topPropsBody').innerHTML = TOP_PROPS.map((p,i)=>`
+    <tr class="clickable" data-idx="${i}">
+      <td style="width:24px">▸</td>
+      <td><span class="rank-badge">${i+1}</span></td>
+      <td><img class="thumb" src="https://images.unsplash.com/photo-${['1613490493576-7fde63acd811','1600596542815-ffad4c1539a9','1600585154340-be6161a56a0c','1512917774080-9991f1c4c750'][i%4]}?auto=format&fit=crop&w=100&q=80" alt=""></td>
+      <td style="font-weight:600">${p.name}</td>
+      <td>${p.loc}</td>
+      <td>${p.type}</td>
+      <td>${p.views.toLocaleString()}</td>
+      <td>${p.saves}</td>
+      <td><span class="pill ${p.rate}">${p.inq}</span></td>
+      <td>${p.days}</td>
+      <td>${p.agent}</td>
+    </tr>
+    <tr class="sparkline-row hide" id="spark-${i}"><td colspan="11">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">30-day view trend</div>
+      <svg width="100%" height="46" viewBox="0 0 400 46" preserveAspectRatio="none"><path d="${sparkPath(400,46)}" fill="none" stroke="#1B3A6B" stroke-width="2"/></svg>
+    </td></tr>
+  `).join('');
+  document.querySelectorAll('#topPropsBody tr.clickable').forEach(row=>{
+    row.addEventListener('click', ()=>{ document.getElementById('spark-'+row.dataset.idx).classList.toggle('hide'); });
+  });
+}
+function buildHeatmapChart(){
+  const pts = TOP_PROPS.map(p=>({ x:p.views, y:p.inq, r:8, type:p.type }));
+  const byType = { Villa:CHART_COLORS.navy, Apartment:CHART_COLORS.blue, Commercial:CHART_COLORS.gold, Townhouse:CHART_COLORS.navy, Land:CHART_COLORS.gray };
+  mkChart('heatmapChart',{ type:'bubble', data:{ datasets:[{ data:pts.map(p=>({x:p.x,y:p.y,r:9})), backgroundColor:pts.map(p=>(byType[p.type]||CHART_COLORS.purple)+'CC') }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700},
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.raw.x.toLocaleString()} views, ${c.raw.y} inquiries`}} },
+      scales:{ x:{title:{display:true,text:'Views'},grid:{color:'#F1F5F9'}}, y:{title:{display:true,text:'Inquiries'},grid:{color:'#F1F5F9'}} } } });
+}
+function buildDaysOnMarketChart(){
+  const labels = ['Villa','Apartment','Townhouse','Commercial','Land'];
+  const data = [34,22,28,67,89];
+  mkChart('daysOnMarketChart',{ type:'bar', data:{ labels, datasets:[{ data, backgroundColor:CHART_COLORS.navy, borderRadius:5 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:{duration:700},
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.x} days`}},
+        annotation:undefined },
+      scales:{ x:{beginAtZero:true,grid:{color:'#F1F5F9'}}, y:{grid:{display:false}} } },
+    plugins:[{ id:'benchmark', afterDraw(chart){ const {ctx,chartArea,scales} = chart; const x = scales.x.getPixelForValue(45);
+      ctx.save(); ctx.strokeStyle = CHART_COLORS.red; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke();
+      ctx.setLineDash([]); ctx.fillStyle = CHART_COLORS.red; ctx.font='700 10px DM Sans';
+      ctx.fillText('45d avg', x+4, chartArea.top+10); ctx.restore(); } }] });
+}
+function buildListingHealth(){
+  const cards = [
+    {v:'2,847', l:'Active Listings', c:'green'}, {v:'24', l:'Pending Review', c:'amber'},
+    {v:'183', l:'Expired (90+ days)', c:'red'}, {v:'142', l:'Featured Listings', c:'gold'}
+  ];
+  document.getElementById('listingHealthRow').innerHTML = cards.map(c=>`<div class="card stat4"><div class="v" style="color:${c.c==='red'?'var(--red)':c.c==='amber'?'var(--amber)':c.c==='gold'?'var(--gold)':'var(--green)'}">${c.v}</div><div class="l">${c.l}</div></div>`).join('');
+}
+function buildNewVsSoldChart(){
+  const months = monthLabels(6);
+  mkChart('newVsSoldChart',{ type:'line', data:{ labels:months, datasets:[
+    { label:'New Listings', data:months.map(()=>jitter(340,0.15)), borderColor:CHART_COLORS.navy, backgroundColor:'rgba(27,58,107,.08)', fill:true, tension:.35, borderWidth:2.5 },
+    { label:'Sold / Closed', data:months.map(()=>jitter(180,0.18)), borderColor:CHART_COLORS.gold, backgroundColor:'rgba(201,168,76,.1)', fill:true, tension:.35, borderWidth:2.5 }
+  ]}, options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700}, plugins:{legend:{position:'top',align:'end'}}, scales:{ y:{beginAtZero:true,grid:{color:'#F1F5F9'}}, x:{grid:{display:false}} } } });
+}
+function initProperty(){ buildTopPropsTable(); buildHeatmapChart(); buildDaysOnMarketChart(); buildListingHealth(); buildNewVsSoldChart(); }
+function refreshProperty(){ /* table/heatmap stable across ranges by design */ }
+
+/* ============================================================
+   SECTION 4: AREA INTELLIGENCE
+   ============================================================ */
+const HOT_AREAS = [
+  {name:'Al Malqa, Riyadh', score:94, trend:'up'}, {name:'Hittin, Riyadh', score:89, trend:'up'},
+  {name:'Al Nakheel, Riyadh', score:84, trend:'flat'}, {name:'Al Rawdah, Jeddah', score:81, trend:'up'},
+  {name:'Al Hamra, Jeddah', score:77, trend:'up'}, {name:'Al Murjan, Jeddah', score:71, trend:'down'},
+  {name:'Al Shati, Jeddah', score:68, trend:'up'}, {name:'Al Faisaliah, Riyadh', score:64, trend:'flat'},
+  {name:'Al Olaya, Riyadh', score:59, trend:'down'}, {name:'Hittin, Jeddah', score:54, trend:'up'}
+];
+function heatColor(score){ return score>=90?CHART_COLORS.red : score>=70?CHART_COLORS.amber : score>=50?'#EAB308' : CHART_COLORS.green; }
+function buildHotAreas(){
+  document.getElementById('hotAreasList').innerHTML = HOT_AREAS.map(a=>`
+    <div class="hbar-row">
+      <div class="hbar-label">${a.name}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${a.score}%;background:${heatColor(a.score)}"><span>${a.score}</span></div></div>
+      <div class="hbar-trend ${a.trend==='up'?'trend-up':a.trend==='down'?'trend-down':'trend-flat'}">${a.trend==='up'?'▲ Rising':a.trend==='down'?'▼ Falling':'— Steady'}</div>
+    </div>`).join('');
+}
+function buildPriceTrendChart(){
+  const months = monthLabels(12);
+  const areas = [
+    {name:'Al Malqa', base:8700, color:CHART_COLORS.navy}, {name:'Hittin', base:8200, color:CHART_COLORS.gold},
+    {name:'Al Nakheel', base:7100, color:CHART_COLORS.blue}, {name:'Al Rawdah', base:6900, color:CHART_COLORS.green},
+    {name:'Al Hamra', base:7400, color:CHART_COLORS.purple}
+  ];
+  mkChart('priceTrendChart',{ type:'line', data:{ labels:months, datasets:areas.map(a=>{
+    let v = a.base*0.88;
+    return { label:a.name, data:months.map(()=>{ v *= (1+ (Math.random()*0.03)); return Math.round(v); }), borderColor:a.color, backgroundColor:'transparent', tension:.3, pointRadius:0, borderWidth:2.5 };
+  })}, options:{ responsive:true, maintainAspectRatio:false, animation:{duration:800}, plugins:{ legend:{position:'top',align:'end',labels:{boxWidth:8,font:{size:11}}}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${fmtSAR(c.parsed.y)}/sqm`}} },
+    scales:{ y:{min:3000,max:12000,grid:{color:'#F1F5F9'},ticks:{callback:v=>'SAR '+(v/1000)+'K'}}, x:{grid:{display:false},ticks:{maxTicksLimit:12}} } } });
+}
+function buildRentBuyChart(){
+  const areas = ['Al Malqa','Hittin','Al Nakheel','Al Rawdah','Al Hamra','Al Olaya','Al Murjan','Al Faisaliah'];
+  const buy = [820,690,540,410,380,290,260,470];
+  const rent = [310,380,420,560,610,720,540,380];
+  mkChart('rentBuyChart',{ type:'bar', data:{ labels:areas, datasets:[
+    { label:'Buy Searches', data:buy, backgroundColor:CHART_COLORS.navy, borderRadius:4 },
+    { label:'Rent Searches', data:rent, backgroundColor:CHART_COLORS.gold, borderRadius:4 }
+  ]}, options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700}, plugins:{ legend:{position:'top',align:'end'} }, scales:{ y:{beginAtZero:true,grid:{color:'#F1F5F9'}}, x:{grid:{display:false}} } } });
+}
+const AREA_TABLE = [
+  {area:'Al Malqa', city:'Riyadh', priceSqm:8700, rent:12500, demand:94, yoy:8.2, school:92, invest:5},
+  {area:'Hittin', city:'Riyadh', priceSqm:8200, rent:11800, demand:89, yoy:6.5, school:88, invest:4},
+  {area:'Al Nakheel', city:'Riyadh', priceSqm:7100, rent:9900, demand:84, yoy:5.1, school:81, invest:4},
+  {area:'Al Rawdah', city:'Jeddah', priceSqm:6900, rent:9200, demand:81, yoy:7.3, school:79, invest:4},
+  {area:'Al Hamra', city:'Jeddah', priceSqm:7400, rent:10100, demand:77, yoy:4.8, school:74, invest:4},
+  {area:'Al Murjan', city:'Jeddah', priceSqm:6200, rent:8400, demand:71, yoy:3.2, school:70, invest:3},
+  {area:'Al Shati', city:'Jeddah', priceSqm:6800, rent:9000, demand:68, yoy:2.9, school:76, invest:3},
+  {area:'Al Faisaliah', city:'Riyadh', priceSqm:6500, rent:8700, demand:64, yoy:2.1, school:85, invest:3},
+  {area:'Al Olaya', city:'Riyadh', priceSqm:9100, rent:13200, demand:59, yoy:1.8, school:90, invest:3},
+  {area:'Al Aqiq', city:'Riyadh', priceSqm:9800, rent:14000, demand:90, yoy:9.1, school:70, invest:5},
+  {area:'Diriyah', city:'Riyadh', priceSqm:8900, rent:12100, demand:86, yoy:11.4, school:82, invest:5},
+  {area:'Al Yasmin', city:'Riyadh', priceSqm:5900, rent:7800, demand:56, yoy:3.5, school:87, invest:3}
+];
+let areaSort = {key:'demand', dir:'desc'};
+function starsHtml(n){ return '★'.repeat(n) + '☆'.repeat(5-n); }
+function renderAreaTable(){
+  const sorted = [...AREA_TABLE].sort((a,b)=>{
+    const va=a[areaSort.key], vb=b[areaSort.key];
+    if(typeof va==='string') return areaSort.dir==='asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    return areaSort.dir==='asc' ? va-vb : vb-va;
+  });
+  const avgPrice = AREA_TABLE.reduce((s,a)=>s+a.priceSqm,0)/AREA_TABLE.length;
+  document.getElementById('areaTableBody').innerHTML = sorted.map(a=>`<tr>
+    <td style="font-weight:700">${a.area}</td><td>${a.city}</td>
+    <td style="color:${a.priceSqm>avgPrice?'var(--green)':'var(--red)'};font-weight:600">${fmtSAR(a.priceSqm)}</td>
+    <td>${fmtSAR(a.rent)}</td>
+    <td><span class="pill ${a.demand>=80?'green':a.demand>=60?'amber':'red'}">${a.demand}</span></td>
+    <td class="${a.yoy>=5?'trend-up':'trend-flat'}">+${a.yoy}%</td>
+    <td>${a.school}/100</td>
+    <td class="stars">${starsHtml(a.invest)}</td>
+  </tr>`).join('');
+  document.querySelectorAll('#areaTable th.sortable').forEach(th=>{
+    th.classList.toggle('sort-asc', th.dataset.key===areaSort.key && areaSort.dir==='asc');
+    th.classList.toggle('sort-desc', th.dataset.key===areaSort.key && areaSort.dir==='desc');
+  });
+}
+document.getElementById('areaTable').querySelector('thead').addEventListener('click', e=>{
+  const th = e.target.closest('th.sortable'); if(!th) return;
+  const key = th.dataset.key;
+  areaSort.dir = (areaSort.key===key && areaSort.dir==='desc') ? 'asc' : 'desc';
+  areaSort.key = key;
+  renderAreaTable();
+});
+const EMERGING = [
+  {area:'Al Arid', city:'North Riyadh', why:'New metro line opening Q4 2026 is set to cut commute times to KAFD in half.', growth:34, price:'SAR 6,100/sqm'},
+  {area:'Obhur Al Shamaliyah', city:'Jeddah', why:'New waterfront development bringing marina-front villas and retail to North Jeddah.', growth:28, price:'SAR 5,800/sqm'},
+  {area:'Al Widyan', city:'Riyadh', why:'Rising NEOM employee housing demand as relocation packages ramp up.', growth:41, price:'SAR 6,900/sqm'}
+];
+function buildEmerging(){
+  document.getElementById('emergingRow').innerHTML = EMERGING.map(e=>`<div class="emerging-card">
+    <div class="emerging-badge">⚡ Emerging</div>
+    <h4>${e.area}</h4>
+    <div class="city">${e.city}</div>
+    <div class="why">${e.why}</div>
+    <div class="emerging-stats">
+      <div><b>+${e.growth}%</b>search growth</div>
+      <div><b>${e.price}</b>avg price</div>
+    </div>
+  </div>`).join('');
+}
+const COVERAGE = [
+  {district:'Al Malqa, Riyadh', agency:'Al Malqa Real Estate', agent:'Ahmed Al-Rashidi', listings:34, share:42},
+  {district:'Hittin, Riyadh', agency:'Hittin Properties Group', agent:'Sara Al-Otaibi', listings:28, share:38},
+  {district:'Al Nakheel, Riyadh', agency:'Al Malqa Real Estate', agent:'Fatima Al-Qahtani', listings:21, share:33},
+  {district:'Al Rawdah, Jeddah', agency:'Jeddah Coastal Properties', agent:'—', listings:22, share:45},
+  {district:'Al Hamra, Jeddah', agency:'Jeddah Coastal Properties', agent:'—', listings:18, share:36},
+  {district:'Al Aqiq, Riyadh', agency:'Riyadh Realty Partners', agent:'Khalid Al-Harbi', listings:19, share:29},
+  {district:'Diriyah, Riyadh', agency:'Riyadh Realty Partners', agent:'Faisal Al-Ghamdi', listings:16, share:31},
+  {district:'Al Olaya, Riyadh', agency:'Hittin Properties Group', agent:'Noura Al-Shammari', listings:14, share:27}
+];
+function buildCoverageTable(){
+  document.getElementById('coverageBody').innerHTML = COVERAGE.map(c=>`<tr>
+    <td style="font-weight:600">${c.district}</td>
+    <td>${c.agency}</td>
+    <td>${c.agent}</td>
+    <td>${c.listings}</td>
+    <td><span class="pill green">${c.share}%</span></td>
+  </tr>`).join('');
+}
+function initArea(){ buildHotAreas(); buildPriceTrendChart(); buildRentBuyChart(); renderAreaTable(); buildCoverageTable(); buildEmerging(); }
+
+/* ============================================================
+   SECTION 5: USER BEHAVIOUR
+   ============================================================ */
+function buildUserTypeChart(){
+  mkChart('userTypeChart',{ type:'doughnut', data:{ labels:['Buyers','Sellers','Brokers','Agencies'], datasets:[{ data:[58,12,24,6], backgroundColor:[CHART_COLORS.navy,CHART_COLORS.blue,CHART_COLORS.gold,CHART_COLORS.purple], borderWidth:2, borderColor:'#fff' }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', animation:{animateRotate:true,duration:800}, plugins:{ legend:{position:'bottom',labels:{boxWidth:8,font:{size:11}}}, tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}} } } });
+}
+function buildCityChart(){
+  mkChart('cityChart',{ type:'bar', data:{ labels:['Riyadh','Jeddah','Dammam','Al Khobar','Other'], datasets:[{ data:[52,31,9,5,3], backgroundColor:CHART_COLORS.navy, borderRadius:5 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700}, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y}% of sessions`}} },
+      scales:{ y:{beginAtZero:true,ticks:{callback:v=>v+'%'},grid:{color:'#F1F5F9'}}, x:{grid:{display:false}} } } });
+}
+function buildHourlyChart(){
+  const hours = Array.from({length:24},(_,i)=>i);
+  const data = hours.map(h=>{
+    if(h>=9&&h<=11) return rnd(680,820);
+    if(h>=20&&h<=23) return rnd(720,900);
+    if(h>=3&&h<=6) return rnd(20,60);
+    return rnd(200,450);
+  });
+  const peak = h => (h>=9&&h<=11)||(h>=20&&h<=23);
+  mkChart('hourlyActivityChart',{ type:'bar', data:{ labels:hours.map(h=>h+':00'), datasets:[{ data, backgroundColor:hours.map(h=>peak(h)?CHART_COLORS.gold:CHART_COLORS.navy), borderRadius:3 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700}, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y.toLocaleString()} sessions`}} },
+      scales:{ y:{beginAtZero:true,grid:{color:'#F1F5F9'}}, x:{grid:{display:false},ticks:{maxTicksLimit:12}} } } });
+}
+const USER_FUNNEL = [
+  {lbl:'Lands on Platform', val:12450}, {lbl:'Searches (avg 2.4)', val:11890}, {lbl:'Views Property (avg 6.8)', val:9640},
+  {lbl:'Saves Property (avg 2.1)', val:5210}, {lbl:'Contacts Broker (38%)', val:1980}, {lbl:'Books Viewing (22%)', val:436}, {lbl:'Signs Contract (8%)', val:35}
+];
+const SAVED_SEARCH_CRITERIA = [
+  {loc:'Al Malqa, Riyadh', type:'Villa', price:'SAR 2M–3M', beds:'4', users:1240},
+  {loc:'Al Hamra, Jeddah', type:'Apartment', price:'SAR 800K–1.2M', beds:'2–3', users:980},
+  {loc:'Hittin, Riyadh', type:'Villa', price:'SAR 2.5M–4M', beds:'5', users:764},
+  {loc:'Al Khobar (Corniche)', type:'Villa', price:'SAR 3M–5M', beds:'5–6', users:512},
+  {loc:'Al Aqiq (KAFD), Riyadh', type:'Office', price:'SAR 5M+', beds:'—', users:298}
+];
+function buildSavedSearchTable(){
+  document.getElementById('savedSearchBody').innerHTML = SAVED_SEARCH_CRITERIA.map(s=>`<tr><td>${s.loc}</td><td>${s.type}</td><td>${s.price}</td><td>${s.beds}</td><td>${s.users.toLocaleString()}</td></tr>`).join('');
+}
+function buildNewReturningChart(){
+  const labels = []; const nw=[]; const ret=[];
+  for(let i=29;i>=0;i--){ labels.push(dateLabel(i)); nw.push(rnd(280,520)); ret.push(rnd(180,340)); }
+  mkChart('newReturningChart',{ type:'line', data:{ labels, datasets:[
+    { label:'New', data:nw, borderColor:CHART_COLORS.navy, backgroundColor:'transparent', tension:.35, pointRadius:0, borderWidth:2.5 },
+    { label:'Returning', data:ret, borderColor:CHART_COLORS.gold, backgroundColor:'transparent', tension:.35, pointRadius:0, borderWidth:2.5 }
+  ]}, options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700}, plugins:{legend:{position:'top',align:'end'}}, scales:{ y:{beginAtZero:true,grid:{color:'#F1F5F9'}}, x:{grid:{display:false},ticks:{maxTicksLimit:6}} } } });
+}
+function initUser(){ buildUserTypeChart(); buildCityChart(); buildHourlyChart(); buildFunnel('userFunnel', USER_FUNNEL); buildSavedSearchTable(); buildNewReturningChart(); }
+
+/* ============================================================
+   SECTION 6: REVENUE
+   ============================================================ */
+function buildRevenueKpis(){
+  const cards = [
+    {v:'SAR 124,500', l:'MRR', chg:18}, {v:'SAR 156,800', l:'Total Revenue This Month', chg:22},
+    {v:'486 brokers', l:'Active Subscriptions', chg:null, sub:'+31 this month'}, {v:'SAR 256', l:'Avg Revenue / Broker / mo', chg:null}
+  ];
+  document.getElementById('revenueKpiRow').innerHTML = cards.map(c=>`<div class="card kpi">
+    <div class="ic">💰</div><div class="lbl">${c.l}</div><div class="val">${c.v}</div>
+    ${c.chg?`<div class="chg up">▲ ${c.chg}%</div>`:c.sub?`<div class="chg up">▲ ${c.sub}</div>`:''}
+  </div>`).join('');
+}
+function buildRevenueSourceChart(){
+  mkChart('revenueSourceChart',{ type:'doughnut', data:{ labels:['Broker Subscriptions','Featured Listings','Lead Generation Fees','Transaction Fees'], datasets:[{ data:[58,22,14,6], backgroundColor:[CHART_COLORS.navy,CHART_COLORS.gold,CHART_COLORS.blue,CHART_COLORS.purple], borderWidth:2, borderColor:'#fff' }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', animation:{animateRotate:true,duration:800}, plugins:{ legend:{position:'bottom',labels:{boxWidth:8,font:{size:11}}}, tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}} } } });
+}
+function buildPlansChart(){
+  mkChart('plansChart',{ type:'bar', data:{ labels:['Basic (SAR 199/mo)','Professional (SAR 499/mo)','Agency (SAR 1,499/mo)'], datasets:[{ data:[220,184,82], backgroundColor:[CHART_COLORS.blue,CHART_COLORS.navy,CHART_COLORS.gold], borderRadius:5 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700}, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y} brokers`}} },
+      scales:{ y:{beginAtZero:true,grid:{color:'#F1F5F9'}}, x:{grid:{display:false}} } } });
+}
+function buildMrrTrendChart(){
+  const months = monthLabels(12);
+  let v = 68000;
+  const data = months.map((_,i)=> v = Math.round(68000 + (124500-68000)*(i/(months.length-1)) + (Math.random()*2000-1000)) );
+  mkChart('mrrTrendChart',{ type:'line', data:{ labels:months, datasets:[{ data, borderColor:CHART_COLORS.gold, backgroundColor:'rgba(201,168,76,.4)', fill:true, tension:.3, pointRadius:0, borderWidth:2.5 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:{duration:800}, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${fmtSAR(c.parsed.y)}`}} },
+      scales:{ y:{beginAtZero:false,ticks:{callback:v=>'SAR '+Math.round(v/1000)+'K'},grid:{color:'#F1F5F9'}}, x:{grid:{display:false}} } } });
+}
+function buildNewChurnChart(){
+  const months = monthLabels(6);
+  const newSub = months.map(()=>rnd(38,58));
+  const churn = months.map(()=>rnd(4,14));
+  mkChart('newChurnChart',{ type:'bar', data:{ labels:months, datasets:[
+    { label:'New', data:newSub, backgroundColor:CHART_COLORS.navy, borderRadius:4 },
+    { label:'Churned', data:churn, backgroundColor:CHART_COLORS.red, borderRadius:4 }
+  ]}, options:{ responsive:true, maintainAspectRatio:false, animation:{duration:700}, plugins:{ legend:{position:'top',align:'end'} }, scales:{ y:{beginAtZero:true,grid:{color:'#F1F5F9'}}, x:{grid:{display:false}} } } });
+}
+const TOP_AGENTS = [
+  {name:'Ahmed Al-Rashidi', agency:'Al Malqa Real Estate', av:'1500648767791-00dcc994a43e', deals:47, listings:58, value:18400000, response:12, rating:4.9},
+  {name:'Khalid Al-Harbi', agency:'Riyadh Realty Partners', av:'1507003211169-0a1dd7228f2d', deals:41, listings:54, value:15200000, response:18, rating:4.8},
+  {name:'Sara Al-Otaibi', agency:'Hittin Properties Group', av:'1544005313-94ddf0286df2', deals:38, listings:44, value:13800000, response:15, rating:4.9},
+  {name:'Fatima Al-Qahtani', agency:'Al Malqa Real Estate', av:'1500648767791-00dcc994a43e', deals:34, listings:48, value:11600000, response:22, rating:4.7},
+  {name:'Faisal Al-Ghamdi', agency:'Riyadh Realty Partners', av:'1507003211169-0a1dd7228f2d', deals:29, listings:42, value:9800000, response:25, rating:4.6},
+  {name:'Noura Al-Shammari', agency:'Hittin Properties Group', av:'1544005313-94ddf0286df2', deals:26, listings:31, value:8400000, response:19, rating:4.8},
+  {name:'Abdullah Al-Otaibi', agency:'Al Malqa Real Estate', av:'1500648767791-00dcc994a43e', deals:22, listings:33, value:7100000, response:31, rating:4.5},
+  {name:'Layla Al-Zahrani', agency:'Riyadh Realty Partners', av:'1507003211169-0a1dd7228f2d', deals:19, listings:29, value:6300000, response:27, rating:4.7}
+];
+function convPill(pct){ const cls = pct>=80?'green':pct>=70?'amber':'red'; return `<span class="pill ${cls}">${pct}%</span>`; }
+function buildTopAgentsTable(){
+  document.getElementById('topAgentsBody').innerHTML = TOP_AGENTS.map((a,i)=>`<tr>
+    <td>${i<3?['🥇','🥈','🥉'][i]:`<span class="rank-badge">${i+1}</span>`}</td>
+    <td><img class="thumb" src="https://images.unsplash.com/photo-${a.av}?auto=format&fit=crop&w=100&q=80" alt=""></td>
+    <td style="font-weight:600">${a.name}</td>
+    <td>${a.agency}</td>
+    <td>${a.deals}</td>
+    <td>${convPill(Math.round(a.deals/a.listings*100))}</td>
+    <td style="font-weight:600;color:var(--navy)">${fmtSAR(a.value)}</td>
+    <td>${a.response} min</td>
+    <td>⭐ ${a.rating}</td>
+  </tr>`).join('');
+}
+const TOP_AGENCIES = [
+  {name:'Al Malqa Real Estate', city:'Riyadh', agents:12, deals:103, value:37100000, rating:4.8},
+  {name:'Riyadh Realty Partners', city:'Riyadh', agents:9, deals:89, value:31300000, rating:4.7},
+  {name:'Hittin Properties Group', city:'Riyadh', agents:7, deals:64, value:22200000, rating:4.8},
+  {name:'Jeddah Coastal Properties', city:'Jeddah', agents:8, deals:52, value:17600000, rating:4.6},
+  {name:'Eastern Province Realty', city:'Al Khobar', agents:6, deals:38, value:13400000, rating:4.7}
+];
+function buildTopAgenciesTable(){
+  document.getElementById('topAgenciesBody').innerHTML = TOP_AGENCIES.map((a,i)=>`<tr>
+    <td>${i<3?['🥇','🥈','🥉'][i]:`<span class="rank-badge">${i+1}</span>`}</td>
+    <td style="font-weight:600">${a.name}<div style="font-size:11px;color:var(--muted);font-weight:400">${a.city}</div></td>
+    <td>${a.agents}</td>
+    <td>${a.deals}</td>
+    <td style="font-weight:600;color:var(--navy)">${fmtSAR(a.value)}</td>
+    <td>⭐ ${a.rating}</td>
+  </tr>`).join('');
+}
+function buildAgencySalesChart(){
+  mkChart('agencySalesChart',{ type:'bar', data:{ labels:TOP_AGENCIES.map(a=>a.name), datasets:[{ data:TOP_AGENCIES.map(a=>a.value), backgroundColor:CHART_COLORS.gold, borderRadius:5 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:{duration:700},
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${fmtSAR(c.parsed.x)}`}} },
+      scales:{ x:{beginAtZero:true,ticks:{callback:v=>'SAR '+(v/1e6).toFixed(0)+'M'},grid:{color:'#F1F5F9'}}, y:{grid:{display:false}} } } });
+}
+function initRevenue(){ buildRevenueKpis(); buildTopAgentsTable(); buildTopAgenciesTable(); buildAgencySalesChart(); buildRevenueSourceChart(); buildPlansChart(); buildMrrTrendChart(); buildNewChurnChart(); }
+function refreshRevenue(){ buildRevenueKpis(); }
+
+/* ============================================================
+   SECTION 7: EXPORT REPORTS
+   ============================================================ */
+const REPORTS = [
+  {ic:'📊', title:'Monthly Platform Overview', desc:'Full KPI summary for the month', last:'1 Aug 2026'},
+  {ic:'🔍', title:'Search Analytics Report', desc:'All search terms, volume, trends', last:'1 Aug 2026'},
+  {ic:'🏠', title:'Property Performance Report', desc:'Views, inquiries, conversion per listing', last:'3 Aug 2026'},
+  {ic:'🗺️', title:'Area Intelligence Report', desc:'District demand, prices, investment scores', last:'1 Aug 2026'},
+  {ic:'👥', title:'User Behaviour Report', desc:'Demographics, journey, retention', last:'2 Aug 2026'},
+  {ic:'💰', title:'Revenue & Subscription Report', desc:'MRR, churn, plan breakdown', last:'1 Aug 2026'}
+];
+function buildReportCards(){
+  document.getElementById('reportCardsRow').innerHTML = REPORTS.map((r,i)=>`<div class="card report-card">
+    <div class="ic">${r.ic}</div><h4>${r.title}</h4><p>${r.desc}</p>
+    <div class="meta">Last generated: ${r.last}</div>
+    <div class="report-actions">
+      <button class="btn btn-outline" data-export="csv-${i}">⬇ CSV</button>
+      <button class="btn btn-gold" data-export="pdf-${i}">📄 PDF</button>
+    </div>
+  </div>`).join('');
+  document.getElementById('reportCardsRow').addEventListener('click', e=>{
+    const btn = e.target.closest('button[data-export]'); if(!btn) return;
+    runExport(btn);
+  });
+}
+const SCHEDULED = [
+  {name:'Monthly Platform Overview', freq:'Monthly', to:'exec-team@smartre.sa', last:'1 Aug 2026', next:'1 Sep 2026', on:true},
+  {name:'Weekly Search Trends', freq:'Weekly', to:'marketing@smartre.sa', last:'4 Aug 2026', next:'11 Aug 2026', on:true},
+  {name:'Revenue & Subscriptions', freq:'Monthly', to:'finance@smartre.sa', last:'1 Aug 2026', next:'1 Sep 2026', on:true},
+  {name:'Area Intelligence Digest', freq:'Bi-weekly', to:'strategy@smartre.sa', last:'28 Jul 2026', next:'11 Aug 2026', on:false}
+];
+function buildScheduledTable(){
+  document.getElementById('scheduledBody').innerHTML = SCHEDULED.map((s,i)=>`<tr>
+    <td style="font-weight:600">${s.name}</td><td>${s.freq}</td><td>${s.to}</td><td>${s.last}</td><td>${s.next}</td>
+    <td><span class="switch ${s.on?'on':''}" data-toggle="${i}"></span></td>
+  </tr>`).join('');
+  document.getElementById('scheduledBody').addEventListener('click', e=>{
+    const sw = e.target.closest('[data-toggle]'); if(!sw) return;
+    sw.classList.toggle('on');
+  });
+}
+function initExport(){ buildReportCards(); buildScheduledTable(); }
+
+/* ============================================================
+   EXPORT BUTTONS (top bar + report cards)
+   ============================================================ */
+function runExport(btn){
+  const original = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Generating…';
+  setTimeout(()=>{ btn.textContent = 'Done ✓'; setTimeout(()=>{ btn.textContent = original; btn.disabled = false; }, 1400); }, 1500);
+}
+document.getElementById('exportPdfBtn').addEventListener('click', ()=>runExport(document.getElementById('exportPdfBtn')));
+document.getElementById('exportCsvBtn').addEventListener('click', ()=>runExport(document.getElementById('exportCsvBtn')));
+
+/* ============================================================
+   INIT
+   ============================================================ */
+initOverview();
+initialized.overview = true;
+</script>
+</body>
+</html>

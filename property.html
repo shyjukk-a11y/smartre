@@ -43,8 +43,8 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
         <span class="nb-count hide" id="savedCount">0</span>
       </a>
-      <button class="btn btn-outline btn-sm">Sign In</button>
-      <button class="btn btn-navy btn-sm">List Property</button>
+      <button class="btn btn-outline btn-sm" onclick="openSignIn()">Sign In</button>
+      <button class="btn btn-navy btn-sm" onclick="location.href='add-listing.html'">List Property</button>
     </div>
   </div>
 </nav>
@@ -68,18 +68,21 @@
         <button class="pd-gallery-nav next" onclick="galStep(1)" aria-label="Next photo">›</button>
         <span class="pd-gallery-count" id="galCount">1 / 1</span>
         <button class="pd-tour-btn" onclick="openTour()">▶ Video &amp; 360° Tour</button>
+        <button class="pd-tour-btn" id="viewAllPhotosBtn" style="left:auto;right:16px;bottom:auto;top:16px" onclick="toast('Demo mode — full gallery lightbox')">🖼 View All Photos</button>
       </div>
       <div class="pd-gallery-thumbs" id="galThumbs"></div>
     </div>
 
     <div class="pd-head">
       <div class="pd-title">
+        <div style="font-size:12.5px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px" id="pdStatus">—</div>
         <h1 id="pdTitle">—</h1>
         <div class="pd-loc">📍 <span id="pdLoc">—</span></div>
       </div>
       <div class="pd-price-block">
         <div class="pd-price" id="pdPrice">—</div>
         <div class="pd-price-sub" id="pdPriceSub">AI-estimated fair value</div>
+        <div class="pd-price-sub" id="pdPriceSqm" style="margin-top:2px">—</div>
       </div>
     </div>
 
@@ -96,6 +99,12 @@
 
     <div class="pd-stats" id="pdStats"></div>
 
+    <div class="gov-badges">
+      <span class="gov-badge"><span class="ck">✓</span> MOJ Verified</span>
+      <span class="gov-badge"><span class="ck">✓</span> Absher ID Verified</span>
+      <span class="gov-badge"><span class="ck">✓</span> Balady Permit</span>
+    </div>
+
     <div class="pd-tabs">
       <button class="pd-tab active" data-tab="overview" onclick="pdTab('overview',this)">Overview</button>
       <button class="pd-tab" data-tab="floorplan" onclick="pdTab('floorplan',this)">Floor Plan</button>
@@ -104,7 +113,12 @@
     </div>
 
     <div class="pd-tabpanel active" id="tab-overview">
-      <p class="pd-desc" id="pdDesc">—</p>
+      <p class="pd-desc clamped" id="pdDesc">—</p>
+      <span class="read-more-btn" id="readMoreBtn" onclick="toggleReadMore()">Read More ▾</span>
+
+      <div class="invest-snap" id="investSnap"></div>
+
+      <h4 style="font-size:16px;margin-bottom:14px">Features &amp; Amenities</h4>
       <div class="pd-amenities" id="pdAmenities"></div>
     </div>
 
@@ -145,6 +159,10 @@
             <div class="ctxt"><b>87%</b><small>Confidence</small></div>
           </div>
         </div>
+        <div class="pw-comps">
+          <div class="h">Comparable Sold Properties Nearby</div>
+          <div id="pwCompsList"></div>
+        </div>
         <span class="sell-badge" id="pwSellBadge">⚡ Predicted to sell in 24 days</span>
       </div>
     </div>
@@ -163,8 +181,23 @@
         <img id="agAvatar" src="" alt="">
         <div><b id="agName">—</b><span id="agRole">—</span><div class="stars">★★★★★ 4.9</div></div>
       </div>
-      <button class="btn btn-navy btn-block" onclick="openEnquiry()">✉ Send Enquiry</button>
-      <button class="btn btn-outline btn-block" id="agCallBtn">📞 Call Agent</button>
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+        <div id="agAgency" style="font-weight:600;color:var(--text)">—</div>
+        <div>REGA License: <b id="agRega" style="color:var(--navy)">—</b></div>
+      </div>
+      <button class="btn btn-navy btn-block" id="agCallBtn">📞 Call Agent</button>
+      <a class="btn btn-whatsapp btn-block" id="agWaBtn" href="#" target="_blank" rel="noopener" style="margin-top:9px">💬 WhatsApp</a>
+
+      <form class="agent-msg-form" id="agentMsgForm" onsubmit="return submitAgentMsg(event)">
+        <div class="field" id="famName"><label>Full Name</label><input type="text" id="amName"></div>
+        <div class="field" id="famPhone"><label>Phone</label><input type="tel" id="amPhone" placeholder="+966"></div>
+        <div class="field" id="famEmail"><label>Email</label><input type="email" id="amEmail"></div>
+        <div class="field"><label>Message</label><textarea id="amMsg">Hi, I'm interested in this property. Please share more details and availability for a viewing.</textarea></div>
+        <button class="btn btn-gold btn-block" type="submit">Send Message</button>
+      </form>
+      <div class="agent-secure-note">🔒 Your details are secure and will only be shared with this agent</div>
+
+      <button class="btn btn-gold btn-block" style="margin-top:14px" onclick="openEnquiry()">📅 Schedule Viewing</button>
     </div>
 
     <div class="mcalc">
@@ -297,6 +330,22 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="signInOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Sign In</h3><div class="modal-close" onclick="closeModal('signInOverlay')">✕</div></div>
+    <div class="modal-body">
+      <form onsubmit="return doSignIn(event)">
+        <div class="field"><label>Email</label><input type="email" id="siEmail" required></div>
+        <div class="field"><label>Password</label><input type="password" id="siPass" required></div>
+        <button class="btn btn-navy btn-block btn-lg" type="submit">Sign In</button>
+      </form>
+      <div style="display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:12px"><div style="flex:1;height:1px;background:var(--border)"></div>or<div style="flex:1;height:1px;background:var(--border)"></div></div>
+      <button class="btn btn-outline btn-block" style="margin-bottom:10px" onclick="doSignIn(event)">Continue with Google</button>
+      <button class="btn btn-outline btn-block" onclick="doSignIn(event)">Continue with Apple</button>
+    </div>
+  </div>
+</div>
+
 <script src="app.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -312,10 +361,14 @@ function render(){
   renderThumbs();
   setGal(0);
 
+  const extras = propExtras(P);
+
+  document.getElementById('pdStatus').textContent = P.type + (P.type==='Land'?' for Sale':' for Sale') + ' — Active';
   document.getElementById('pdTitle').textContent = P.title;
   document.getElementById('pdLoc').textContent = P.loc;
   document.getElementById('pdPrice').textContent = fmtSAR(P.price);
   document.getElementById('pdPriceSub').textContent = P.type==='Land' ? 'Asking price' : 'AI-estimated fair value';
+  document.getElementById('pdPriceSqm').textContent = fmtSAR(Math.round(P.price/P.sqm)) + ' / sqm';
   document.getElementById('pdCompareChk').checked = getCompareIds().includes(P.id);
   setHeart();
 
@@ -323,11 +376,28 @@ function render(){
   if(P.beds>0) stats.push(['🛏',P.beds,'Beds']);
   if(P.baths>0) stats.push(['🛁',P.baths,'Baths']);
   stats.push(['📐',P.sqm+' sqm','Area']);
+  if(extras.floors) stats.push(['🏢',extras.floors,'Floors']);
+  if(extras.parking>0) stats.push(['🚗',extras.parking,'Parking']);
   stats.push(['📅',P.year||'—','Year Built']);
   document.getElementById('pdStats').innerHTML = stats.map(s=>`<div class="pd-stat"><div class="v">${s[0]} ${s[1]}</div><div class="l">${s[2]}</div></div>`).join('');
 
   document.getElementById('pdDesc').textContent = P.desc;
   document.getElementById('pdAmenities').innerHTML = P.amenities.map(a=>`<div class="pd-amenity"><span class="tick">✓</span>${a}</div>`).join('');
+
+  if(P.rentYield){
+    const annualRent = Math.round(P.price*(P.rentYield/100));
+    const netYield = (P.rentYield*0.8).toFixed(1);
+    const growth3yr = Math.round((Math.pow(1.06,3)-1)*100);
+    const rank = Math.min(10, Math.max(6, Math.round(P.rentYield)));
+    document.getElementById('investSnap').innerHTML = `
+      <div class="cell"><div class="v">${fmtSAR(annualRent)}</div><div class="l">Est. Annual Rent</div></div>
+      <div class="cell"><div class="v">${P.rentYield}%</div><div class="l">Gross Rental Yield</div></div>
+      <div class="cell"><div class="v">${netYield}%</div><div class="l">Net Yield (after costs)</div></div>
+      <div class="cell"><div class="v">+${growth3yr}%</div><div class="l">Capital Growth (3yr)</div></div>
+      <div class="invest-snap-foot">🤖 This property ranks <b>${rank}/10</b> for investment potential in ${P.loc.split(',')[0]} — <a href="invest.html?id=${P.id}" style="color:var(--gold);font-weight:700">Full analysis →</a></div>`;
+  } else {
+    document.getElementById('investSnap').style.display='none';
+  }
 
   document.getElementById('floorplanSvgHolder').innerHTML = floorplanSVG(P.type);
   document.getElementById('fpArea').textContent = P.sqm + ' sqm';
@@ -340,7 +410,15 @@ function render(){
   document.getElementById('agAvatar').src = u(P.av,120);
   document.getElementById('agName').textContent = P.agent;
   document.getElementById('agRole').textContent = P.role;
+  document.getElementById('agAgency').textContent = extras.agency;
+  document.getElementById('agRega').textContent = extras.rega;
   document.getElementById('agCallBtn').onclick = ()=>toast('Demo mode — calling '+P.agent+' at '+P.phone);
+  document.getElementById('agWaBtn').href = waLink(P.phone, `Hi ${P.agent}, I'm interested in ${P.title}.`);
+
+  const compsList = PROPS.filter(x=>x.id!==P.id && x.city===P.city && x.type===P.type).slice(0,3);
+  document.getElementById('pwCompsList').innerHTML = compsList.length ? compsList.map(c=>`
+    <div class="comp"><span class="a"><span class="sq"></span>${c.title} · ${c.sqm} sqm</span><span class="p">${fmtSAR(c.price)}</span></div>`).join('')
+    : '<p style="font-size:13px;color:var(--muted)">No directly comparable sales in this district yet.</p>';
 
   document.getElementById('pwAddr').textContent = P.title + ', ' + P.loc;
   document.getElementById('pwPrice').textContent = fmtSAR(P.price);
@@ -437,6 +515,28 @@ function submitEnquiry(e){
   return false;
 }
 function toggleField(id, invalid){ document.getElementById(id).classList.toggle('invalid', invalid); }
+
+function submitAgentMsg(e){
+  e.preventDefault();
+  let ok = true;
+  const name = document.getElementById('amName').value.trim();
+  const phone = document.getElementById('amPhone').value.trim();
+  const email = document.getElementById('amEmail').value.trim();
+  toggleField('famName', name.length<2); if(name.length<2) ok=false;
+  toggleField('famPhone', phone.length<7); if(phone.length<7) ok=false;
+  toggleField('famEmail', !validEmail(email)); if(!validEmail(email)) ok=false;
+  if(!ok) return false;
+  document.getElementById('agentMsgForm').outerHTML = `<div class="form-success" style="padding:20px 0"><div class="ic" style="width:48px;height:48px;font-size:22px">✓</div><h3 style="font-size:16px">Message Sent</h3><p style="font-size:13px">${P.agent} usually replies within a few hours.</p></div>`;
+  return false;
+}
+
+/* ---------- read more toggle ---------- */
+function toggleReadMore(){
+  const desc = document.getElementById('pdDesc');
+  const btn = document.getElementById('readMoreBtn');
+  const clamped = desc.classList.toggle('clamped');
+  btn.textContent = clamped ? 'Read More ▾' : 'Read Less ▴';
+}
 
 /* ---------- 360 / video tour (interactive draggable panorama) ---------- */
 function openTour(){

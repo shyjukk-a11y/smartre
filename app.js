@@ -80,6 +80,20 @@ function propById(id){ return PROPS.find(p=>String(p.id)===String(id)); }
 function u(id,w){return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w||600}&q=80`;}
 function fmtSAR(n){ return "SAR " + Number(n).toLocaleString('en-US'); }
 
+/* ---------- derived listing/agent extras (computed, not hand-authored per property) ---------- */
+const AGENCY_BY_AGENT = {
+  "Ahmed Al-Rashidi": { agency:"Al Malqa Real Estate", rega:"RE-104829" },
+  "Sara Al-Otaibi":   { agency:"Hittin Properties Group", rega:"RE-119374" },
+  "Khalid Al-Harbi":  { agency:"Riyadh Realty Partners", rega:"RE-108562" }
+};
+function propExtras(p){
+  const floors = p.type==='Land' ? null : p.type==='Office' ? 1 : (p.sqm>450 ? 3 : p.sqm>320 ? 2 : 1);
+  const parking = p.type==='Land' ? 0 : p.type==='Office' ? Math.max(2,Math.round(p.sqm/150)) : Math.max(1,Math.round((p.beds||1)*0.7));
+  const info = AGENCY_BY_AGENT[p.agent] || { agency:"SMART RE Partners", rega:"RE-100000" };
+  return { floors, parking, agency:info.agency, rega:info.rega };
+}
+function waLink(phone, text){ return 'https://wa.me/'+phone.replace(/[^\d]/g,'')+'?text='+encodeURIComponent(text||''); }
+
 function heartSVG(){return '<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.9-10-9.3C.4 8.4 2 4.5 5.5 4.5c2 0 3.4 1.2 4.5 2.6 1.1-1.4 2.5-2.6 4.5-2.6 3.5 0 5.1 3.9 3.5 7.2C19.5 16.1 12 21 12 21z" stroke-width="1.8"/></svg>';}
 
 /* ---------- localStorage helpers (saved properties / searches / compare / notifications) ---------- */
@@ -143,6 +157,26 @@ function toast(msg, kind){
   wrap.appendChild(t);
   setTimeout(()=>{ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 2600);
 }
+
+/* ---------- shared modal + sign-in helpers (used on every page) ---------- */
+function openModal(id){ const el=document.getElementById(id); if(el) el.classList.add('open'); }
+function closeModal(id){ const el=document.getElementById(id); if(el) el.classList.remove('open'); }
+function openSignIn(){ openModal('signInOverlay'); }
+function doSignIn(e){
+  if(e) e.preventDefault();
+  toast('Signed in — redirecting…','ok');
+  setTimeout(()=>location.href='customer-portal.html', 700);
+  return false;
+}
+
+const LS_AGENT_SESSION = 'sre_agent_signed_in';
+function isAgentSignedIn(){ return lsGet(LS_AGENT_SESSION, false) === true; }
+function doAgentSignIn(e){
+  if(e) e.preventDefault();
+  lsSet(LS_AGENT_SESSION, true);
+  return false;
+}
+function agentSignOut(){ lsSet(LS_AGENT_SESSION, false); location.href='index.html'; }
 
 /* ---------- property card renderer (used on every page) ---------- */
 function propCard(p, opts){
